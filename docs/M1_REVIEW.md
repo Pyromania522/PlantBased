@@ -22,8 +22,9 @@ Ruff, strict mypy, all official hassfest integration validators, official HACS
 manifest schemas, and the local HACS brand validator pass. Full GitHub CI/HACS
 metadata validation is tracked in ../VALIDATION.md. The complete current HACS
 index (3,225 integrations) and Core API have now been checked: no domain collision.
-The HACS license check requires LICENSE on the repository's default branch.
-GitHub repository description/topics are still missing; the existing GitHub App
-credential cannot update those settings (HTTP 403). Suggested values are in
-../VALIDATION.md. HACS validation keeps all checks enabled and may fail on these
-repository-level prerequisites until the owner resolves them.
+The user supplied the repository description/topics and merged the separate
+MIT-license PR #2. GitHub now detects MIT on the default branch. Both the push
+and PR workflows passed on implementation commit `cd28af4`: hassfest, HACS,
+quality, and both HA test jobs. All HACS checks remained enabled. The earlier
+metadata failures were resolved without changing integration logic. See
+../VALIDATION.md for exact runs, scope, and limitations.

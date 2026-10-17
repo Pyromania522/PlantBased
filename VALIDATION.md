@@ -1,6 +1,6 @@
 # M1 validation — 2026-10-17
 
-**M1 is implemented and validated locally. Full GitHub CI acceptance is pending.**
+**M1 is implemented and validated locally and by GitHub CI.**
 GitHub delivery and remote checks are tracked below. No release or HACS
 default-catalog submission has been performed.
 
@@ -16,6 +16,8 @@ default-catalog submission has been performed.
 | Official hassfest, all integration validators | **1 integration, 0 invalid** |
 | Official HACS manifest schemas | `hacs.json` and integration manifest passed |
 | Official HACS local brand validator | Passed with the actual checkout's PNG file paths |
+| GitHub hassfest and HACS actions | Passed on implementation commit `cd28af4` |
+| GitHub quality and both HA test jobs | Passed on implementation commit `cd28af4` |
 | PNG specification | 4 RGBA PNGs; normal 256×256, hDPI 512×512 |
 | Brand regeneration | `script/build_brand.py` executed successfully |
 | GitHub workflow, issue templates, Dependabot YAML | Parsed successfully |
@@ -86,24 +88,35 @@ The committed workflow uses the official actions to repeat validation on GitHub.
   environment, and its executable directory is on PATH for its Ruff subprocess.
 - Python, uv caches, and executable links live in writable `/workspace` paths.
 
-## Remaining M1 acceptance checks
+## Completed GitHub acceptance
 
-1. The saved network changes are active. The full HACS index audit and Core API
-   check found no collision. GitHub API, HACS-index, and HACS publishing-doc
-   requests returned HTTP 200. The HA documentation website still returned HTTP
-   403; its official source references remain documented in DECISIONS.md.
-2. GitHub's repository metadata confirms issues enabled, but description, topics,
-   and license detection are absent. Attempts to set description and topics
-   returned HTTP 403, `Resource not accessible by integration`; the available
-   GitHub App credential supports repository reads but cannot change repository
-   settings. The owner must set these in GitHub's About editor. Suggested
-   description: `Local, calendar-based plant care for Home Assistant (in development).`
-   Suggested topics: `home-assistant`, `hacs`, `custom-integration`, `plant-care`,
-   `plantbased`. The license check depends on LICENSE reaching the default branch.
-   The workflow contains **no ignored HACS checks**.
-3. After the changes reach GitHub, run `.github/workflows/validate.yml` and verify
-   hassfest, HACS, quality, and both HA test jobs. Do not label CI green before
-   these jobs actually succeed for the relevant revision.
+M1 is delivered in [PR #1](https://github.com/Pyromania522/PlantBased/pull/1).
+On the implementation commit `cd28af4a46853b953e20786bc6074d9947653d0f`, both
+workflows completed successfully after the repository prerequisites were fixed:
+
+- [Push validation, attempt 2](https://github.com/Pyromania522/PlantBased/actions/runs/39066667086/attempts/2)
+- [Pull-request validation, attempt 2](https://github.com/Pyromania522/PlantBased/actions/runs/39066671366/attempts/2)
+
+hassfest, HACS, quality (Ruff, formatting, strict mypy), and both HA test jobs
+are green. Only the initially failed HACS jobs were retried; the already passing
+jobs retained their successful results. The workflow has **no ignored HACS checks**.
+
+The initial HACS failures were repository-level prerequisites: missing
+description, topics, and detected license. The user added the description and
+topics and merged the separate MIT-license [PR #2](https://github.com/Pyromania522/PlantBased/pull/2).
+The GitHub API now confirms the description, topics, enabled issues, and detected
+MIT license on `main`. No application-code correction or assertion bypass was
+needed for HACS to pass.
+
+The saved network changes are active. The full HACS index audit and Core API
+check found no collision. GitHub API, HACS-index, and HACS publishing-doc requests
+returned HTTP 200. The HA documentation website still returned HTTP 403; its
+verified official source references remain documented in DECISIONS.md.
+
+M1 is the hub skeleton only. Browser-based manual UI testing, M2–M6 features,
+HACS default-catalog submission, and the public v0.1.0 release are not claimed by
+these results. The current PR checks are authoritative for later documentation
+or implementation commits.
 
 ## Saved cloud configuration draft
 

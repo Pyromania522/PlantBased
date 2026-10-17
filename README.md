@@ -30,7 +30,7 @@ Local brand images work on HA 2026.3+. Earlier versions may show a generic icon.
 
 | Milestone | Scope | Status |
 | --- | --- | --- |
-| M1 | HACS structure, hub, translations, validation | See VALIDATION.md |
+| M1 | HACS structure, hub, translations, validation | Implemented; GitHub CI verified |
 | M2 | Plant/group subentries, storage, scheduling, entities | Planned |
 | M3 | Actions, events, calendar, to-do, diagnostics | Planned |
 | M4 | Summary and actionable notifications | Planned |

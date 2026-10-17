@@ -98,6 +98,13 @@ succeeded. These are distinct operation scopes; no replacement secret is needed
 for the working Git route. The owner can supply description/topics in GitHub's
 About editor. No HACS checks are bypassed to hide these prerequisites.
 
+The user subsequently set description/topics and merged the MIT-only PR #2.
+GitHub now detects MIT on `main`. Both previously failed HACS jobs passed on
+retry, making the push and pull-request workflows fully green on implementation
+commit `cd28af4a46853b953e20786bc6074d9947653d0f`. The earlier 403s and HACS
+metadata failures are resolved prerequisites, not outstanding environment or
+application defects. The integration code was unchanged during that resolution.
+
 ## Future milestones
 
 Reverify subentry APIs, entity translations/naming, storage migration, scheduling,
