@@ -1,0 +1,15 @@
+name: Feature request / Funktionswunsch
+description: Suggest an improvement within the timer-based plant-care scope.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What plant-care problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+    validations:
+      required: true

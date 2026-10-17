@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>PlantBased sprout</title>
+  <path d="M128 181V86" fill="none" stroke="#246844" stroke-width="12" stroke-linecap="round"/>
+  <path d="M125 132C58 138 12 92 15 28C83 25 131 68 125 132Z" fill="#38894d"/>
+  <path d="M131 98C130 40 175 3 241 7C239 65 198 108 131 98Z" fill="#5ba951"/>
+  <path d="M128 132L55 66M133 96L202 36" fill="none" stroke="#246844" stroke-width="6" stroke-linecap="round"/>
+  <path d="M58 176H198L180 250H76Z" fill="#b8603e"/>
+  <path d="M53 167H203V186H53Z" fill="#cf7852"/>
+</svg>

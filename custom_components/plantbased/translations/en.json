@@ -1,0 +1,13 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "PlantBased is already configured."
+    },
+    "step": {
+      "user": {
+        "title": "Set up PlantBased",
+        "description": "Create your local PlantBased hub. This development milestone adds the hub only; plants and care schedules will be available in a later milestone. No account or sensors are required."
+      }
+    }
+  }
+}
