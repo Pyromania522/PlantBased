@@ -1,0 +1,13 @@
+{
+  "domain": "plantbased",
+  "name": "PlantBased",
+  "codeowners": ["@Pyromania522"],
+  "config_flow": true,
+  "documentation": "https://github.com/Pyromania522/PlantBased",
+  "integration_type": "hub",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/Pyromania522/PlantBased/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}

@@ -1,0 +1,23 @@
+name: Bug report / Fehler melden
+description: Report a reproducible PlantBased issue.
+body:
+  - type: markdown
+    attributes:
+      value: Do not include tokens, private URLs, or personal Home Assistant configuration.
+  - type: input
+    id: versions
+    attributes:
+      label: Home Assistant and PlantBased versions
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant sanitized logs
+      render: text

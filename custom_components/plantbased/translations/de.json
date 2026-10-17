@@ -1,0 +1,13 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "PlantBased ist bereits eingerichtet."
+    },
+    "step": {
+      "user": {
+        "title": "PlantBased einrichten",
+        "description": "Richte deinen lokalen PlantBased-Hub ein. Dieser Entwicklungsstand fügt nur den Hub hinzu; Pflanzen und Pflegetermine folgen in einem späteren Meilenstein. Ein Konto oder Sensoren sind nicht erforderlich."
+      }
+    }
+  }
+}

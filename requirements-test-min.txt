@@ -1,0 +1,4 @@
+# This plugin pins exactly the declared minimum Home Assistant 2025.10.0.
+pytest-homeassistant-custom-component==0.13.285
+# aiodns 3.5 (required by HA 2025.10) predates the pycares 5 API removal.
+pycares==4.11.0

@@ -1,0 +1,138 @@
+# M1 validation — 2026-10-17
+
+**M1 is implemented and validated locally and by GitHub CI.**
+GitHub delivery and remote checks are tracked below. No release or HACS
+default-catalog submission has been performed.
+
+## Executed results
+
+| Check | Result |
+| --- | --- |
+| HA 2026.10.2, Python 3.14.2, test plugin 0.13.373 | **7 passed**, no skips or expected failures |
+| HA 2025.10.0, Python 3.13.2, test plugin 0.13.285 | **7 passed**, no skips or expected failures |
+| Python coverage, each HA target | **100% statements and branches** of M1: 19 statements, 2 branch exits |
+| Ruff 0.17.1 lint and format check | Passed |
+| mypy 2.4.0, strict, 3 integration source files | Passed |
+| Official hassfest, all integration validators | **1 integration, 0 invalid** |
+| Official HACS manifest schemas | `hacs.json` and integration manifest passed |
+| Official HACS local brand validator | Passed with the actual checkout's PNG file paths |
+| GitHub hassfest and HACS actions | Passed on implementation commit `cd28af4` |
+| GitHub quality and both HA test jobs | Passed on implementation commit `cd28af4` |
+| PNG specification | 4 RGBA PNGs; normal 256×256, hDPI 512×512 |
+| Brand regeneration | `script/build_brand.py` executed successfully |
+| GitHub workflow, issue templates, Dependabot YAML | Parsed successfully |
+| Whitespace errors | `git diff --check` passed |
+| Complete current HACS integration-domain index | 3,225 entries checked; no `plantbased` collision |
+| Current Core domain check | GitHub API confirms no `plantbased` component on `dev` |
+| Reusable cloud install script | Executed twice successfully, preserving usable environments |
+
+The coverage percentage describes only the small hub skeleton. It does not
+measure or establish readiness of the planned plant-care features.
+
+The seven tests cover explicit confirmation, creation and entry data, stable
+unique ID, real setup/reload/unload/removal, singleton enforcement for existing
+entries, parallel flows, an entry appearing during confirmation, both languages
+through HA's translation loader, and translation-key parity. There are no mocked
+Home Assistant implementation modules. No browser-based manual UI test was run.
+
+## Reproduce the integration checks
+
+From `/workspace/PlantBased`, after the setup in CONTRIBUTING.md:
+
+```sh
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/mypy
+.venv/bin/pytest
+COVERAGE_FILE=.coverage.min .venv-min/bin/pytest --cov-report=xml:/tmp/plantbased-min-coverage.xml
+```
+
+The separate coverage file prevents the minimum/current runs from competing for
+the same report. All generated environments and reports are excluded from Git.
+
+### Official validators used locally
+
+hassfest was run from the official HA Core source at
+`b7a099a1f282cdcbbfefe8332d6de39de73aacee`, with that checkout's requirements and
+its own isolated environment. No validators were skipped. The command from that
+Core checkout was:
+
+```sh
+PATH=/workspace/.venvs/plantbased-hassfest/bin:$PATH \
+PYTHONPATH=/tmp/plantbased-research/core \
+/workspace/.venvs/plantbased-hassfest/bin/python -m script.hassfest \
+  --action validate \
+  --integration-path /workspace/PlantBased/custom_components/plantbased
+```
+
+The HACS source at `04fac58f2b04e263370c6ba9a7a3df0136268a80` was imported with
+its official frontend package installed in the external research checkout.
+`HACS_MANIFEST_JSON_SCHEMA` and `INTEGRATION_MANIFEST_JSON_SCHEMA` were called
+directly on this repository's JSON files. `validate.brands.Validator.async_validate`
+was called with local file paths and content-directory metadata. It found
+`custom_components/plantbased/brand/icon.png`, so no remote brand fallback was
+needed. These checks are deliberately **not described as a full HACS action run**.
+
+The temporary source checkouts are research material, not application dependencies.
+The committed workflow uses the official actions to repeat validation on GitHub.
+
+## Diagnosed setup corrections
+
+- The project root is explicitly in pytest's `pythonpath`; plain `pytest` and
+  `python -m pytest` can both import the custom-components namespace.
+- HA 2025.10's `aiodns==3.5.0` accepts unbounded newer `pycares` releases even
+  though their API is incompatible. The minimum test environment pins
+  `pycares==4.11.0`. This is a **test compatibility constraint**, not an integration
+  runtime dependency or change to HA's production environment.
+- hassfest's development dependencies are isolated from the released HA test
+  environment, and its executable directory is on PATH for its Ruff subprocess.
+- Python, uv caches, and executable links live in writable `/workspace` paths.
+
+## Completed GitHub acceptance
+
+M1 is delivered in [PR #1](https://github.com/Pyromania522/PlantBased/pull/1).
+On the implementation commit `cd28af4a46853b953e20786bc6074d9947653d0f`, both
+workflows completed successfully after the repository prerequisites were fixed:
+
+- [Push validation, attempt 2](https://github.com/Pyromania522/PlantBased/actions/runs/39066667086/attempts/2)
+- [Pull-request validation, attempt 2](https://github.com/Pyromania522/PlantBased/actions/runs/39066671366/attempts/2)
+
+hassfest, HACS, quality (Ruff, formatting, strict mypy), and both HA test jobs
+are green. Only the initially failed HACS jobs were retried; the already passing
+jobs retained their successful results. The workflow has **no ignored HACS checks**.
+
+The initial HACS failures were repository-level prerequisites: missing
+description, topics, and detected license. The user added the description and
+topics and merged the separate MIT-license [PR #2](https://github.com/Pyromania522/PlantBased/pull/2).
+The GitHub API now confirms the description, topics, enabled issues, and detected
+MIT license on `main`. No application-code correction or assertion bypass was
+needed for HACS to pass.
+
+The saved network changes are active. The full HACS index audit and Core API
+check found no collision. GitHub API, HACS-index, and HACS publishing-doc requests
+returned HTTP 200. The HA documentation website still returned HTTP 403; its
+verified official source references remain documented in DECISIONS.md.
+
+M1 is the hub skeleton only. Browser-based manual UI testing, M2–M6 features,
+HACS default-catalog submission, and the public v0.1.0 release are not claimed by
+these results. The current PR checks are authoritative for later documentation
+or implementation commits.
+
+## Saved cloud configuration draft
+
+The following fields were saved and the user subsequently saved/published the
+environment settings. Current runtime observations confirm the network rules are
+enforced, and the saved configuration contains the installation/start instructions:
+
+- `install_script`: reproducible Python/venv/dependency installation for both
+  test targets, using the existing checkout.
+- `start_skill`: working directory, milestone boundaries, test commands,
+  interpreter selection, and the instruction not to create a Git worktree unless
+  explicitly requested. M1 needs no persistent service process.
+- `network.allowed_domains`: adds `developers.home-assistant.io`, `hacs.xyz`,
+  `api.github.com`, and `data-v2.hacs.xyz`; existing package-manager presets are
+  preserved. No new credentials or secret requirements were added.
+
+Fresh requests verified GitHub and HACS access after the runtime update. The
+configuration now has a published base version containing these settings. This
+does not establish that a separate new cloud task has restored the snapshot.
