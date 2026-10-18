@@ -1,5 +1,108 @@
 # Decisions and verified references
 
+## M2 scope and current API verification
+
+M2 adds plant/group subentries, native devices, persisted care state and the six
+entity platforms: binary sensor, button, date, number, sensor and switch. Each
+plant has 16 entities, each group five, and the overview six. Calendar/to-do,
+integration-wide actions/events and diagnostics remain M3. Reminder options and
+notifications remain M4; illustration resources, image entities and cards remain
+M5. Basic snooze, pause/vacation and season calculations are implemented now
+because the M2 entity controls and care statuses must already work consistently.
+
+Before implementation, the current official developer-doc source at
+`50b518898989b67bb76b69827f227aa6f0acd32a` was read alongside Core `dev` at
+`4dbd9dca6febcc36a348d2a9fff69833e68fb36a`, and both installed released HA
+versions. No private HA write/lifecycle API is used in the integration.
+
+| M2 API / contract | Verified official reference |
+| --- | --- |
+| `async_get_supported_subentry_types`, `ConfigSubentryFlow`, `async_create_entry`, `async_update_and_abort`, reconfigure context | [Subentry flows](https://developers.home-assistant.io/docs/core/integration/config_flow/#subentry-flows) |
+| `async_update_subentry`, `async_remove_subentry`, update listeners, unload hooks, platform setup/unload | [Config entries](https://developers.home-assistant.io/docs/config_entries_index/), released Core `config_entries.py` |
+| `ConfigEntry.runtime_data` with a typed manager | [Runtime data](https://developers.home-assistant.io/docs/core/integration-quality-scale/rules/runtime-data/) |
+| `config_subentry_id` in `async_add_entities`, device registration and registry ownership | [Device registry](https://developers.home-assistant.io/docs/device_registry_index/), released `entity_platform.py` |
+| `has_entity_name`, `translation_key`, `async_added_to_hass`, `async_on_remove`, push updates | [Entity](https://developers.home-assistant.io/docs/core/entity/) |
+| Native values and methods for each of the six platforms | [Sensor](https://developers.home-assistant.io/docs/core/entity/sensor/), [binary sensor](https://developers.home-assistant.io/docs/core/entity/binary-sensor/), [button](https://developers.home-assistant.io/docs/core/entity/button/), [date](https://developers.home-assistant.io/docs/core/entity/date/), [number](https://developers.home-assistant.io/docs/core/entity/number/), [switch](https://developers.home-assistant.io/docs/core/entity/switch/) |
+| `async_track_time_change`, `async_at_start`, core time-zone updates | [Listening for events](https://developers.home-assistant.io/docs/integration_listen_events/), released `helpers/event.py` and `helpers/start.py` |
+| Versioned `Store`, migration, atomic/private writes, public load/save/remove | [Official storage source](https://github.com/home-assistant/core/blob/dev/homeassistant/helpers/storage.py) plus both released implementations |
+| Executor-based filesystem preflight | [Working with async](https://developers.home-assistant.io/docs/asyncio_working_with_async/) |
+| Entity, selector, device and subentry translations | [Internationalization](https://developers.home-assistant.io/docs/internationalization/core/) |
+
+The internationalization schema requires subentry `entry_type` and
+`initiate_flow.user` (plus a reconfigure label). The small config-flow example's
+`title` alone is insufficient; the integration follows the current translation
+reference and all hassfest integration validators pass.
+
+### Supported-version compatibility
+
+- HA has used Probatio since 2026.9 and officially aliases the public
+  `voluptuous` import at startup. The isolated schema module uses that supported
+  alias and current Probatio types for static checking, so no extra dependency
+  or guessed transition-version branch is required. See the official
+  [validation-engine announcement](https://developers.home-assistant.io/blog/2026/09/30/probatio-validation-engine/).
+- Current HA deprecates cross-entry `device_registry.async_get_device` lookups.
+  The integration uses `async_entries_for_config_entry` and identifiers scoped
+  to the owning hub, which is supported by both versions and avoids deprecation
+  warnings. `suggested_area` is only passed when registering the device; explicit
+  subentry area edits use `async_update_device(area_id=...)`.
+- Subentry edits use `async_update_and_abort` with the shared entry update
+  listener. `async_update_reload_and_abort` must not be combined with that
+  listener on current HA. Creates, reconfigure, interval edits and removal use
+  the same reload lifecycle and preserve stable entity/device identities.
+- Existing hub entries remain version 1. M1 had no subentries or runtime store,
+  so there is no existing M1 care data to migrate. New Store version 1 includes
+  an explicitly defined internal pre-release v0 migration fixture; v0 was never
+  a published PlantBased storage format. Unsupported versions are not reset.
+
+### Scheduling and UX assumptions
+
+- All dates use HA's configured time zone and calendar-day arithmetic. Midnight
+  uses `async_track_time_change`; a time-zone setting change resubscribes it and
+  recalculates the local day. There is no periodic polling.
+- A due task starts on `today >= last_date + interval + snooze`. Negative day
+  counts remain visible while paused, but due flags and overdue overview counts
+  exclude paused plants. Unpausing resumes the original dates without shifting.
+- Fertilizing seasons include complete boundary months and may cross New Year.
+  A season covering all 12 months behaves like all-year mode. Disabled
+  fertilizing has no next date. Outside a season the next-fertilizing sensor is
+  the requested **season-resume marker**; the original interval is checked again
+  when the season opens. A far-future interval is therefore not prematurely due
+  merely because that marker is displayed.
+- Snoozing overdue care moves it to at least tomorrow; repeating snooze extends
+  the current postponed date. Each care type has its own offset, reset by marking
+  that care done or correcting its date.
+- Creation-only seed dates default to today. Reconfigure changes settings;
+  date entities edit runtime last-care dates, so ordinary reconfiguration cannot
+  reset history. Last-care dates entered by users cannot be in the future.
+- Every button/date correction is retained in operation order, allowing repeated
+  dates, with only the last 10 dates per care type kept. Groups act on all current
+  members, including paused plants; they never act on other groups.
+- HA generates each subentry ID. There is no external plant identifier, so a
+  name is not used as `unique_id`; duplicate names are allowed. Device and entity
+  identities use the immutable subentry ID.
+- Optional image presets and custom URLs are metadata in M2. No guessed frontend
+  URL is emitted for not-yet-shipped illustrations, and the backend never fetches
+  user image URLs. No image entity or resource registration is claimed yet.
+
+### Persistence and failure behavior
+
+Configuration (including intervals) belongs to HA subentries. Dates, snoozes,
+histories, individual pause and global vacation belong to one private, atomic
+Store per hub. State mutations are serialized by a lock; unload waits for an
+in-flight write. New actions are rejected during HA shutdown.
+
+HA Store logs and swallows some write errors. PlantBased therefore confirms
+the candidate snapshot with a fresh public Store read before acknowledging a
+care action or updating entities. This deliberately trades one small async read
+per write for a checked save, without overriding HA's private write methods.
+JSON/envelope preflight also runs in the executor before Store loading: malformed
+existing files remain unchanged and cause a translated setup failure instead of
+being mistaken for a new hub. Tests cover the real swallowed-write-error path,
+repeated loading of corrupt files, migration, pruning and concurrent care.
+
+Silver is still a target rather than a claimed tier; the later diagnostics,
+actions, calendar/to-do and applicable remaining quality rules are outstanding.
+
 ## M1 scope and assumptions
 
 - M1 creates only the hub. No fake devices, placeholder entities, actions, storage

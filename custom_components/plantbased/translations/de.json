@@ -6,8 +6,271 @@
     "step": {
       "user": {
         "title": "PlantBased einrichten",
-        "description": "Richte deinen lokalen PlantBased-Hub ein. Dieser Entwicklungsstand fügt nur den Hub hinzu; Pflanzen und Pflegetermine folgen in einem späteren Meilenstein. Ein Konto oder Sensoren sind nicht erforderlich."
+        "description": "Richte deinen lokalen PlantBased-Hub ein. Anschließend kannst du über die Integrationskarte Pflanzen und Gruppen hinzufügen. Ein Konto oder Sensoren sind nicht erforderlich."
       }
+    }
+  },
+  "config_subentries": {
+    "group": {
+      "step": {
+        "user": {
+          "title": "Gruppe hinzufügen",
+          "data": {
+            "name": "Name",
+            "area": "Bereich",
+            "image_preset": "Illustration"
+          },
+          "description": "Fasse Pflanzen für gemeinsame Pflegeaktionen zusammen."
+        },
+        "reconfigure": {
+          "title": "Gruppe bearbeiten",
+          "data": {
+            "name": "Name",
+            "area": "Bereich",
+            "image_preset": "Illustration"
+          }
+        }
+      },
+      "error": {
+        "invalid_input": "Bitte prüfe die Eingaben und versuche es erneut.",
+        "name_required": "Bitte gib einen Namen ein.",
+        "invalid_area": "Wähle einen vorhandenen Bereich aus.",
+        "invalid_group": "Wähle eine vorhandene Gruppe aus oder entferne die Zuordnung.",
+        "invalid_interval": "Gib eine ganze Anzahl von 1 bis 365 Tagen ein.",
+        "invalid_image": "Verwende einen /local/-Pfad oder eine HTTP(S)-Bildadresse ohne eingebettete Zugangsdaten.",
+        "future_date": "Das letzte Pflegedatum darf nicht in der Zukunft liegen."
+      },
+      "abort": {
+        "reconfigure_successful": "Einstellungen aktualisiert."
+      },
+      "entry_type": "Gruppe",
+      "initiate_flow": {
+        "user": "Gruppe hinzufügen",
+        "reconfigure": "Gruppe bearbeiten"
+      }
+    },
+    "plant": {
+      "step": {
+        "user": {
+          "title": "Pflanze hinzufügen",
+          "data": {
+            "name": "Name",
+            "area": "Bereich",
+            "image_preset": "Illustration",
+            "group": "Gruppe",
+            "species": "Pflanzenart",
+            "notes": "Notizen",
+            "location_note": "Standorthinweis",
+            "image_url": "Eigener Bildpfad oder eigene Bild-URL",
+            "watering_interval": "Gießintervall (Tage)",
+            "fertilizing_enabled": "Düngen aktivieren",
+            "fertilizing_interval": "Düngeintervall (Tage)",
+            "all_year": "Ganzjährig düngen",
+            "season_start": "Beginn der Düngesaison",
+            "season_end": "Ende der Düngesaison",
+            "initial_last_watered": "Zuletzt gegossen",
+            "initial_last_fertilized": "Zuletzt gedüngt"
+          },
+          "description": "Lege die Pflegeintervalle in lokalen Kalendertagen fest. Die Anfangsdaten werden einmalig übernommen; später lassen sie sich über die Datumsentitäten ändern."
+        },
+        "reconfigure": {
+          "title": "Pflanze bearbeiten",
+          "data": {
+            "name": "Name",
+            "area": "Bereich",
+            "image_preset": "Illustration",
+            "group": "Gruppe",
+            "species": "Pflanzenart",
+            "notes": "Notizen",
+            "location_note": "Standorthinweis",
+            "image_url": "Eigener Bildpfad oder eigene Bild-URL",
+            "watering_interval": "Gießintervall (Tage)",
+            "fertilizing_enabled": "Düngen aktivieren",
+            "fertilizing_interval": "Düngeintervall (Tage)",
+            "all_year": "Ganzjährig düngen",
+            "season_start": "Beginn der Düngesaison",
+            "season_end": "Ende der Düngesaison"
+          }
+        }
+      },
+      "error": {
+        "invalid_input": "Bitte prüfe die Eingaben und versuche es erneut.",
+        "name_required": "Bitte gib einen Namen ein.",
+        "invalid_area": "Wähle einen vorhandenen Bereich aus.",
+        "invalid_group": "Wähle eine vorhandene Gruppe aus oder entferne die Zuordnung.",
+        "invalid_interval": "Gib eine ganze Anzahl von 1 bis 365 Tagen ein.",
+        "invalid_image": "Verwende einen /local/-Pfad oder eine HTTP(S)-Bildadresse ohne eingebettete Zugangsdaten.",
+        "future_date": "Das letzte Pflegedatum darf nicht in der Zukunft liegen."
+      },
+      "abort": {
+        "reconfigure_successful": "Einstellungen aktualisiert."
+      },
+      "entry_type": "Pflanze",
+      "initiate_flow": {
+        "user": "Pflanze hinzufügen",
+        "reconfigure": "Pflanze bearbeiten"
+      }
+    }
+  },
+  "selector": {
+    "image_preset": {
+      "options": {
+        "generic": "Allgemeine Pflanze",
+        "monstera": "Monstera",
+        "ficus": "Ficus",
+        "pothos": "Efeutute",
+        "snake_plant": "Bogenhanf",
+        "succulent": "Sukkulente",
+        "cactus": "Kaktus",
+        "fern": "Farn",
+        "orchid": "Orchidee",
+        "herb": "Kräuter",
+        "palm": "Palme",
+        "hanging_plant": "Hängepflanze"
+      }
+    },
+    "month": {
+      "options": {
+        "1": "Januar",
+        "2": "Februar",
+        "3": "März",
+        "4": "April",
+        "5": "Mai",
+        "6": "Juni",
+        "7": "Juli",
+        "8": "August",
+        "9": "September",
+        "10": "Oktober",
+        "11": "November",
+        "12": "Dezember"
+      }
+    }
+  },
+  "device": {
+    "hub": {
+      "name": "Pflanzenübersicht"
+    }
+  },
+  "entity": {
+    "button": {
+      "mark_watered": {
+        "name": "Wässern"
+      },
+      "mark_fertilized": {
+        "name": "Düngen"
+      },
+      "snooze_watering": {
+        "name": "Gießen um einen Tag verschieben"
+      },
+      "snooze_fertilizing": {
+        "name": "Düngen um einen Tag verschieben"
+      },
+      "mark_all_watered": {
+        "name": "Alle Pflanzen wässern"
+      },
+      "mark_all_fertilized": {
+        "name": "Alle Pflanzen düngen"
+      }
+    },
+    "date": {
+      "last_watered": {
+        "name": "Zuletzt gegossen"
+      },
+      "last_fertilized": {
+        "name": "Zuletzt gedüngt"
+      }
+    },
+    "number": {
+      "watering_interval": {
+        "name": "Gießintervall"
+      },
+      "fertilizing_interval": {
+        "name": "Düngeintervall"
+      }
+    },
+    "sensor": {
+      "next_watering": {
+        "name": "Nächstes Gießen"
+      },
+      "next_fertilizing": {
+        "name": "Nächstes Düngen"
+      },
+      "days_until_watering": {
+        "name": "Tage bis zum Gießen"
+      },
+      "days_until_fertilizing": {
+        "name": "Tage bis zum Düngen"
+      },
+      "care_status": {
+        "name": "Pflegestatus",
+        "state": {
+          "ok": "Versorgt",
+          "water": "Gießen fällig",
+          "fertilize": "Düngen fällig",
+          "water_and_fertilize": "Gießen und Düngen fällig",
+          "paused": "Pausiert"
+        }
+      },
+      "total_plants": {
+        "name": "Pflanzen insgesamt"
+      },
+      "plants_needing_water": {
+        "name": "Pflanzen mit Gießbedarf"
+      },
+      "plants_needing_fertilizer": {
+        "name": "Pflanzen mit Düngebedarf"
+      },
+      "plants_overdue": {
+        "name": "Überfällige Pflanzen"
+      }
+    },
+    "binary_sensor": {
+      "needs_water": {
+        "name": "Gießen fällig",
+        "state": {
+          "on": "Fällig",
+          "off": "Nicht fällig"
+        }
+      },
+      "needs_fertilizer": {
+        "name": "Düngen fällig",
+        "state": {
+          "on": "Fällig",
+          "off": "Nicht fällig"
+        }
+      },
+      "any_plant_needs_care": {
+        "name": "Pflanzenpflege fällig",
+        "state": {
+          "on": "Fällig",
+          "off": "Nicht fällig"
+        }
+      }
+    },
+    "switch": {
+      "pause_plant": {
+        "name": "Pflanzenpflege pausieren"
+      },
+      "vacation_mode": {
+        "name": "Urlaubsmodus"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_interval": {
+      "message": "Gib eine ganze Anzahl von 1 bis 365 Tagen ein."
+    },
+    "future_date": {
+      "message": "Das letzte Pflegedatum darf nicht in der Zukunft liegen."
+    },
+    "not_available": {
+      "message": "Diese Pflanze oder Gruppe ist nicht mehr verfügbar."
+    },
+    "storage_error": {
+      "message": "Die Pflegedaten von PlantBased konnten nicht sicher geladen werden. Stelle den Speicher aus einer Sicherung wieder her, bevor du es erneut versuchst."
+    },
+    "storage_write_error": {
+      "message": "Die Pflegedaten konnten nicht gespeichert werden. Prüfe den verfügbaren Speicherplatz und die Schreibrechte."
     }
   }
 }

@@ -6,8 +6,271 @@
     "step": {
       "user": {
         "title": "Set up PlantBased",
-        "description": "Create your local PlantBased hub. This development milestone adds the hub only; plants and care schedules will be available in a later milestone. No account or sensors are required."
+        "description": "Create your local PlantBased hub. Add plants and groups from the integration card after setup. No account or sensors are required."
       }
+    }
+  },
+  "config_subentries": {
+    "group": {
+      "step": {
+        "user": {
+          "title": "Add Group",
+          "data": {
+            "name": "Name",
+            "area": "Area",
+            "image_preset": "Illustration"
+          },
+          "description": "Group plants for shared care actions."
+        },
+        "reconfigure": {
+          "title": "Edit Group",
+          "data": {
+            "name": "Name",
+            "area": "Area",
+            "image_preset": "Illustration"
+          }
+        }
+      },
+      "error": {
+        "invalid_input": "Check the values and try again.",
+        "name_required": "Enter a name.",
+        "invalid_area": "Select an existing area.",
+        "invalid_group": "Select an existing group or leave the plant unassigned.",
+        "invalid_interval": "Enter a whole number of days between 1 and 365.",
+        "invalid_image": "Use a /local/ path or an HTTP(S) image URL without embedded credentials.",
+        "future_date": "A last-care date cannot be in the future."
+      },
+      "abort": {
+        "reconfigure_successful": "Configuration updated."
+      },
+      "entry_type": "Group",
+      "initiate_flow": {
+        "user": "Add group",
+        "reconfigure": "Edit group"
+      }
+    },
+    "plant": {
+      "step": {
+        "user": {
+          "title": "Add Plant",
+          "data": {
+            "name": "Name",
+            "area": "Area",
+            "image_preset": "Illustration",
+            "group": "Group",
+            "species": "Species",
+            "notes": "Notes",
+            "location_note": "Location note",
+            "image_url": "Custom image path or URL",
+            "watering_interval": "Watering interval (days)",
+            "fertilizing_enabled": "Enable fertilizing",
+            "fertilizing_interval": "Fertilizing interval (days)",
+            "all_year": "Fertilize all year",
+            "season_start": "Fertilizing season starts",
+            "season_end": "Fertilizing season ends",
+            "initial_last_watered": "Last watered",
+            "initial_last_fertilized": "Last fertilized"
+          },
+          "description": "Set the care intervals in local calendar days. Initial dates are used once; edit last-care dates using the date entities."
+        },
+        "reconfigure": {
+          "title": "Edit Plant",
+          "data": {
+            "name": "Name",
+            "area": "Area",
+            "image_preset": "Illustration",
+            "group": "Group",
+            "species": "Species",
+            "notes": "Notes",
+            "location_note": "Location note",
+            "image_url": "Custom image path or URL",
+            "watering_interval": "Watering interval (days)",
+            "fertilizing_enabled": "Enable fertilizing",
+            "fertilizing_interval": "Fertilizing interval (days)",
+            "all_year": "Fertilize all year",
+            "season_start": "Fertilizing season starts",
+            "season_end": "Fertilizing season ends"
+          }
+        }
+      },
+      "error": {
+        "invalid_input": "Check the values and try again.",
+        "name_required": "Enter a name.",
+        "invalid_area": "Select an existing area.",
+        "invalid_group": "Select an existing group or leave the plant unassigned.",
+        "invalid_interval": "Enter a whole number of days between 1 and 365.",
+        "invalid_image": "Use a /local/ path or an HTTP(S) image URL without embedded credentials.",
+        "future_date": "A last-care date cannot be in the future."
+      },
+      "abort": {
+        "reconfigure_successful": "Configuration updated."
+      },
+      "entry_type": "Plant",
+      "initiate_flow": {
+        "user": "Add plant",
+        "reconfigure": "Edit plant"
+      }
+    }
+  },
+  "selector": {
+    "image_preset": {
+      "options": {
+        "generic": "Generic plant",
+        "monstera": "Monstera",
+        "ficus": "Ficus",
+        "pothos": "Pothos",
+        "snake_plant": "Snake plant",
+        "succulent": "Succulent",
+        "cactus": "Cactus",
+        "fern": "Fern",
+        "orchid": "Orchid",
+        "herb": "Herb",
+        "palm": "Palm",
+        "hanging_plant": "Hanging plant"
+      }
+    },
+    "month": {
+      "options": {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
+      }
+    }
+  },
+  "device": {
+    "hub": {
+      "name": "Plant overview"
+    }
+  },
+  "entity": {
+    "button": {
+      "mark_watered": {
+        "name": "Mark watered"
+      },
+      "mark_fertilized": {
+        "name": "Mark fertilized"
+      },
+      "snooze_watering": {
+        "name": "Snooze watering"
+      },
+      "snooze_fertilizing": {
+        "name": "Snooze fertilizing"
+      },
+      "mark_all_watered": {
+        "name": "Mark all watered"
+      },
+      "mark_all_fertilized": {
+        "name": "Mark all fertilized"
+      }
+    },
+    "date": {
+      "last_watered": {
+        "name": "Last watered"
+      },
+      "last_fertilized": {
+        "name": "Last fertilized"
+      }
+    },
+    "number": {
+      "watering_interval": {
+        "name": "Watering interval"
+      },
+      "fertilizing_interval": {
+        "name": "Fertilizing interval"
+      }
+    },
+    "sensor": {
+      "next_watering": {
+        "name": "Next watering"
+      },
+      "next_fertilizing": {
+        "name": "Next fertilizing"
+      },
+      "days_until_watering": {
+        "name": "Days until watering"
+      },
+      "days_until_fertilizing": {
+        "name": "Days until fertilizing"
+      },
+      "care_status": {
+        "name": "Care status",
+        "state": {
+          "ok": "Up to date",
+          "water": "Watering due",
+          "fertilize": "Fertilizing due",
+          "water_and_fertilize": "Watering and fertilizing due",
+          "paused": "Paused"
+        }
+      },
+      "total_plants": {
+        "name": "Total plants"
+      },
+      "plants_needing_water": {
+        "name": "Plants needing water"
+      },
+      "plants_needing_fertilizer": {
+        "name": "Plants needing fertilizer"
+      },
+      "plants_overdue": {
+        "name": "Overdue plants"
+      }
+    },
+    "binary_sensor": {
+      "needs_water": {
+        "name": "Needs water",
+        "state": {
+          "on": "Due",
+          "off": "Not due"
+        }
+      },
+      "needs_fertilizer": {
+        "name": "Needs fertilizer",
+        "state": {
+          "on": "Due",
+          "off": "Not due"
+        }
+      },
+      "any_plant_needs_care": {
+        "name": "Any plant needs care",
+        "state": {
+          "on": "Due",
+          "off": "Not due"
+        }
+      }
+    },
+    "switch": {
+      "pause_plant": {
+        "name": "Pause plant"
+      },
+      "vacation_mode": {
+        "name": "Vacation mode"
+      }
+    }
+  },
+  "exceptions": {
+    "invalid_interval": {
+      "message": "Enter a whole number of days between 1 and 365."
+    },
+    "future_date": {
+      "message": "A last-care date cannot be in the future."
+    },
+    "not_available": {
+      "message": "This plant or group is no longer available."
+    },
+    "storage_error": {
+      "message": "PlantBased runtime data could not be loaded safely. Restore its storage from a backup before trying again."
+    },
+    "storage_write_error": {
+      "message": "Care data could not be saved. Check available disk space and write permissions."
     }
   }
 }

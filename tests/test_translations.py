@@ -45,3 +45,25 @@ def test_translation_parity() -> None:
         }
 
     assert keys(english) == keys(german)
+
+
+@pytest.mark.parametrize(
+    ("language", "plant_label", "paused"),
+    [("en", "Add plant", "Paused"), ("de", "Pflanze hinzufügen", "Pausiert")],
+)
+async def test_subentry_entity_and_selector_translations(
+    hass, language, plant_label, paused
+):
+    subentries = await async_get_translations(
+        hass, language, "config_subentries", {DOMAIN}
+    )
+    assert (
+        subentries[f"component.{DOMAIN}.config_subentries.plant.initiate_flow.user"]
+        == plant_label
+    )
+    entities = await async_get_translations(hass, language, "entity", {DOMAIN})
+    assert (
+        entities[f"component.{DOMAIN}.entity.sensor.care_status.state.paused"] == paused
+    )
+    selectors = await async_get_translations(hass, language, "selector", {DOMAIN})
+    assert selectors[f"component.{DOMAIN}.selector.month.options.3"]

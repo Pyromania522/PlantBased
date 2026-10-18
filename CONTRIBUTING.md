@@ -1,6 +1,7 @@
 # Contributing
 
-PlantBased is developed in milestones. M1 contains only the configurable hub.
+PlantBased is developed in milestones. M2 adds native plant/group subentries,
+calculated care entities and persisted runtime state.
 Before using an HA API, check the current official developer documentation and
 the supported minimum HA release. Record compatibility decisions in DECISIONS.md.
 
@@ -15,6 +16,7 @@ python3.14 -m venv .venv
 .venv/bin/ruff format --check .
 .venv/bin/mypy
 .venv/bin/pytest
+.venv/bin/python -m script.check_storage
 ```
 
 For the exact minimum Home Assistant **2025.10.0**, use Python 3.13 in a separate
@@ -24,6 +26,7 @@ environment (the fixture packages pin incompatible HA versions):
 python3.13 -m venv .venv-min
 .venv-min/bin/python -m pip install -r requirements-test-min.txt
 .venv-min/bin/pytest
+.venv-min/bin/python -m script.check_storage
 ```
 
 The test plugin supplies HA fixtures and a pinned HA package. Integration runtime
@@ -39,8 +42,13 @@ topics, issues enabled, and the MIT license committed.
 
 Install in a disposable supported Home Assistant instance, restart, add PlantBased
 through Devices & services, and confirm setup. Check that a second hub is refused.
-Reload and remove the hub. At M1, no devices, entities, services, or cards should
-be created. Both German and English dialogs should be readable.
+Reload and remove the hub. On M2, add two groups and a plant in
+each. Confirm 16 entities per plant, five per group and six on the hub. Exercise
+care buttons, date corrections, intervals, snooze, pause/vacation and group
+actions. Reconfigure and remove a group; its plants must survive unassigned.
+Reload/restart and verify histories and pause state persist. Both German and
+English dialogs and entity names should be readable. Calendar, to-do,
+integration-wide actions/events and cards are still future milestones.
 
 ## Pull requests
 
