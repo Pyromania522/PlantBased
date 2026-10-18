@@ -1,7 +1,7 @@
 # Contributing
 
-PlantBased is developed in milestones. M6 adds documentation, executable
-automation examples and tested packaging/publication for v0.1.0.
+PlantBased's initial M1–M6 milestones are complete. Feature and fix releases use
+the same tested packaging/publication workflow; v0.2.0 adds the sidebar overview.
 Before using an HA API, check the current official developer documentation and
 the supported minimum HA release. Record compatibility decisions in DECISIONS.md.
 

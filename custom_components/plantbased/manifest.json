@@ -12,6 +12,7 @@
   "dependencies": [
     "frontend",
     "http",
+    "panel_custom",
     "persistent_notification"
   ],
   "documentation": "https://github.com/Pyromania522/PlantBased",
@@ -20,5 +21,5 @@
   "issue_tracker": "https://github.com/Pyromania522/PlantBased/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.1.1"
+  "version": "0.2.0"
 }

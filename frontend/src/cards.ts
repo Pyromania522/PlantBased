@@ -1,4 +1,12 @@
-import { LitElement, html, svg, nothing, type PropertyValues } from "lit";
+import {
+  LitElement,
+  html,
+  svg,
+  nothing,
+  type PropertyValues,
+  type CSSResultGroup,
+  type TemplateResult,
+} from "lit";
 import { dayText, t, type TextKey } from "./localize";
 import {
   deviceName,
@@ -25,20 +33,23 @@ export const icon = (kind: "water" | "leaf" | "clock" | "plants") =>
     ${kind === "water" ? svg`<path d="M12 3C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-12Z"/><path d="M8 15a4 4 0 0 0 4 4"/>` : kind === "leaf" ? svg`<path d="M5 20 17 8M5 16C2 6 12 3 21 3c0 9-3 19-13 16"/>` : kind === "clock" ? svg`<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>` : svg`<path d="M7 15h10l-1 6H8l-1-6ZM12 15V6M12 11C4 12 4 5 4 4c6-1 8 3 8 7ZM12 9c0-5 4-6 8-6 0 5-3 8-8 6Z"/>`}
   </svg>`;
 
-abstract class PlantBasedBase extends LitElement {
+export abstract class PlantBasedBase extends LitElement {
   static properties = {
     hass: { attribute: false },
     _config: { state: true },
     _message: { state: true },
     _error: { state: true },
   };
-  static styles = styles;
+  static styles: CSSResultGroup = styles;
   declare hass?: HomeAssistant;
   protected _config?: CardConfig;
   protected _message = "";
   protected _error = false;
   protected pending = new Set<string>();
-  protected registry = new RegistryController(this);
+  protected registry = new RegistryController(this, this.includeAreas);
+  protected get includeAreas() {
+    return false;
+  }
   protected abstract overview: boolean;
   setConfig(config: CardConfig) {
     this._config = validateConfig(config, this.overview, this.hass);
@@ -98,6 +109,9 @@ abstract class PlantBasedBase extends LitElement {
       this.pending.delete(plant.deviceId);
       this.requestUpdate();
     }
+  }
+  protected plantLinks(_plant: Plant): TemplateResult | typeof nothing {
+    return nothing;
   }
   protected row(plant: Plant) {
     const disabled = this.pending.has(plant.deviceId) || !plant.available;
@@ -184,6 +198,7 @@ abstract class PlantBasedBase extends LitElement {
               }
             </div>`
       }
+      ${this.plantLinks(plant)}
     </article>`;
   }
   protected empty(title: TextKey, hint: TextKey) {

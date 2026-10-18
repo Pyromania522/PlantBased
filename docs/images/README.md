@@ -1,5 +1,10 @@
 # Screenshots and capture placeholders
 
+`panel-desktop.png`, `panel-mobile.png`, `panel-groups.png` and `panel-areas.png`
+preview the v0.2.0 sidebar page. They are actual Chromium captures of the compiled
+panel with demonstration data in the browser fixture, not captures from a full HA
+installation. Browser tests also capture the dark theme in the CI evidence artifact.
+
 The committed `overview-mobile.png` and `overview-dark.png` are actual Chromium
 screenshots of PlantBased's compiled cards using the browser test fixture. The
 names and care state are demonstration data. They preview the card appearance;

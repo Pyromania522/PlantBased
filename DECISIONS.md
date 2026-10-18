@@ -1,5 +1,40 @@
 # Decisions and verified references
 
+## v0.2.0: sidebar overview
+
+The user requested a sidebar entry and visual plant/group/room overview after
+using v0.1.1. HA owns the native integration-management layout. Provide a separate
+PlantBased custom panel, retaining that management page and existing Lovelace cards.
+Use the public `panel_custom.async_register_panel` and `frontend.async_remove_panel`
+APIs verified against HA 2025.10.0 and 2026.10.2; add the declared `panel_custom`
+dependency. Register after successful entry setup and remove on successful unload.
+Keep static resources process-wide, as before. Test reload, removal, failed unload,
+real frontend HTTP bootstrapping and native `get_panels` responses on both versions.
+
+The page route is `/plantbased-dashboard`, separate from the existing `/plantbased/`
+static-asset prefix. Reusing the prefix as a page would conflict with static
+directory handling on a direct visit/refresh. The content-hashed module is shared
+with the cards; custom elements/catalog registration remains idempotent. No manual
+dashboard YAML, private HA element imports, new service endpoints or runtime
+Python dependencies are needed.
+
+Verified the official frontend custom-panel property contract (`hass`, `narrow`,
+`panel`, `route`), custom-element creation and the composed/bubbling
+`hass-toggle-menu` event at frontend source
+`b399dac7881d03df938fb4cad5200b68811c24f2`. Settings/device links use HA's native
+integration and device routes. Administration links are shown only to admins;
+HA still enforces all actual permissions. Native WebSocket tests verify overview
+and entity/device/area registry reads for administrators and read-only users.
+
+Reuse existing rendering, status, safe-image fallback and care actions; all plants
+appear by default. Read actual device `area_id` and area names from the public
+registry lists and subscribe to their changes, without polling. Only the panel
+adds the area-registry request/subscription, preserving the existing cards' data
+requirements. Group cards use stable subentry identity, include empty groups and
+unassigned plants, and aggregate full-group counts while filters narrow expanded
+members. Search/grouping are view-only and do not change care/group/area data.
+Version 0.2.0 is prepared for a user-reviewed PR merge before tagging/publication.
+
 ## v0.1.1: optional groups and inherited areas
 
 The first user installation exposed a UI-specific defect: the backend accepted

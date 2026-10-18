@@ -17,7 +17,7 @@ from .reminder_storage import ReminderStore
 from .reminders import ReminderCoordinator, async_remove_reminders
 from .services import async_register_actions
 from .storage import PlantStore
-from .web import async_register_frontend
+from .web import async_register_frontend, async_register_overview, async_remove_overview
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -146,6 +146,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     manager.async_start()
     manager.reminders.async_start()
+    await async_register_overview(hass)
+    entry.async_on_unload(lambda: async_remove_overview(hass))
     return True
 
 

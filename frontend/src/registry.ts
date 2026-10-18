@@ -5,6 +5,7 @@ import type {
   RegistryData,
   EntityEntry,
   DeviceEntry,
+  AreaEntry,
 } from "./types";
 
 export class RegistryController implements ReactiveController {
@@ -17,7 +18,10 @@ export class RegistryController implements ReactiveController {
   private unsubs: (() => void)[] = [];
   private loading = false;
   private dirty = false;
-  constructor(private host: ReactiveControllerHost) {
+  constructor(
+    private host: ReactiveControllerHost,
+    private includeAreas = false,
+  ) {
     host.addController(this);
   }
   hostConnected() {
@@ -45,7 +49,11 @@ export class RegistryController implements ReactiveController {
     const connection = (this.connection = this.hass.connection);
     const generation = this.generation;
     connection.addEventListener("ready", this.onReady);
-    for (const type of ["entity_registry_updated", "device_registry_updated"]) {
+    for (const type of [
+      "entity_registry_updated",
+      "device_registry_updated",
+      ...(this.includeAreas ? ["area_registry_updated"] : []),
+    ]) {
       void connection
         .subscribeEvents(this.onReady, type)
         .then((unsub) => {
@@ -78,16 +86,20 @@ export class RegistryController implements ReactiveController {
     const generation = this.generation;
     this.loading = true;
     try {
-      const [entities, devices] = await Promise.all([
+      const [entities, devices, areas] = await Promise.all([
         this.hass.callWS<EntityEntry[]>({
           type: "config/entity_registry/list",
         }),
         this.hass.callWS<DeviceEntry[]>({
           type: "config/device_registry/list",
         }),
+        this.includeAreas
+          ? this.hass.callWS<AreaEntry[]>({ type: "config/area_registry/list" })
+          : Promise.resolve([]),
       ]);
       if (generation !== this.generation) return;
       this.data = {
+        areas,
         entities: entities.filter((entry) => entry.platform === "plantbased"),
         devices: devices.filter((device) =>
           device.identifiers.some(([domain]) => domain === "plantbased"),

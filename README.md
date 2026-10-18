@@ -10,11 +10,12 @@ Plants and groups have care controls, automation actions/events, a care calendar
 and a task list. Optional reminders now send one grouped summary through selected
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
 Single-plant, group and overview cards now include English/German controls and
-twelve original illustrations. See [release notes](docs/releases/v0.1.0.md)
+twelve original illustrations. The new sidebar page provides plant/group cards,
+room grouping, live care status and access to settings. See [release notes](docs/releases/v0.2.0.md)
 and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
 published versions and installation assets.
 
-[Installation](#installation) · [Cards](#dashboard-cards) ·
+[Installation](#installation) · [Sidebar overview](#sidebar-overview) · [Cards](#dashboard-cards) ·
 [Automations](#automation-examples) · [Reminders](#optional-reminders) ·
 [Troubleshooting](#troubleshooting) · [Deutsch](#deutsch)
 
@@ -22,9 +23,14 @@ Field defaults and limits: [Configuration reference / Einstellungen](docs/CONFIG
 
 ## Card preview
 
+<img src="docs/images/panel-desktop.png" alt="PlantBased sidebar page with plant cards and live care status" width="720">
+
+[Groups](docs/images/panel-groups.png) · [Areas](docs/images/panel-areas.png) ·
+[Mobile sidebar page](docs/images/panel-mobile.png)
+
 <img src="docs/images/overview-mobile.png" alt="German PlantBased overview in a narrow light theme" width="260"> <img src="docs/images/overview-dark.png" alt="PlantBased overview in a dark theme" width="300">
 
-Actual Chromium captures of the compiled cards with demonstration data in the
+Actual Chromium captures of the compiled panel/cards with demonstration data in the
 browser test fixture. Full HA setup/editor/calendar/Companion screenshots remain
 [documented capture placeholders](docs/images/README.md).
 
@@ -100,6 +106,28 @@ restart HA. **Deleting the hub removes its care history and reminder receipts.**
 Removing integration files alone does not remove the existing HA configuration.
 Known mobile/persistent summaries are cleared on removal when their notifier is
 available. Independently created automation messages must be dismissed separately.
+
+## Sidebar overview
+
+After setup, open **PlantBased** in HA's sidebar. The page is also available at
+`/plantbased-dashboard`; no dashboard YAML or manual frontend resource is needed.
+
+- **Plants:** every plant has a photo/illustration, live care status, watering and
+  fertilizing countdowns, independent care/snooze buttons and its HA area.
+- **Groups:** one card per group with member images and care counts. Expand
+  **Show plants** for individual status/actions. Empty groups remain visible;
+  unassigned plants appear under **No group**.
+- **Areas:** plants are arranged under their current HA room, including **No area**.
+  Area changes and renames update automatically.
+- Search names, groups or rooms, or select **Care due only**. Paused/unavailable
+  plants remain visible in the unfiltered view. Disconnected actions are disabled.
+- Administrators can open **Settings** to add/reconfigure plants and groups or
+  configure reminders, and use each card's device/group-details link.
+
+HA's native integration-management page keeps its standard device/subentry layout.
+The sidebar page provides the visual care overview. If PlantBased is hidden, check
+your HA profile's sidebar visibility settings. Removing/disabling the hub removes
+the page; existing custom Lovelace cards remain supported.
 
 ## Care workflow
 
@@ -296,6 +324,7 @@ to configured HA notifiers and makes no notification network request itself.
 | Symptom | Check |
 | --- | --- |
 | PlantBased missing from Add integration | Verify the directory contains `manifest.json`, restart HA after downloading, check minimum HA version and sanitized HA logs |
+| PlantBased missing from the sidebar | Update to v0.2.0 or newer, restart HA, refresh the browser/app, confirm the hub is loaded, and check your profile's sidebar visibility. The page URL is `/plantbased-dashboard` |
 | Custom card not found / not in picker | Confirm the hub loaded successfully, then refresh the open tab/app; reinstall the complete integration if JS is missing. No manual resource is needed |
 | Empty or unavailable card | Select a PlantBased plant/group in the editor, check the device still exists and its entities are enabled/available, and restore the HA connection |
 | Counts differ from the number of plants | Due counts exclude paused/vacation plants and disabled/out-of-season fertilizing; total still counts all plants |
@@ -338,6 +367,19 @@ Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
 Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
 Sammelerinnerungen, mobile Pflegeaktionen und Dashboard-Karten mit zwölf eigenen
 Pflanzenillustrationen sind enthalten.
+
+Ab **v0.2.0** öffnet **PlantBased** in der linken Seitenleiste eine eigene
+Pflanzenübersicht. Du kannst zwischen **Pflanzen**, **Gruppen** und **Bereichen**
+wechseln. Jede Pflanzenkarte zeigt Bild/Illustration, Pflegestatus, Gieß- und
+Düngetermine sowie Pflegeaktionen. Gruppenkarten enthalten Mitgliederbilder und
+Pflegezähler; **Pflanzen anzeigen** klappt die einzelnen Karten auf. Pflanzen ohne
+Gruppe oder Bereich und leere Gruppen werden berücksichtigt.
+
+Die Suche findet Pflanzen, Gruppen und Räume. **Nur fällige Pflege** grenzt die
+Ansicht ein. Über **Einstellungen** gelangen Administratoren zur Verwaltung von
+Pflanzen, Gruppen und Erinnerungen. Die bisherige Integrationsverwaltung behält
+das normale HA-Layout. Für die neue Seite ist kein manuelles Dashboard nötig.
+Falls der Eintrag verborgen ist, die Seitenleisteneinstellungen im HA-Profil prüfen.
 
 [![PlantBased zu HACS hinzufügen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
 
