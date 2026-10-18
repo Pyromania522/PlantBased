@@ -1,5 +1,53 @@
 # Decisions and verified references
 
+## M6 documentation, packages and publication
+
+Verified the current official developer-doc and HACS publishing sources again
+(`50b518898989b67bb76b69827f227aa6f0acd32a` and
+`4f06a5bd11088a21a453fdcb3eda1603353e6c8a`), HA user-doc source at
+`8e2059e13f61f1c0650c11ac94c9e86c393fd8af`, and official GitHub Actions docs
+at `dae83f7d28f3b8e10015bd6b6d8b72267cedceca`. No new integration runtime API
+is added. Current and minimum released automation engines execute the actual
+documented `triggers`/`actions`, event data templates and service targets.
+
+| Contract | Reference |
+| --- | --- |
+| Automation event triggers and templated action data/targets | [HA triggers](https://www.home-assistant.io/docs/automation/trigger/), [script actions](https://www.home-assistant.io/docs/scripts/perform-actions/), installed released implementations |
+| HACS release discovery and integration directory layout | [Integration publishing](https://hacs.xyz/docs/publish/integration/), [general publishing](https://hacs.xyz/docs/publish/start/), [default-list requirements](https://hacs.xyz/docs/publish/include/) |
+| Reusable validation and permission limits | [Reusable workflows](https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows) |
+| Draft/create/upload/publish and refusing absent tags | Official installed [gh release](https://cli.github.com/manual/gh_release) command help (`--verify-tag`, `--draft`, `--clobber`, `--latest`) |
+
+Keep normal HACS repository/tag downloads; `zip_release` is deliberately unset.
+The additional `plantbased.zip` is a manual-install artifact containing a single
+`plantbased/` folder for extraction into `custom_components/`. All runtime files
+remain inside the integration as HACS requires. A tracked-file allowlist excludes
+untracked local configuration/caches; tracked symlinks and unexpected extensions
+are rejected. Include the repository MIT license and the bundle's third-party
+notices. Fixed timestamps/permissions, sorted entries and matching Python/zlib
+produce deterministic ZIPs; SHA256SUMS checks file integrity, not signatures.
+
+The package script requires stable semantic versions matching the tag, integration,
+npm package and both lockfile roots, plus per-version release notes and all twelve
+matching SVGs. Branch/PR CI builds the actual ZIP and uploads a reviewable candidate.
+On `v*` tag pushes, the Release workflow calls all seven validation jobs and the
+publisher requires the tagged commit on `main`. It verifies the candidate hash
+and compares a fresh archive before using only the built-in GitHub token. Write
+permission is limited to the publisher. Upload to a draft before making a complete
+release public; retrying may replace draft assets but never a published release.
+
+Continue the established user-reviewed PR workflow: no automatic M6 PR merge.
+The version tag and public release follow that merge, rather than tagging a feature
+branch. A passing preflight or a saved draft is not a published release. Actual tag
+publication is reported only after observed success. Screenshot previews are
+identified as real Chromium fixture captures; full-HA and phone captures remain
+explicit placeholders. Full HA browser/process restart and physical phone delivery
+remain manual acceptance checks, not inferred from automated API tests.
+
+HACS default-list submission is outside v0.1.0. A later owner/contributor submission
+must recheck name collisions, green no-ignore validators, metadata/license/brand
+requirements and an actual published release, then add the repository alphabetically
+to `hacs/default`. No official quality-scale tier is claimed.
+
 ## M5 scope and verified frontend APIs
 
 Before coding, official developer-doc source

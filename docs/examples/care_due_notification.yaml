@@ -1,0 +1,15 @@
+alias: "PlantBased: notify when care becomes due"
+description: "One persistent message per plant and care type."
+triggers:
+  - trigger: event
+    event_type: plantbased_care_due
+actions:
+  - action: persistent_notification.create
+    data:
+      notification_id: "plantbased_care_{{ trigger.event.data.device_id }}_{{ trigger.event.data.care_type }}"
+      title: PlantBased
+      message: >-
+        {{ trigger.event.data.name }}:
+        {{ 'Watering' if trigger.event.data.care_type == 'water' else 'Fertilizing' }} is due.
+mode: queued
+max: 50

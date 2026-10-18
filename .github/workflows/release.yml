@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Require the tagged commit on main
+        run: git merge-base --is-ancestor HEAD origin/main
+      - uses: actions/download-artifact@v6
+        with:
+          name: plantbased-release-candidate
+          path: dist
+      - name: Verify version and exact artifact contents
+        run: |
+          python3 -m script.build_release --tag "$RELEASE_TAG" --output /tmp/verified-release
+          cmp dist/plantbased.zip /tmp/verified-release/plantbased.zip
+          cmp dist/SHA256SUMS /tmp/verified-release/SHA256SUMS
+          cd dist
+          sha256sum --check SHA256SUMS
+      - name: Upload complete assets to a draft, then publish
+        run: |
+          if draft=$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft); then
+            if [ "$draft" != "true" ]; then
+              echo "A published release already exists; refusing to overwrite it."
+              exit 1
+            fi
+            gh release upload "$RELEASE_TAG" dist/plantbased.zip dist/SHA256SUMS --clobber
+            gh release edit "$RELEASE_TAG" --notes-file "docs/releases/$RELEASE_TAG.md"
+          else
+            gh release create "$RELEASE_TAG" dist/plantbased.zip dist/SHA256SUMS \
+              --verify-tag --draft --title "PlantBased $RELEASE_TAG" \
+              --notes-file "docs/releases/$RELEASE_TAG.md"
+          fi
+          gh release edit "$RELEASE_TAG" --draft=false --latest

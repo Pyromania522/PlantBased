@@ -3,17 +3,36 @@
 Local, calendar-based houseplant care for Home Assistant. No plant sensors, cloud
 accounts, or external Python requirements.
 
-**Development status: M5 — dashboard cards, visual editors and illustrations.**
+**v0.1.0 — M6 release preparation.**
 Plants and groups have care controls, automation actions/events, a care calendar
 and a task list. Optional reminders now send one grouped summary through selected
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
 Single-plant, group and overview cards now include English/German controls and
-twelve original illustrations. This remains a development milestone; the complete
-v0.1.0 release follows in M6.
+twelve original illustrations. The complete v0.1.0 implementation and release
+workflow are ready for review. A release becomes public only after the M6 merge
+and successful version-tag workflow; see [release notes](docs/releases/v0.1.0.md)
+and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases).
+
+[Installation](#installation) · [Cards](#dashboard-cards) ·
+[Automations](#automation-examples) · [Reminders](#optional-reminders) ·
+[Troubleshooting](#troubleshooting) · [Deutsch](#deutsch)
+
+Field defaults and limits: [Configuration reference / Einstellungen](docs/CONFIGURATION.md).
+
+## Card preview
+
+<img src="docs/images/overview-mobile.png" alt="German PlantBased overview in a narrow light theme" width="260"> <img src="docs/images/overview-dark.png" alt="PlantBased overview in a dark theme" width="300">
+
+Actual Chromium captures of the compiled cards with demonstration data in the
+browser test fixture. Full HA setup/editor/calendar/Companion screenshots remain
+[documented capture placeholders](docs/images/README.md).
 
 ## Installation
 
-Requires Home Assistant **2025.10.0 or later**.
+Requires Home Assistant **2025.10.0 or later** and HACS for the HACS path. The HA
+host needs no Node/npm build tools. This is an integration, not a separate HACS
+frontend/card repository. The repository is added manually; it is not in HACS's
+default catalog.
 
 1. In HACS, open **Custom repositories** and add
    `https://github.com/Pyromania522/PlantBased` with category **Integration**.
@@ -24,8 +43,18 @@ Requires Home Assistant **2025.10.0 or later**.
    Give the plant a name, review the default care intervals and initial dates,
    and select its group and area if desired.
 
-Alternatively, copy `custom_components/plantbased` into your Home Assistant
-configuration's `custom_components` directory and restart Home Assistant.
+For a manual release install, download `plantbased.zip` and `SHA256SUMS` from the
+matching [GitHub Release](https://github.com/Pyromania522/PlantBased/releases),
+run `sha256sum --check SHA256SUMS`, then extract the ZIP into the configuration's
+`custom_components/` directory. The result must be
+`custom_components/plantbased/manifest.json`, without another nested directory.
+In HA Container this is usually `/config/custom_components/plantbased/` **inside
+the container**; use the host directory mounted at `/config`. Restart the HA
+container through your usual container manager, then continue with step 3.
+
+Before the first public release, or when developing from source, copy the complete
+repository directory `custom_components/plantbased` to that same destination.
+The compiled frontend is already included; copying only Python files is insufficient.
 
 Configuration is UI-only, without YAML or credentials. Plants and groups appear
 as devices owned by native config subentries. Use **Reconfigure** on a subentry
@@ -34,6 +63,29 @@ Reload or remove the hub from Devices & services. To uninstall, remove the hub
 (which deletes its runtime history), uninstall through HACS, and restart HA.
 
 Local brand images work on HA 2026.3+. Earlier versions may show a generic icon.
+
+For the first plant, a name is enough: watering defaults to seven days,
+fertilizing to 28 days, and initial care dates to today in HA's configured time
+zone. Review those dates if the plant was cared for earlier. Groups, areas,
+species, notes and images are optional. The group does not replace a plant's
+individual intervals. Change group membership with the plant's **Reconfigure**
+dialog; the selected area can also be managed in HA's device settings.
+
+### Updates, backups and uninstall
+
+Back up the HA configuration, including `.storage`, before updating. Select the
+new version in HACS, download it and restart HA; refresh open browser/Companion
+views to load the new card version. Keep the existing hub and subentries to retain
+dates and history. Restore the HA configuration and storage together from a
+known-good backup if recovery is needed; do not edit a live storage file.
+
+To uninstall, remove PlantBased cards and any automations that reference its
+devices/actions. Delete the hub in **Devices & services**, then remove the
+download in HACS (or the manual `custom_components/plantbased` directory) and
+restart HA. **Deleting the hub removes its care history and reminder receipts.**
+Removing integration files alone does not remove the existing HA configuration.
+Known mobile/persistent summaries are cleared on removal when their notifier is
+available. Independently created automation messages must be dismissed separately.
 
 ## Care workflow
 
@@ -67,6 +119,16 @@ Calculated sensor entities do not require any physical sensor or sensor selectio
 Image presets resolve to bundled original SVGs. Custom image paths/URLs are
 loaded by the browser and are not downloaded by the backend.
 
+| Device | Entities |
+| --- | --- |
+| Plant (16) | Four care/snooze buttons, two last-care dates, two interval numbers, two next-date sensors, two day countdowns, two due flags, care status, pause switch |
+| Group (5) | Plant/watering/fertilizing counts and two group care buttons |
+| Hub (8) | Four overview counts, any-care flag, vacation switch, calendar and to-do list |
+
+Entity IDs are assigned by HA and can differ by name/language. Select devices or
+entities from HA's pickers rather than copying an assumed entity ID. Disabling a
+required care-status/count entity in HA makes the corresponding card unavailable.
+
 ## Dashboard cards
 
 After restarting HA and adding PlantBased, refresh an already-open browser tab.
@@ -82,7 +144,8 @@ resource entry or separate frontend repository is needed**.
 
 Plant cards show watering/fertilizing countdowns, group names, and distinct
 healthy, due, overdue, paused and unavailable states. **Watered**, **Fertilized**
-and separate **Watering +1 day / Fertilizing +1 day** snooze choices use the existing care actions. Buttons wait
+and separate **Watering +1 day / Fertilizing +1 day** snooze choices use the existing
+care actions. Buttons wait
 for HA confirmation; failures show a message without marking care done. Care can
 still be recorded during a pause. Disabled fertilizing has no enabled action.
 The overview uses the hub's actual counters; pause/vacation plants stay out of its
@@ -154,6 +217,19 @@ They do not repeat every overdue day. Done events fire after a successful save,
 including care recorded through buttons, date entities, actions and to-do items.
 Use these events as automation triggers independently of the optional reminders.
 
+## Automation examples
+
+The [tested YAML examples](docs/examples/README.md) can be pasted into separate
+automations using HA's **Edit in YAML** UI. Integration configuration remains
+UI-only. Examples include a persistent message on `plantbased_care_due`, clearing
+the matching message on `plantbased_care_done`, and manually recording watering
+for a selected group's actual members.
+
+For quick action calls, select a PlantBased plant/group in **Developer tools →
+Actions**. The example IDs are placeholders; use the visual target picker. Never
+automatically mark care done merely because it becomes due. Daily summary
+reminders are built in and do not need an automation.
+
 Download **Diagnostics** from the integration entry menu to inspect care state.
 The integration's payload includes plant names, dates, histories and care settings;
 it excludes notes, species, group names, areas, location notes and image paths/URLs.
@@ -201,6 +277,26 @@ between delivery and receipt persistence can repeat a message; mobile tags repla
 it. Target failures are isolated and never mark care done. PlantBased delegates
 to configured HA notifiers and makes no notification network request itself.
 
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| PlantBased missing from Add integration | Verify the directory contains `manifest.json`, restart HA after downloading, check minimum HA version and sanitized HA logs |
+| Custom card not found / not in picker | Confirm the hub loaded successfully, then refresh the open tab/app; reinstall the complete integration if JS is missing. No manual resource is needed |
+| Empty or unavailable card | Select a PlantBased plant/group in the editor, check the device still exists and its entities are enabled/available, and restore the HA connection |
+| Counts differ from the number of plants | Due counts exclude paused/vacation plants and disabled/out-of-season fertilizing; total still counts all plants |
+| Care is due sooner/later than expected | Check HA's time zone, last-care date, interval, snooze, season and pause state; intervals use calendar days |
+| No reminder | Reminders default off; choose an available target or persistent HA copy and check HA-local time. Only still-due work is included |
+| Phone actions missing or no phone delivery | Select a `notify.mobile_app_*` service and check Companion permissions/connectivity; generic notify entities do not carry mobile action data |
+| Custom picture fails | Put local files under HA's `www/` and reference `/local/`; remote images must be browser-accessible HTTP(S). The preset is the fallback |
+| Setup reports unreadable storage | Stop and restore a known-good backup of the matching HA configuration/storage; PlantBased intentionally preserves corrupt data rather than resetting dates |
+
+Home Assistant emits its standard warning for every unreviewed custom integration;
+PlantBased does not suppress that warning. This repository does not claim an
+official HA quality-scale tier. For a bug report, include HA/PlantBased versions,
+steps to reproduce and sanitized logs via the [issue template](https://github.com/Pyromania522/PlantBased/issues/new/choose).
+Diagnostics include plant names and care dates; review before sharing.
+
 ## Roadmap
 
 | Milestone | Scope | Status |
@@ -210,21 +306,25 @@ to configured HA notifiers and makes no notification network request itself.
 | M3 | Actions, events, calendar, to-do, diagnostics | Implemented; see VALIDATION.md |
 | M4 | Summary and actionable notifications | Implemented; see VALIDATION.md |
 | M5 | Lovelace cards, visual editors, illustrations | Implemented; see VALIDATION.md |
-| M6 | Complete documentation and v0.1.0 release | Planned |
+| M6 | Complete documentation and v0.1.0 release | Documentation/workflow prepared; tag publication follows merge |
 
-The manifest's `0.1.0` is a development version. A public release is reserved for M6.
+The manifest and frontend version are `0.1.0`. See
+[RELEASING.md](docs/RELEASING.md) for the checked package, tag and publication steps.
+Physical sensors, species databases, weather, cloud sync and HACS default-list
+submission are outside this version.
 
 ## Deutsch
 
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**Aktueller Stand: M5.** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**Aktueller Stand: M6, Vorbereitung von v0.1.0.** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
 Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
 Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
 Sammelerinnerungen, mobile Pflegeaktionen und Dashboard-Karten mit zwölf eigenen
-Pflanzenillustrationen sind enthalten. Die Veröffentlichung von v0.1.0 folgt in M6.
+Pflanzenillustrationen sind enthalten. Dokumentation und Release-Workflow sind
+vorbereitet. Öffentlich wird v0.1.0 nach dem M6-Merge und dem erfolgreichen Tag-Lauf.
 
 Installation: In HACS unter **Benutzerdefinierte Repositories** die oben genannte
 Adresse als **Integration** hinzufügen, herunterladen und Home Assistant neu
@@ -232,6 +332,24 @@ starten. Unter **Einstellungen → Geräte & Dienste → Integration hinzufügen
 **PlantBased** suchen und bestätigen. Es ist genau ein Hub möglich; die
 Einrichtung erfolgt ohne YAML, Konto oder Sensoren. Zum Entfernen den Hub unter
 Geräte & Dienste löschen, in HACS deinstallieren und Home Assistant neu starten.
+
+Bei manueller Installation das ZIP und `SHA256SUMS` aus dem passenden GitHub
+Release herunterladen, die Prüfsumme kontrollieren und nach
+`custom_components/` entpacken. Danach muss
+`custom_components/plantbased/manifest.json` existieren. Im HA-Docker-Container
+liegt dieses Verzeichnis normalerweise unter `/config/`; auf dem Host den dafür
+eingebundenen Ordner verwenden. Der HA-Container muss anschließend neu starten.
+Vor dem ersten öffentlichen Release lässt sich stattdessen der vollständige
+Integrationsordner aus dem Repository kopieren. Node/npm sind auf dem HA-Host
+nicht erforderlich.
+
+Vor Updates die HA-Konfiguration einschließlich `.storage` sichern. Beim Update
+den Hub behalten, die neue Version herunterladen, HA neu starten und offene
+Browser-/App-Ansichten neu laden. **Beim Löschen des Hubs werden Pflegeverlauf
+und Versandnachweise entfernt.** Zum vollständigen Entfernen auch Karten und
+zugehörige Automationen löschen, die Integration in HACS deinstallieren und HA
+neu starten. Für eine Wiederherstellung Konfiguration und Speicher gemeinsam aus
+einer passenden Sicherung zurückholen.
 
 Über **Pflanze hinzufügen** genügt zunächst ein Name; die Intervalle sind mit
 sieben Tagen fürs Gießen und 28 Tagen fürs Düngen vorbelegt. Gruppen und Bereiche
@@ -323,7 +441,32 @@ ebenfalls möglich und werden vom Browser geladen. Ist das Bild nicht erreichbar
 erscheint das gewählte Motiv. Die Karten unterstützen Deutsch, Englisch,
 HA-Themes, dunkle Darstellung und schmale Ansichten.
 
+### Automationen und Hilfe
+
+Die [Beispiele mit deutscher Anleitung](docs/examples/README.md#deutsch) zeigen
+eine HA-Meldung bei fälliger Pflege, deren Entfernen nach gespeicherter Pflege
+und eine manuell ausgeführte Gruppenaktion. Jede Datei im YAML-Editor einer
+eigenen Automation einfügen. Beispiel-Geräte-IDs durch echte Ziele aus dem
+visuellen Aktionseditor ersetzen. Tägliche Sammelerinnerungen sind bereits
+eingebaut und benötigen keine Automation.
+
+Fehlen Karten, zuerst prüfen, ob der Hub geladen ist, und den Browser/App-Inhalt
+neu laden. Für eigene Bilder Dateien unter `www/` ablegen und `/local/` verwenden.
+Bei unerwarteten Terminen die HA-Zeitzone, letzte Pflege, Saison, Pause und
+Verschiebung prüfen. Erinnerungen sind anfangs aus; für mobile Aktionsknöpfe ein
+`notify.mobile_app_*`-Ziel wählen. Ein defekter Speicher wird absichtlich nicht
+überschrieben: eine passende Sicherung wiederherstellen.
+
+Fehler bitte mit Versionsangaben, nachvollziehbaren Schritten und bereinigten
+Logs über die [Issue-Vorlage](https://github.com/Pyromania522/PlantBased/issues/new/choose)
+melden. Diagnosedaten enthalten Pflanzennamen und Pflegedaten. Die normale
+HA-Warnung für benutzerdefinierte Integrationen wird nicht unterdrückt. Die
+Vorschaubilder oben stammen aus dem Browsertest; echte HA-/Companion-Aufnahmen
+sind als [Platzhalter](docs/images/README.md) dokumentiert.
+
 ## Development and license
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [DECISIONS.md](DECISIONS.md), and
-[VALIDATION.md](VALIDATION.md). Code and original artwork use the [MIT License](LICENSE).
+[VALIDATION.md](VALIDATION.md). The [quality-scale self-review](docs/QUALITY.md)
+documents applicable rules and manual acceptance limits.
+Code and original artwork use the [MIT License](LICENSE).

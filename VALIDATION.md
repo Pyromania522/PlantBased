@@ -1,5 +1,76 @@
 # Validation
 
+## M6 — documentation, automation examples and release preflight
+
+M6 prepares the complete v0.1.0 documentation and release machinery. A passing PR
+build is not a published release: the version tag and public release follow the
+reviewed M6 merge. Exact-head remote validation is recorded in the PR checks/body.
+
+| Check | Executed result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **202 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **202 passed**, no skips or expected failures |
+| Combined integration statement/branch coverage | **98.60% current / 98.61% minimum** |
+| Strict mypy | Passed on all 25 integration modules |
+| Ruff lint / format | Passed |
+| TypeScript / Prettier / Vite committed bundle check | Passed |
+| Playwright / local Chromium 154.0.8037.57 | **17 passed** |
+| Actual-filesystem care/reminder persistence, both versions | Passed |
+| Official actionlint 1.7.12 | Both workflows passed |
+| Release package and checksum | **118,141 bytes**, valid/extractable ZIP |
+| Cross-Python repeatable package | Python 3.13.2 and 3.14.2 outputs byte-identical |
+
+The full M1–M5 integration suite remains included. Fifteen new packaging tests
+exercise actual ZIP creation and extraction, complete byte-for-byte runtime file
+inclusion, compileable extracted Python files, twelve SVGs, both licenses,
+checksums, fixed metadata and repeatability. They reject mismatched/unstable tags,
+frontend/lockfile version differences, missing notes/assets, modified illustrations,
+tracked symlinks/caches and omit untracked local files. The publisher will repeat
+version/hash/content verification before making any release public.
+
+Two new HA-native tests load the exact example YAML files into HA's actual
+automation engine. Integration reload emits real due events and creates separate
+water/fertilizer notifications. A successful real care action emits done and
+removes only the matching message. The manually triggered group example changes
+only current members. Both supported releases execute these tests without mocks
+of the automation engine or PlantBased actions.
+
+The local candidate's SHA-256 is:
+
+```text
+a6f946c1689ea17c287a3161437aa4efc7b1b17807560608ae7b085a5e65c7cc  plantbased.zip
+```
+
+Reproduce the environments and frontend commands in CONTRIBUTING.md, then:
+
+```sh
+COVERAGE_FILE=/tmp/plantbased-m6-cov-current/data .venv/bin/pytest
+COVERAGE_FILE=/tmp/plantbased-m6-cov-min/data .venv-min/bin/pytest
+.venv/bin/python -m script.check_storage
+.venv-min/bin/python -m script.check_storage
+.venv/bin/python -m script.build_release --tag v0.1.0 --output /tmp/plantbased-m6-current-package
+.venv-min/bin/python -m script.build_release --tag v0.1.0 --output /tmp/plantbased-m6-min-package
+cmp /tmp/plantbased-m6-current-package/plantbased.zip /tmp/plantbased-m6-min-package/plantbased.zip
+```
+
+The official actionlint binary was downloaded from its GitHub release and verified
+against that release's SHA-256 checksum list before use. Its schema/shell checks
+cover the reusable validation workflow and tag-gated publisher. Branch/PR CI now
+has seven jobs, including an actual release-package preflight/candidate artifact.
+Hassfest and HACS remain official unmodified validators without ignores; their
+exact-head remote outcome is recorded in the PR.
+
+No version tag or public release is created during PR work. The final tag workflow,
+GitHub asset publication and HACS installation from that public release remain
+unexecuted until after the user merges M6. No full interactive HA/browser test,
+process-level restart or real phone delivery is claimed. Actual Chromium fixture
+previews are labeled as such; full HA/Companion capture placeholders are explicit.
+See docs/RELEASING.md and docs/QUALITY.md for the release and acceptance boundaries.
+
+Earlier milestone evidence follows as historical records.
+
+---
+
 ## M5 — dashboard cards, editors and original illustrations
 
 M5 is implemented. Results below executed locally on the final implementation;

@@ -1,0 +1,8 @@
+alias: "PlantBased: record watering for one group"
+description: "Run manually after watering the selected group's plants."
+triggers: []
+actions:
+  - action: plantbased.mark_watered
+    target:
+      device_id: REPLACE_WITH_GROUP_DEVICE_ID
+mode: single

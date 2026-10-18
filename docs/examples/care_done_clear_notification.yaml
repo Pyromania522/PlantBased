@@ -1,0 +1,10 @@
+alias: "PlantBased: clear the matching care message"
+triggers:
+  - trigger: event
+    event_type: plantbased_care_done
+actions:
+  - action: persistent_notification.dismiss
+    data:
+      notification_id: "plantbased_care_{{ trigger.event.data.device_id }}_{{ trigger.event.data.care_type }}"
+mode: queued
+max: 50
