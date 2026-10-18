@@ -14,6 +14,7 @@ from .reminder_storage import ReminderStore
 from .reminders import ReminderCoordinator, async_remove_reminders
 from .services import async_register_actions
 from .storage import PlantStore
+from .web import async_register_frontend
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
@@ -31,6 +32,7 @@ PLATFORMS = [
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Keep action descriptions available even when the hub is unloaded."""
+    await async_register_frontend(hass)
     async_register_actions(hass)
     return True
 

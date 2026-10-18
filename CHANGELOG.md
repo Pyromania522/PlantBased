@@ -2,6 +2,18 @@
 
 ## Unreleased — 0.1.0 development
 
+### Added in M5
+
+- Bundled plant/group and overview dashboard cards with graphical editors,
+  registry-based device selection, live care state and existing care actions.
+- English/German labels, theme colors, dark/mobile layouts, keyboard controls,
+  independent snooze choices and visible action failures.
+- Automatic public frontend-module/static-path registration, content-versioned
+  URLs and reload-safe process-wide registration without manual resource entries.
+- Twelve original MIT-licensed local SVG illustrations and custom-image fallback.
+- Reproducible locked TypeScript/Lit/Vite build, license notices and CI browser
+  checks with screenshots; actual HA HTTP/frontend/registry API compatibility tests.
+
 ### Added in M4
 
 - Hub options for opt-in local-time reminders, available notification targets,

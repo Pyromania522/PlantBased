@@ -1,0 +1,121 @@
+import type { HomeAssistant } from "./types";
+const en = {
+  plants: "Plants",
+  overview: "Plant overview",
+  total: "Total",
+  water: "Watering",
+  fertilize: "Fertilizing",
+  overdue: "Overdue",
+  ok: "Doing well",
+  due: "Care due",
+  paused: "Paused",
+  unavailable: "Unavailable",
+  loading: "Loading plants…",
+  watered: "Watered",
+  fertilized: "Fertilized",
+  snooze: "Snooze",
+  snoozeWater: "Watering +1 day",
+  snoozeFertilizer: "Fertilizing +1 day",
+  today: "Due today",
+  days: "In {n} days",
+  tomorrow: "Tomorrow",
+  overdueDays: "{n} days overdue",
+  overdueDay: "1 day overdue",
+  disabled: "Not enabled",
+  noPlants: "No plants yet",
+  noPlantsHint: "Add plants in the PlantBased integration settings.",
+  allDone: "All caught up",
+  allDoneHint: "Your plants have no care due right now.",
+  groupEmpty: "This group has no plants yet.",
+  chooseDevice: "Choose a plant or group",
+  missingDevice: "This plant or group is no longer available.",
+  registryError: "Plant information could not be loaded.",
+  retry: "Try again",
+  actionError: "Care could not be saved. Please try again.",
+  saved: "Care saved",
+  title: "Title",
+  titleHint: "Optional",
+  showActions: "Show care buttons",
+  plant: "Plant",
+  group: "Group",
+  cardDescription: "Care for a plant or a group",
+  overviewDescription: "Care counts and plants needing attention",
+  selected: "Selected device",
+  noDevices: "Add a plant or group in the PlantBased integration first.",
+  invalidConfig: "Choose a PlantBased plant or group device.",
+  invalidTitle: "Enter a text title.",
+  invalidActions: "Choose whether care buttons are shown.",
+};
+const de: typeof en = {
+  plants: "Pflanzen",
+  overview: "Pflanzenübersicht",
+  total: "Gesamt",
+  water: "Gießen",
+  fertilize: "Düngen",
+  overdue: "Überfällig",
+  ok: "Gut versorgt",
+  due: "Pflege fällig",
+  paused: "Pausiert",
+  unavailable: "Nicht verfügbar",
+  loading: "Pflanzen werden geladen…",
+  watered: "Gewässert",
+  fertilized: "Gedüngt",
+  snooze: "Verschieben",
+  snoozeWater: "Gießen +1 Tag",
+  snoozeFertilizer: "Düngen +1 Tag",
+  today: "Heute fällig",
+  days: "In {n} Tagen",
+  tomorrow: "Morgen",
+  overdueDays: "{n} Tage überfällig",
+  overdueDay: "1 Tag überfällig",
+  disabled: "Nicht aktiviert",
+  noPlants: "Noch keine Pflanzen",
+  noPlantsHint:
+    "Füge Pflanzen in den Einstellungen der PlantBased-Integration hinzu.",
+  allDone: "Alles versorgt",
+  allDoneHint: "Für deine Pflanzen ist gerade keine Pflege fällig.",
+  groupEmpty: "Diese Gruppe hat noch keine Pflanzen.",
+  chooseDevice: "Pflanze oder Gruppe wählen",
+  missingDevice: "Diese Pflanze oder Gruppe ist nicht mehr verfügbar.",
+  registryError: "Die Pflanzeninformationen konnten nicht geladen werden.",
+  retry: "Erneut versuchen",
+  actionError:
+    "Die Pflege konnte nicht gespeichert werden. Bitte erneut versuchen.",
+  saved: "Pflege gespeichert",
+  title: "Titel",
+  titleHint: "Optional",
+  showActions: "Pflegeaktionen anzeigen",
+  plant: "Pflanze",
+  group: "Gruppe",
+  cardDescription: "Pflege für eine Pflanze oder Gruppe",
+  overviewDescription: "Pflegezähler und Pflanzen mit fälliger Pflege",
+  selected: "Gewähltes Gerät",
+  noDevices:
+    "Füge zuerst eine Pflanze oder Gruppe in der PlantBased-Integration hinzu.",
+  invalidConfig: "Wähle ein PlantBased-Pflanzen- oder Gruppengerät.",
+  invalidTitle: "Gib einen Titel als Text ein.",
+  invalidActions: "Wähle, ob Pflegeaktionen angezeigt werden.",
+};
+export type TextKey = keyof typeof en;
+export const language = (hass?: HomeAssistant): "en" | "de" =>
+  (hass?.locale?.language ?? hass?.language ?? "en")
+    .toLowerCase()
+    .startsWith("de")
+    ? "de"
+    : "en";
+export const t = (
+  hass: HomeAssistant | undefined,
+  key: TextKey,
+  n?: number,
+): string =>
+  (language(hass) === "de" ? de : en)[key].replace("{n}", String(n ?? ""));
+export function dayText(
+  hass: HomeAssistant | undefined,
+  days: number | null,
+): string {
+  if (days === null) return t(hass, "unavailable");
+  if (days === 0) return t(hass, "today");
+  if (days === 1) return t(hass, "tomorrow");
+  if (days === -1) return t(hass, "overdueDay");
+  return t(hass, days < 0 ? "overdueDays" : "days", Math.abs(days));
+}

@@ -1,5 +1,76 @@
 # Validation
 
+## M5 — dashboard cards, editors and original illustrations
+
+M5 is implemented. Results below executed locally on the final implementation;
+remote acceptance is recorded against the PR head in its checks and description.
+
+| Check | Result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **185 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **185 passed**, no skips or expected failures |
+| Combined statement/branch coverage | **98.54% current / 98.55% minimum** |
+| Strict mypy | Passed on all 25 integration modules |
+| Ruff lint and formatting | Passed |
+| TypeScript strict check and Prettier | Passed |
+| Vite production build | One JS module, **47.47 kB / 14.23 kB gzip**, bundled Lit |
+| Chromium 154.0.8037.57 / Playwright | **17 passed**, no skips |
+| Original SVGs | 12 distinct, safe, rendered originals; source/shipped parity |
+| Official local hassfest | 1 integration, 0 invalid; all integration validators |
+| Independent actual-filesystem checks, both HA versions | Care and reminder stores passed |
+
+The full M1–M4 suite remains included. New HA-native tests check idempotent static
+registration across entry reload/removal, actual HTTP serving of the committed
+bundle and all SVGs, module injection into the official HA frontend index, and
+authenticated device/entity registry responses including translation keys,
+unique IDs and config-subentry ownership. Preset URLs and fertilizing metadata
+are checked on real care-status entities. No requirement auto-installation is
+needed: test-only frontend wheels match each supported HA manifest.
+
+Seventeen browser tests load the actual compiled production module. They cover
+plant/group/overview cards, real hub count consumption, care status pushes,
+renames/group changes, scoped actions and independent snooze, pending/error
+feedback, paused/unavailable/disabled-fertilizer states, registry recovery,
+reconnect/unsubscribe, safe image fallback and escaped user text. They also check
+stub configuration, duplicate module loads, empty/missing/deleted selection,
+visual-editor filtering and bubbling config changes, title/action options,
+German labels, keyboard operation, minimum touch size, narrow desktop columns,
+mobile/dark layouts and all twelve rendered SVG illustrations.
+
+The browser fixture supplies the public HA connection/state contract; it does not
+run the complete HA application. Native backend HTTP/WS tests independently
+exercise the APIs that fixture represents on both supported releases. Screenshots
+were visually inspected in the local Chromium run. CI uploads mobile, desktop,
+dark and gallery images plus any failure traces. No full HA browser/Companion
+manual test, real phone delivery or full HA process restart is claimed.
+
+Reproduce using CONTRIBUTING.md's two Python environments and Node 24:
+
+```sh
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/mypy
+COVERAGE_FILE=/tmp/plantbased-m5-cov-current/data .venv/bin/pytest
+COVERAGE_FILE=/tmp/plantbased-m5-cov-min/data .venv-min/bin/pytest
+.venv/bin/python -m script.check_storage
+.venv-min/bin/python -m script.check_storage
+npm ci
+npm run typecheck
+npm run format:check
+python3 script/build_illustrations.py
+npm run check:bundle
+CHROMIUM_PATH=/usr/bin/chromium npm test
+```
+
+Official local hassfest used Core dev
+`1b740dcd4bc1e669827fc94c8b4bd7a4bbbae734` with the same command/environment
+recorded below for M4. See DECISIONS.md for current frontend references and public
+module-registration assumptions. Public release and release automation remain M6.
+
+Earlier milestone evidence follows as historical records.
+
+---
+
 ## M4 — reminder options, scheduled summaries and mobile actions
 
 M4 is implemented. The following executed locally on the milestone's final
