@@ -75,14 +75,14 @@ resource entry or separate frontend repository is needed**.
 
 1. Open your dashboard, choose **Edit dashboard → Add card**, and search for
    **PlantBased**.
-2. Choose **PlantBased · Plant / group** and select a PlantBased plant or group
+2. Choose **PlantBased** and select a PlantBased plant or group
    in the visual editor. A group displays its current members in a compact grid.
-3. Add **PlantBased · Overview** for hub counts and the list of due plants.
+3. Add **PlantBased Overview / Übersicht** for hub counts and the list of due plants.
 4. Optionally set a title or hide the action buttons in either editor.
 
 Plant cards show watering/fertilizing countdowns, group names, and distinct
 healthy, due, overdue, paused and unavailable states. **Watered**, **Fertilized**
-and separate **Snooze 1 day** choices use the existing care actions. Buttons wait
+and separate **Watering +1 day / Fertilizing +1 day** snooze choices use the existing care actions. Buttons wait
 for HA confirmation; failures show a message without marking care done. Care can
 still be recorded during a pause. Disabled fertilizing has no enabled action.
 The overview uses the hub's actual counters; pause/vacation plants stay out of its
@@ -306,12 +306,12 @@ Anbietergrenzen bestimmen die tatsächliche Zustellung.
 Nach dem HA-Neustart einen bereits geöffneten Browser-Tab neu laden. Die Karten
 werden automatisch geladen; ein manueller Ressourceneintrag ist nicht nötig.
 Unter **Dashboard bearbeiten → Karte hinzufügen** nach **PlantBased** suchen.
-**PlantBased · Plant / group** bietet im visuellen Editor die Auswahl einer
-Pflanze oder Gruppe. **PlantBased · Overview** zeigt die Gesamtzahlen und alle
+**PlantBased** bietet im visuellen Editor die Auswahl einer
+Pflanze oder Gruppe. **PlantBased Overview / Übersicht** zeigt die Gesamtzahlen und alle
 aktuell fälligen Pflanzen. Titel und Aktionsknöpfe lassen sich im Editor anpassen.
 
-**Wässern**, **Düngen** und **1 Tag verschieben** verwenden die vorhandenen
-Pflegeaktionen; beim Verschieben Gießen oder Düngen getrennt wählen. Während des
+**Gewässert** und **Gedüngt** speichern die jeweilige Pflege. Unter
+**Verschieben** lässt sich **Gießen +1 Tag** oder **Düngen +1 Tag** getrennt wählen. Während des
 Speicherns sind doppelte Klicks gesperrt. Bei einem Fehler erscheint eine Meldung.
 Pausen, überfällige Pflege und nicht verfügbare Pflanzen sind unterscheidbar.
 Gruppenkarten folgen der aktuellen Zuordnung ihrer Pflanzen.
