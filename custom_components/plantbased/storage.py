@@ -31,17 +31,8 @@ def _check_existing_json(path: str) -> None:
         raise ValueError("Invalid storage envelope")
 
 
-class PlantStore(Store[dict[str, Any]]):
-    """Persist only runtime state, never a second copy of subentry configuration."""
-
-    def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
-        super().__init__(
-            hass,
-            STORAGE_VERSION,
-            storage_key(entry_id),
-            atomic_writes=True,
-            private=True,
-        )
+class VerifiedStore(Store[dict[str, Any]]):
+    """Private atomic store with corruption preflight and checked writes."""
 
     async def async_load(self) -> dict[str, Any] | None:
         """Fail before HA can treat corrupt JSON as an empty, newly seeded store."""
@@ -61,12 +52,25 @@ class PlantStore(Store[dict[str, Any]]):
         """
         await super().async_save(data)
         saved = await Store[dict[str, Any]](
-            self.hass, STORAGE_VERSION, self.key
+            self.hass, self.version, self.key
         ).async_load()
         if saved != data:
             raise HomeAssistantError(
                 translation_domain=DOMAIN, translation_key="storage_write_error"
             )
+
+
+class PlantStore(VerifiedStore):
+    """Persist only care runtime, never a second copy of configuration."""
+
+    def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
+        super().__init__(
+            hass,
+            STORAGE_VERSION,
+            storage_key(entry_id),
+            atomic_writes=True,
+            private=True,
+        )
 
     async def _async_migrate_func(
         self, old_major_version: int, old_minor_version: int, old_data: dict[str, Any]

@@ -2,6 +2,20 @@
 
 ## Unreleased — 0.1.0 development
 
+### Added in M4
+
+- Hub options for opt-in local-time reminders, available notification targets,
+  daily repeat, persistent HA copy and optional mobile snooze action.
+- One English/German due-care summary per recipient, private durable receipts,
+  startup catch-up, DST handling and reload/restart deduplication.
+- Scoped Companion all-watered/all-fertilized/snooze actions, stale-cycle checks,
+  atomic bulk snooze and shared care-state updates.
+- Tagged mobile replacement/clearing, persistent-copy restoration and cleanup
+  for removed targets, disabled reminders and disabled/removed hubs.
+- Ordinary notify entity support, recipient-isolated delivery failures and no
+  notifier identifiers/action tokens in diagnostics.
+- Real-filesystem reminder-receipt validation and minimum/current HA tests.
+
 ### Added in M3
 
 - Four translated care actions with plant/group/entity/area/label targets,

@@ -1,7 +1,7 @@
 # Contributing
 
-PlantBased is developed in milestones. M3 adds integration actions/events,
-calendar/to-do and safe diagnostics to M2’s native plant/group backend.
+PlantBased is developed in milestones. M4 adds opt-in scheduled summaries,
+persistent reminder receipts and scoped Companion actions to M3’s care backend.
 Before using an HA API, check the current official developer documentation and
 the supported minimum HA release. Record compatibility decisions in DECISIONS.md.
 
@@ -29,6 +29,10 @@ python3.13 -m venv .venv-min
 .venv-min/bin/python -m script.check_storage
 ```
 
+When running both coverage jobs concurrently, set COVERAGE_FILE to distinct
+files in separate directories; the default `.coverage*` cleanup can otherwise
+collide with another run’s data.
+
 The test plugin supplies HA fixtures and a pinned HA package. Integration runtime
 requirements remain empty. Tests must exercise real HA flows and lifecycle APIs;
 do not substitute hand-written Home Assistant stubs. Coverage must stay ≥90%.
@@ -52,8 +56,14 @@ boundaries, overdue dates and due-only to-do items. Complete a task and verify
 history, counts, dates and calendar change together. In Developer tools, exercise
 all four PlantBased actions with plant/group/entity/area targets and listen for
 `plantbased_care_due` and `plantbased_care_done`. Download integration diagnostics
-and check no notes, image addresses or location text is exported. Notifications
-and frontend cards remain later milestones.
+and check no notes, image addresses or location text is exported. Enable
+reminders in the hub options and select test targets. Confirm one
+summary per recipient at the local scheduled time, both care headings, correct
+language, repeat-off behavior and no reminder during pause/vacation. Test all
+Companion actions, summary replacement/clearing, reload/restart deduplication,
+persistent-copy restoration and disabled/removed target cleanup. Frontend cards
+remain M5. Automated tests use fake notifier receivers through real HA services;
+no test contacts a real mobile device or external provider.
 
 ## Pull requests
 

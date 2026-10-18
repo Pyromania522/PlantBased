@@ -347,5 +347,26 @@
         }
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Care reminders",
+        "description": "One summary at the selected time in Home Assistant’s time zone. Mobile actions are available through notify.mobile_app_*. Paused plants are excluded.",
+        "data": {
+          "reminder_enabled": "Enable reminders",
+          "reminder_time": "Daily reminder time",
+          "notify_targets": "Notification targets",
+          "repeat_daily": "Repeat daily while care is due",
+          "persistent_notification": "Also show a persistent notification",
+          "snooze_action": "Include mobile Snooze 1 day action"
+        }
+      }
+    },
+    "error": {
+      "invalid_target": "Select a currently available notification target.",
+      "target_required": "Select at least one target or enable the persistent notification.",
+      "local_time_required": "Select a local time without a time-zone offset."
+    }
   }
 }

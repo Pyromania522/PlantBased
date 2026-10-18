@@ -347,5 +347,26 @@
         }
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Pflegeerinnerungen",
+        "description": "Eine Sammelmeldung zur gewählten Uhrzeit in der Home-Assistant-Zeitzone. Mobile Aktionen sind über notify.mobile_app_* verfügbar. Pausierte Pflanzen werden nicht gemeldet.",
+        "data": {
+          "reminder_enabled": "Erinnerungen aktivieren",
+          "reminder_time": "Tägliche Erinnerungszeit",
+          "notify_targets": "Benachrichtigungsziele",
+          "repeat_daily": "Täglich wiederholen, solange Pflege fällig ist",
+          "persistent_notification": "Zusätzlich in Home Assistant anzeigen",
+          "snooze_action": "Mobile Aktion „1 Tag verschieben“ anbieten"
+        }
+      }
+    },
+    "error": {
+      "invalid_target": "Wähle ein aktuell verfügbares Benachrichtigungsziel.",
+      "target_required": "Wähle mindestens ein Ziel oder aktiviere die Anzeige in Home Assistant.",
+      "local_time_required": "Wähle eine lokale Uhrzeit ohne Zeitzonenangabe."
+    }
   }
 }

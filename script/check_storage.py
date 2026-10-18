@@ -10,6 +10,7 @@ import tempfile
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
+from custom_components.plantbased.reminder_storage import ReminderStore, decode_receipts
 from custom_components.plantbased.storage import PlantStore, storage_key
 
 
@@ -52,6 +53,31 @@ async def main() -> None:
             assert await hass.async_add_executor_job(read) == "{broken"
         await store.async_remove()
         assert not await hass.async_add_executor_job(path.exists)
+        reminder = ReminderStore(hass, "disk-smoke")
+        reminder_data = {
+            "recipients": {
+                "service:mobile_app_test": {
+                    "day": "2026-06-15",
+                    "seen": ["plant:water:2026-06-15"],
+                    "active": ["plant:water:2026-06-15"],
+                    "token": "a" * 32,
+                    "text": "PlantBased: plant care\nWatering due: Test plant",
+                }
+            }
+        }
+        await reminder.async_save(reminder_data)
+        restored = await ReminderStore(hass, "disk-smoke").async_load()
+        assert restored == reminder_data
+        assert (
+            decode_receipts(restored)["service:mobile_app_test"].day.isoformat()
+            == "2026-06-15"
+        )
+        reminder_path = Path(reminder.path)
+        assert (
+            await hass.async_add_executor_job(reminder_path.stat)
+        ).st_mode & 0o077 == 0
+        await reminder.async_remove()
+        assert not await hass.async_add_executor_job(reminder_path.exists)
     finally:
         await hass.async_stop()
         await asyncio.to_thread(shutil.rmtree, directory)

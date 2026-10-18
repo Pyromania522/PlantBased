@@ -3,12 +3,12 @@
 Local, calendar-based houseplant care for Home Assistant. No plant sensors, cloud
 accounts, or external Python requirements.
 
-**Development status: M3 — care actions, events, calendar, tasks and diagnostics.**
-Each plant has independent watering/fertilizing dates, editable intervals, care
-buttons, status and pause controls. Groups, overview counts, automation actions,
-a care calendar and a completable task list are available. Notifications and
-dashboard cards follow in M4–M5. This is a development milestone, not the complete
-v0.1.0.
+**Development status: M4 — care reminders and mobile notification actions.**
+Plants and groups have care controls, automation actions/events, a care calendar
+and a task list. Optional reminders now send one grouped summary through selected
+HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
+Dashboard cards follow in M5. This remains a development milestone, not the
+complete v0.1.0.
 
 ## Installation
 
@@ -103,13 +103,54 @@ The events `plantbased_care_due` and `plantbased_care_done` contain `device_id`,
 due, including season entry, unpause and startup/reload for already-due care.
 They do not repeat every overdue day. Done events fire after a successful save,
 including care recorded through buttons, date entities, actions and to-do items.
-Use these events as automation triggers; built-in reminders arrive in M4.
+Use these events as automation triggers independently of the optional reminders.
 
 Download **Diagnostics** from the integration entry menu to inspect care state.
 The integration's payload includes plant names, dates, histories and care settings;
 it excludes notes, species, group names, areas, location notes and image paths/URLs.
 Calendar/task text follows HA's configured language; entity and action names are
 translated by Home Assistant.
+
+## Optional reminders
+
+Open **Configure** on the PlantBased hub under **Settings → Devices & services**.
+Reminders are **off by default**. Enable them and choose available notification
+targets, or enable the persistent HA notification. The default reminder time is
+**09:00 in Home Assistant's configured time zone**, with daily repeat enabled.
+Select the `notify.mobile_app_*` service for Companion app action buttons.
+New-style notify entities are also selectable for ordinary message/title delivery.
+
+At the chosen time, one summary per selected target lists due plants under
+watering and fertilizing headings. Paused/vacation work and out-of-season or
+disabled fertilizing are excluded. English/German text follows HA's configured
+language, with English fallback for other languages. You can choose:
+
+- **Repeat daily while care is due**: otherwise only a newly due care task causes
+  another scheduled summary. The summary still lists all currently due tasks.
+- **Also show a persistent notification**: keeps a matching summary in HA and
+  dismisses it when nothing is due.
+- **Include mobile Snooze 1 day action**: adds a third Companion button alongside
+  **All watered** and **All fertilized**, when those care types are due.
+
+Mobile actions affect the still-due tasks listed by that message. Healthy plants,
+newer care cycles and paused plants are never marked by an old message. Snooze
+postpones both listed care types in one saved operation. Mobile summaries use one
+entry-specific tag, so changes replace the current message and finishing care
+clears it. Persistent copies update/dismiss too. Turning off reminders, removing
+a target or disabling/removing the hub attempts to clear known mobile/persistent
+messages. Ordinary notifier messages cannot be recalled through their generic API.
+
+If HA starts after the chosen time, today's unsent reminder is caught up. Private
+versioned receipts in `.storage/plantbased.<entry_id>.reminders` avoid duplicate
+scheduled sends on ordinary reload/restart and during the repeated DST hour.
+A skipped DST clock time is shifted forward by the gap. Persistent copies are
+restored after HA startup. Include the care and reminder stores in backups.
+
+A provider accepting a service call does not guarantee phone delivery or clearing;
+Companion permissions, connectivity and platform limits still apply. A crash
+between delivery and receipt persistence can repeat a message; mobile tags replace
+it. Target failures are isolated and never mark care done. PlantBased delegates
+to configured HA notifiers and makes no notification network request itself.
 
 ## Roadmap
 
@@ -118,7 +159,7 @@ translated by Home Assistant.
 | M1 | HACS structure, hub, translations, validation | Implemented; GitHub CI verified |
 | M2 | Plant/group subentries, storage, scheduling, entities | Implemented; see VALIDATION.md |
 | M3 | Actions, events, calendar, to-do, diagnostics | Implemented; see VALIDATION.md |
-| M4 | Summary and actionable notifications | Planned |
+| M4 | Summary and actionable notifications | Implemented; see VALIDATION.md |
 | M5 | Lovelace cards, visual editors, illustrations | Planned |
 | M6 | Complete documentation and v0.1.0 release | Planned |
 
@@ -129,11 +170,12 @@ The manifest's `0.1.0` is a development version. A public release is reserved fo
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**Aktueller Stand: M3.** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**Aktueller Stand: M4.** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
 Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
-Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Erinnerungen
-und Dashboard-Karten folgen in M4 und M5.
+Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
+Sammelerinnerungen und mobile Pflegeaktionen sind jetzt enthalten; Dashboard-Karten
+folgen in M5.
 
 Installation: In HACS unter **Benutzerdefinierte Repositories** die oben genannte
 Adresse als **Integration** hinzufügen, herunterladen und Home Assistant neu
@@ -188,6 +230,27 @@ auch beim Start/Neuladen bereits fälliger Pflege; die Meldung wiederholt sich
 nicht täglich. Erledigt-Ereignisse folgen erst nach erfolgreichem Speichern.
 **Diagnosedaten herunterladen** im Menü des Integrationseintrags liefert
 Pflegedaten mit Pflanzennamen, ohne Notizen, Standorte oder Bildadressen.
+
+Erinnerungen sind zunächst **ausgeschaltet**. Unter **Einstellungen → Geräte &
+Dienste → PlantBased → Konfigurieren** lassen sich Uhrzeit, Benachrichtigungsziele,
+tägliche Wiederholung, eine zusätzliche HA-Meldung und die mobile Verschiebeaktion
+festlegen. Standard ist **09:00 Uhr in der Home-Assistant-Zeitzone**. Mindestens
+ein Ziel oder die zusätzliche HA-Meldung muss gewählt sein.
+
+Für mobile Aktionsschaltflächen das Ziel `notify.mobile_app_*` wählen. **Alle
+gewässert**, **Alle gedüngt** und optional **1 Tag verschieben** gelten nur für
+noch fällige Aufgaben aus dieser Meldung. Alte Meldungen ändern keine späteren
+Pflegezyklen. Neue Notify-Entitäten unterstützen einfache Nachrichten und Titel;
+ihre derzeitige API bietet keine Aktions- oder Tag-Daten.
+
+Mobile Sammelmeldungen werden unter demselben Tag aktualisiert und nach erledigter
+Pflege zurückgezogen; die zusätzliche HA-Meldung wird ebenfalls aktualisiert oder
+entfernt. Andere Benachrichtigungsanbieter können bereits versendete Nachrichten
+nicht allgemein zurückrufen. Ist HA zur Erinnerungszeit ausgeschaltet, wird eine
+heute noch nicht versendete Meldung nach dem Start nachgeholt. Versandnachweise
+bleiben bei Neustarts erhalten; eine doppelte Uhrzeit bei der Zeitumstellung führt
+nicht zu einer zweiten Tagesmeldung. Geräteverbindung, App-Berechtigungen und
+Anbietergrenzen bestimmen die tatsächliche Zustellung.
 
 ## Development and license
 

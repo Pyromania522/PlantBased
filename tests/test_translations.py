@@ -87,3 +87,20 @@ async def test_m3_action_and_platform_translations(hass, language):
     entities = await async_get_translations(hass, language, "entity", {DOMAIN})
     assert entities[f"component.{DOMAIN}.entity.calendar.care_calendar.name"]
     assert entities[f"component.{DOMAIN}.entity.todo.plant_care.name"]
+
+
+@pytest.mark.parametrize("language", ["en", "de"])
+async def test_reminder_option_translations(hass, language):
+    translations = await async_get_translations(hass, language, "options", {DOMAIN})
+    prefix = f"component.{DOMAIN}.options"
+    assert translations[f"{prefix}.step.init.title"]
+    for key in [
+        "reminder_enabled",
+        "reminder_time",
+        "notify_targets",
+        "repeat_daily",
+        "persistent_notification",
+        "snooze_action",
+    ]:
+        assert translations[f"{prefix}.step.init.data.{key}"]
+    assert translations[f"{prefix}.error.target_required"]

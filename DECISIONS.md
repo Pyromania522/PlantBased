@@ -1,5 +1,74 @@
 # Decisions and verified references
 
+## M4 scope, verified APIs and behavior
+
+Before implementation, the official developer documentation at
+`50b518898989b67bb76b69827f227aa6f0acd32a`, Core dev at
+`506d5c077399457a9557bbe4a887f5b3229d2520` and both supported released implementations were inspected. Official
+Companion documentation at `a2034d40d8e8b19ef7c75c08014e75795c45d9c5`
+verifies actionable payloads, unique action identifiers, event payloads, tag
+replacement/clearing and Android alert-once behavior. HACS docs remain at
+`4f06a5bd11088a21a453fdcb3eda1603353e6c8a`.
+
+| API / contract | Official reference |
+| --- | --- |
+| `async_get_options_flow`, `OptionsFlow.config_entry`, `async_step_init`, `async_create_entry` | [Options flow](https://developers.home-assistant.io/docs/core/integration/options_flow/) |
+| Local `async_track_time_change`, startup hooks, config/time-zone changes, entry-owned tasks and unload | [Events](https://developers.home-assistant.io/docs/integration_listen_events/), public released helpers and config entries |
+| Legacy notify services versus notify entity message/title limits | [Notify entity](https://developers.home-assistant.io/docs/core/entity/notify/), both released notify/mobile_app implementations |
+| `data.actions`, unique action IDs, `mobile_app_notification_action` | [Companion actions](https://companion.home-assistant.io/docs/notifications/actionable-notifications/) |
+| `data.tag`, `clear_notification`, `alert_once` | [Companion basic notifications](https://companion.home-assistant.io/docs/notifications/notifications-basic/) |
+| Persistent create/dismiss callbacks | [Official persistent notification source](https://github.com/home-assistant/core/blob/dev/homeassistant/components/persistent_notification/__init__.py) |
+
+Reminders default off, at 09:00 HA-local time, repeat daily on, persistent copy
+off and snooze action on. Enabling requires at least one target or the persistent
+copy. Target selection discovers available notify services and notify entities;
+mobile_app entities are represented by their legacy mobile_app service because
+the current entity API cannot carry action/tag data. Generic `send_message` and
+persistent-notification bridge services are not selectable. No optional notifier
+or Companion app is forced to install. A persistent-notification dependency is
+required for the native persistent API.
+
+One summary per selected recipient groups all currently due plants by care type.
+Pause, vacation, disabled fertilizer and season rules are shared with the care
+engine. The scheduled callback uses local wall-clock time. Startup after the
+scheduled time catches up today's unsent reminder; durable per-recipient dates
+prevent duplicate sends on ordinary reload, restart and a repeated DST hour.
+A nonexistent DST wall time is forward-normalized with a single point-in-time
+callback prepared at setup and local day changes; no recurring poll is added.
+Persistent copies are restored on reload/start because HA stores them in memory.
+With daily repeat off, only newly due task identities cause a scheduled summary;
+completing/snoozing/pausing a task ends its due episode. No polling is introduced.
+
+Existing mobile summaries are replaced under one entry-scoped tag when their
+pending tasks change; when no work remains, the tag is cleared. Persistent copies
+are updated/dismissed likewise. Other notify services/entities receive a basic
+summary at the scheduled time: their APIs do not promise recall or action data.
+Delivery errors are isolated by recipient and cannot change care history. HA
+service acceptance cannot prove device delivery. Sending and writing a durable
+receipt are not an atomic external transaction; a crash or receipt-write failure
+in between can repeat a message (mobile tags replace it).
+
+Mobile actions affect only tasks listed by that message that are still due in
+the same care cycle. Opaque per-message action IDs are retained in private local
+state; unrelated, stale and replayed events cannot reset healthy/later-cycle
+plants. All-watered/all-fertilized affect the corresponding due list; Snooze 1 day
+postpones both listed care types as one care-state transaction. No action can
+bypass pause/vacation. Removing targets/disabling reminders clears known mobile
+and persistent messages; temporary unavailable clear targets are retained for a
+later attempt. Disabling/removing the hub also attempts message cleanup and removes reminder
+receipts on deletion. Mobile clearing is best effort; Companion platform/device
+limitations still apply. A fresh notify entity has unknown timestamp state but
+is usable before its first send; only unavailable entities are excluded.
+
+Runtime notification wording uses a small English/German catalog in
+`notification_texts.py`, with English fallback, because HA's standard integration
+translation schema has no arbitrary notification-text category. Hub options and
+errors remain in strings.json and translations/en.json/de.json. Notification
+text follows HA's configured language, with no user text in logging or diagnostics
+other than the already allowed plant names. Notifications delegate to the user's
+existing HA notifiers; PlantBased makes no network requests itself. Frontend
+cards/artwork remain M5, public release M6.
+
 ## M3 scope, verified APIs and assumptions
 
 Before M3 coding, the official developer-doc source at

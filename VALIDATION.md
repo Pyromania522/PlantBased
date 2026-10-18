@@ -1,5 +1,81 @@
 # Validation
 
+## M4 — reminder options, scheduled summaries and mobile actions
+
+M4 is implemented. The following executed locally on the milestone's final
+implementation. Its PR checks/description record exact-head remote CI acceptance;
+local success alone does not establish a successful GitHub run.
+
+| Check | Result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **181 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **181 passed**, no skips or expected failures |
+| Combined statement/branch coverage | **98.51%** on each target |
+| Strict mypy | Passed on all 24 integration modules |
+| Ruff lint and formatting | Passed |
+| Official local hassfest | 1 integration, 0 invalid; all integration validators |
+| Independent actual-filesystem checks, both HA versions | Care and reminder stores passed |
+
+The M1–M3 suite remains included. M4 adds real options-flow tests, live service and
+notify-entity discovery, unknown initial notify timestamps, supported title
+features, stale target removal and no-target validation. Public notify service
+receivers capture payloads without contacting an external provider. Modern notify
+entity tests use HA's actual notify entity component and send_message service.
+Persistent notifications use HA's real public create/dismiss/callback API.
+
+Frozen-time tests cover grouped summaries, daily and new-task-only reminders,
+startup catch-up, durable reload deduplication, both Europe/Berlin DST changes,
+a skipped 02:30 clock time and a repeated hour. They cover language changes,
+English/German/fallback content, optional snooze buttons, one-transaction bulk
+snooze, care completion, tag replacement/clearing, pause/vacation, disabled
+fertilizer, target removal/recovery, hub disabling/deletion and persistent-copy
+restoration. Mobile events exercise wrong/malformed action IDs, replays, later
+care cycles and revalidation after waiting for the care lock.
+
+Failure tests cover independent recipients, care write failure with no done
+event, reminder receipt write failure without changing care, malformed receipt
+schemas and setup failure without overwriting the reminder store. Diagnostics do
+not export notification target IDs or action tokens. Existing native calendar,
+to-do, events, storage and diagnostics tests continue to pass.
+
+Reproduce with the environments in CONTRIBUTING.md. Separate coverage directories
+avoid interference when running both jobs concurrently:
+
+```sh
+mkdir -p /tmp/plantbased-m4-cov-current /tmp/plantbased-m4-cov-min
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/mypy
+COVERAGE_FILE=/tmp/plantbased-m4-cov-current/data .venv/bin/pytest --cov-report=xml:/tmp/plantbased-m4-current-coverage.xml
+COVERAGE_FILE=/tmp/plantbased-m4-cov-min/data .venv-min/bin/pytest --cov-report=xml:/tmp/plantbased-m4-min-coverage.xml
+.venv/bin/python -m script.check_storage
+.venv-min/bin/python -m script.check_storage
+```
+
+The real-file check independently verifies private care and reminder files,
+actual JSON save/fresh read, receipt restoration, corruption preservation and
+removal. Official local hassfest uses Core source
+`506d5c077399457a9557bbe4a887f5b3229d2520` in the cached checkout:
+
+```sh
+PATH=/workspace/.venvs/plantbased-hassfest/bin:$PATH \
+PYTHONPATH=/tmp/plantbased-m3-core \
+/workspace/.venvs/plantbased-hassfest/bin/python -m script.hassfest \
+  --action validate \
+  --integration-path /workspace/PlantBased/custom_components/plantbased
+```
+
+No real phone/provider delivery, browser manual test or full HA process restart
+is claimed. The API payloads, real HA services, native lifecycle and durable
+filesystem restoration are tested separately. HA's standard custom-integration
+warning is not suppressed; injected failures deliberately log generic warnings.
+Provider acceptance/clearing limits and the delivery/receipt crash window are
+explicit in DECISIONS.md. Frontend/cards remain M5; public release remains M6.
+
+Earlier milestone evidence follows as historical records.
+
+---
+
 ## M3 — actions, events, calendar, to-do and diagnostics
 
 The M3 backend is implemented. These results executed locally on the milestone's
