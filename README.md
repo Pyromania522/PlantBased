@@ -3,15 +3,16 @@
 Local, calendar-based houseplant care for Home Assistant. No plant sensors, cloud
 accounts, or external Python requirements.
 
-**v0.1.0 — M6 release preparation.**
+[![Add PlantBased to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
+
+**[v0.1.0 — released](https://github.com/Pyromania522/PlantBased/releases/tag/v0.1.0).**
 Plants and groups have care controls, automation actions/events, a care calendar
 and a task list. Optional reminders now send one grouped summary through selected
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
 Single-plant, group and overview cards now include English/German controls and
-twelve original illustrations. The complete v0.1.0 implementation and release
-workflow are ready for review. A release becomes public only after the M6 merge
-and successful version-tag workflow; see [release notes](docs/releases/v0.1.0.md)
-and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases).
+twelve original illustrations. See [release notes](docs/releases/v0.1.0.md)
+and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
+published versions and installation assets.
 
 [Installation](#installation) · [Cards](#dashboard-cards) ·
 [Automations](#automation-examples) · [Reminders](#optional-reminders) ·
@@ -32,9 +33,18 @@ browser test fixture. Full HA setup/editor/calendar/Companion screenshots remain
 Requires Home Assistant **2025.10.0 or later** and HACS for the HACS path. The HA
 host needs no Node/npm build tools. This is an integration, not a separate HACS
 frontend/card repository. The repository is added manually; it is not in HACS's
-default catalog.
+default catalog. The button below opens this custom repository in your HACS:
 
-1. In HACS, open **Custom repositories** and add
+[![Open PlantBased in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
+
+If My Home Assistant asks for your instance URL, enter the address you normally
+use to open HA. Confirm adding the repository, download PlantBased, restart HA,
+then continue with step 3 below. The button requires HACS to be installed already.
+It opens the repository; installation and HA restart still need your confirmation.
+
+You can also add it manually:
+
+1. In HACS, open the **⋮** menu → **Custom repositories** and add
    `https://github.com/Pyromania522/PlantBased` with category **Integration**.
 2. Download PlantBased and restart Home Assistant.
 3. Open **Settings → Devices & services → Add integration → PlantBased**.
@@ -306,7 +316,7 @@ Diagnostics include plant names and care dates; review before sharing.
 | M3 | Actions, events, calendar, to-do, diagnostics | Implemented; see VALIDATION.md |
 | M4 | Summary and actionable notifications | Implemented; see VALIDATION.md |
 | M5 | Lovelace cards, visual editors, illustrations | Implemented; see VALIDATION.md |
-| M6 | Complete documentation and v0.1.0 release | Documentation/workflow prepared; tag publication follows merge |
+| M6 | Complete documentation and v0.1.0 release | Released; see GitHub Releases |
 
 The manifest and frontend version are `0.1.0`. See
 [RELEASING.md](docs/RELEASING.md) for the checked package, tag and publication steps.
@@ -318,15 +328,22 @@ submission are outside this version.
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**Aktueller Stand: M6, Vorbereitung von v0.1.0.** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**[v0.1.0 ist veröffentlicht](https://github.com/Pyromania522/PlantBased/releases/tag/v0.1.0).** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
 Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
 Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
 Sammelerinnerungen, mobile Pflegeaktionen und Dashboard-Karten mit zwölf eigenen
-Pflanzenillustrationen sind enthalten. Dokumentation und Release-Workflow sind
-vorbereitet. Öffentlich wird v0.1.0 nach dem M6-Merge und dem erfolgreichen Tag-Lauf.
+Pflanzenillustrationen sind enthalten.
 
-Installation: In HACS unter **Benutzerdefinierte Repositories** die oben genannte
+[![PlantBased zu HACS hinzufügen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
+
+Der Button öffnet PlantBased direkt in deiner HACS-Installation. Falls My Home
+Assistant nach der Adresse deiner Instanz fragt, die gewohnte HA-Adresse eintragen.
+Das Hinzufügen bestätigen, PlantBased herunterladen und HA neu starten. HACS muss
+bereits installiert sein. Danach unter **Einstellungen → Geräte & Dienste →
+Integration hinzufügen** nach **PlantBased** suchen.
+
+Ohne Button: In HACS über **⋮ → Benutzerdefinierte Repositories** die oben genannte
 Adresse als **Integration** hinzufügen, herunterladen und Home Assistant neu
 starten. Unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** nach
 **PlantBased** suchen und bestätigen. Es ist genau ein Hub möglich; die
