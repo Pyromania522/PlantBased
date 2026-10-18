@@ -3,7 +3,7 @@ pytest-homeassistant-custom-component==0.13.373
 ruff==0.17.1
 mypy==2.4.0
 # Optional artwork regeneration tool; not an integration runtime dependency.
-CairoSVG==2.8.2
+CairoSVG==2.9.1
 
 # Official frontend required to test real HTTP/bootstrap/module registration.
 home-assistant-frontend==20260930.4
