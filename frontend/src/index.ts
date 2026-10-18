@@ -1,6 +1,7 @@
 import { PlantBasedCard, PlantBasedOverviewCard } from "./cards";
 import { PlantBasedEditor, PlantBasedOverviewEditor } from "./editor";
 import { PlantBasedPanel } from "./panel";
+import { PlantBasedCreateDialog } from "./create-dialog";
 
 for (const [name, implementation] of [
   ["plantbased-card", PlantBasedCard],
@@ -8,6 +9,7 @@ for (const [name, implementation] of [
   ["plantbased-card-editor", PlantBasedEditor],
   ["plantbased-overview-card-editor", PlantBasedOverviewEditor],
   ["plantbased-panel", PlantBasedPanel],
+  ["plantbased-create-dialog", PlantBasedCreateDialog],
 ] as const) {
   if (!customElements.get(name)) customElements.define(name, implementation);
 }

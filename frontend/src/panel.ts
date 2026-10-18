@@ -21,6 +21,7 @@ export class PlantBasedPanel extends PlantBasedBase {
     _view: { state: true },
     _search: { state: true },
     _dueOnly: { state: true },
+    _creation: { state: true },
   };
   protected overview = true;
   protected get includeAreas() {
@@ -30,6 +31,7 @@ export class PlantBasedPanel extends PlantBasedBase {
   private _view: View = "plants";
   private _search = "";
   private _dueOnly = false;
+  private _creation?: "plant" | "group";
 
   private image(plant?: Plant) {
     return html`<img
@@ -222,6 +224,30 @@ export class PlantBasedPanel extends PlantBasedBase {
           <div class="brand">PlantBased</div>
           <h1>${t(this.hass, "yourPlants")}</h1>
           <p>${t(this.hass, "panelHint")}</p>
+          ${
+            this.hass?.user?.is_admin
+              ? html`<div class="create-actions">
+                  <button
+                    class="primary"
+                    ?disabled=${this.hass.connected === false || !!this._creation}
+                    @click=${() => {
+                      this._creation = "plant";
+                    }}
+                  >
+                    <span aria-hidden="true">＋</span>
+                    ${t(this.hass, "addPlant")}</button
+                  ><button
+                    ?disabled=${this.hass.connected === false || !!this._creation}
+                    @click=${() => {
+                      this._creation = "group";
+                    }}
+                  >
+                    <span aria-hidden="true">＋</span>
+                    ${t(this.hass, "addGroup")}
+                  </button>
+                </div>`
+              : nothing
+          }
         </header>
         ${this.renderStatus()}
         ${
@@ -299,7 +325,25 @@ export class PlantBasedPanel extends PlantBasedBase {
               `
             : nothing
         }
-      </main>`;
+      </main>
+      ${
+        this._creation
+          ? html`<plantbased-create-dialog
+              .hass=${this.hass}
+              .kind=${this._creation}
+              .areas=${this.registry.data?.areas ?? []}
+              @closed=${() => {
+                this._creation = undefined;
+              }}
+              @created=${() => {
+                this._creation = undefined;
+                this._error = false;
+                this._message = t(this.hass, "created");
+                void this.registry.refresh();
+              }}
+            ></plantbased-create-dialog>`
+          : nothing
+      }`;
   }
 
   static styles = [
@@ -360,6 +404,12 @@ export class PlantBasedPanel extends PlantBasedBase {
       }
       .page-heading {
         margin-bottom: 26px;
+      }
+      .create-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
       }
       h1 {
         font-size: clamp(28px, 4vw, 38px);

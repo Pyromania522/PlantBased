@@ -1,5 +1,36 @@
 # Decisions and verified references
 
+## v0.2.1: create plants/groups on the sidebar page
+
+Add administrator-only creation buttons to the overview. The existing HA frontend
+does not expose a stable public URL/helper to launch subentry setup directly from
+a custom panel. Use the authenticated native REST endpoints documented by official
+frontend `src/data/sub_config_flow.ts` instead of importing private hashed chunks
+or accessing other pages' shadow DOM. Verify the API and serialized selector fields
+on HA 2025.10.0 and 2026.10.2 with actual HTTP tests.
+
+Read the loaded PlantBased entry through `config_entries/get`; create, submit and
+delete only its native plant/group flows. Fields/defaults/suggested values and
+labels come from the returned schema and HA's `loadBackendTranslation` API. Render
+our six existing selector types with accessible browser controls, preserving the
+server's local initial-care dates. HA performs validation and persists subentries
+through the existing reload lifecycle; no backend endpoint/storage changes are
+needed. Browser tests use the actual integration translation JSON. Cancel/navigation
+cleans known unfinished flow IDs, including a late creation response after detach.
+An in-flight submission disables duplicate submission and cancellation until its
+result is known. Errors do not expose raw server details or discard entered values.
+
+The user also asked about species-based care recommendations. Research confirms
+[OpenPlantbook's maintained release notes](https://github.com/slaxor505/OpenPlantbook-client)
+document multilingual common-name search (September 2025), language aliases via
+`lang`, and general watering/fertilization care fields requested with `include=care`
+(May 2026). Its [HA integration](https://github.com/Olen/home-assistant-openplantbook)
+documents account/API credentials and HA-language support. These are care guidance
+fields, not a verified standardized numeric watering/fertilizing-days contract.
+Separate the user's display name from a confirmed species before proposing editable
+intervals, and preserve manual/offline setup. No provider credentials, paid plan,
+database client, external lookup or unverified interval data is introduced here.
+
 ## v0.2.0: sidebar overview
 
 The user requested a sidebar entry and visual plant/group/room overview after

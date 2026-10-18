@@ -526,6 +526,13 @@ De?.({ LitElement: B }), (z.litElementVersions ??= []).push("4.2.2");
 //#endregion
 //#region frontend/src/localize.ts
 var Oe = {
+	addPlant: "Add plant",
+	addGroup: "Add group",
+	create: "Create",
+	cancel: "Cancel",
+	created: "Added successfully",
+	createLoadError: "The setup form could not be loaded. Check that the PlantBased hub is loaded and try again.",
+	createError: "Could not add this plant or group. Check the values or try again.",
 	groups: "Groups",
 	areas: "Areas",
 	yourPlants: "Your plants",
@@ -590,6 +597,13 @@ var Oe = {
 	invalidTitle: "Enter a text title.",
 	invalidActions: "Choose whether care buttons are shown."
 }, ke = {
+	addPlant: "Pflanze hinzufügen",
+	addGroup: "Gruppe hinzufügen",
+	create: "Anlegen",
+	cancel: "Abbrechen",
+	created: "Erfolgreich hinzugefügt",
+	createLoadError: "Das Formular konnte nicht geladen werden. Prüfe, ob der PlantBased-Hub geladen ist, und versuche es erneut.",
+	createError: "Die Pflanze oder Gruppe konnte nicht angelegt werden. Prüfe die Eingaben oder versuche es erneut.",
 	groups: "Gruppen",
 	areas: "Bereiche",
 	yourPlants: "Deine Pflanzen",
@@ -1576,7 +1590,8 @@ var Ie = class {
 			narrow: { type: Boolean },
 			_view: { state: !0 },
 			_search: { state: !0 },
-			_dueOnly: { state: !0 }
+			_dueOnly: { state: !0 },
+			_creation: { state: !0 }
 		};
 	}
 	get includeAreas() {
@@ -1734,6 +1749,26 @@ var Ie = class {
           <div class="brand">PlantBased</div>
           <h1>${V(this.hass, "yourPlants")}</h1>
           <p>${V(this.hass, "panelHint")}</p>
+          ${this.hass?.user?.is_admin ? A`<div class="create-actions">
+                  <button
+                    class="primary"
+                    ?disabled=${this.hass.connected === !1 || !!this._creation}
+                    @click=${() => {
+			this._creation = "plant";
+		}}
+                  >
+                    <span aria-hidden="true">＋</span>
+                    ${V(this.hass, "addPlant")}</button
+                  ><button
+                    ?disabled=${this.hass.connected === !1 || !!this._creation}
+                    @click=${() => {
+			this._creation = "group";
+		}}
+                  >
+                    <span aria-hidden="true">＋</span>
+                    ${V(this.hass, "addGroup")}
+                  </button>
+                </div>` : N}
         </header>
         ${this.renderStatus()}
         ${this.hass && this.registry.data && !this.registry.error ? A`
@@ -1784,7 +1819,18 @@ var Ie = class {
                 ${this.hass.connected === !1 ? A`<p role="status" class="offline">${V(this.hass, "offline")}</p>` : N}
                 ${this.feedback()}
               ` : N}
-      </main>`;
+      </main>
+      ${this._creation ? A`<plantbased-create-dialog
+              .hass=${this.hass}
+              .kind=${this._creation}
+              .areas=${this.registry.data?.areas ?? []}
+              @closed=${() => {
+			this._creation = void 0;
+		}}
+              @created=${() => {
+			this._creation = void 0, this._error = !1, this._message = V(this.hass, "created"), this.registry.refresh();
+		}}
+            ></plantbased-create-dialog>` : N}`;
 	}
 	static {
 		this.styles = [J, o`
@@ -1843,6 +1889,12 @@ var Ie = class {
       }
       .page-heading {
         margin-bottom: 26px;
+      }
+      .create-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
       }
       h1 {
         font-size: clamp(28px, 4vw, 38px);
@@ -2080,6 +2132,280 @@ var Ie = class {
       }
     `];
 	}
+}, $e = "config/config_entries/subentries/flow", et = { "HA-Frontend-Base": location.origin }, tt = class extends B {
+	constructor(...e) {
+		super(...e), this.areas = [], this._busy = !1, this._loading = !0, this._error = "", this.values = {}, this.labels = () => "", this.selectorLabels = () => "";
+	}
+	static {
+		this.properties = {
+			hass: { attribute: !1 },
+			kind: { type: String },
+			areas: { attribute: !1 },
+			_step: { state: !0 },
+			_busy: { state: !0 },
+			_loading: { state: !0 },
+			_error: { state: !0 }
+		};
+	}
+	firstUpdated(e) {
+		this.renderRoot.querySelector("dialog").showModal(), this.load();
+	}
+	disconnectedCallback() {
+		super.disconnectedCallback(), this.discard();
+	}
+	async discard() {
+		let e = this.flowId;
+		if (this.flowId = void 0, e) try {
+			await this.hass.callApi("DELETE", `${$e}/${encodeURIComponent(e)}`);
+		} catch {}
+	}
+	close() {
+		(!this._busy || this._loading) && this.dispatchEvent(new CustomEvent("closed", {
+			bubbles: !0,
+			composed: !0
+		}));
+	}
+	async load() {
+		if (!this._busy && this.hass.user?.is_admin) {
+			this._busy = this._loading = !0, this._error = "";
+			try {
+				await this.discard();
+				let e = (await this.hass.callWS({
+					type: "config_entries/get",
+					domain: "plantbased"
+				})).find((e) => e.state === "loaded" && this.kind in e.supported_subentry_types);
+				if (!e) throw Error("Hub not loaded");
+				if (!this.isConnected) return;
+				let t = await this.hass.callApi("POST", $e, { handler: [e.entry_id, this.kind] }, et);
+				if (this.flowId = t.flow_id, !this.isConnected) {
+					await this.discard();
+					return;
+				}
+				if (this.labels = await this.hass.loadBackendTranslation("config_subentries", "plantbased"), this.selectorLabels = await this.hass.loadBackendTranslation("selector", "plantbased"), !this.isConnected) return;
+				if (t.type !== "form" || !t.data_schema?.every((e) => [
+					"text",
+					"area",
+					"number",
+					"boolean",
+					"date",
+					"select"
+				].some((t) => t in e.selector))) throw Error("Unexpected schema");
+				this.values = Object.fromEntries(t.data_schema.map((e) => [e.name, e.description?.suggested_value ?? e.default ?? ("boolean" in e.selector ? !1 : "")])), this._step = t, this._loading = !1, this._busy = !1, await this.updateComplete, this.renderRoot.querySelector("input[name=\"name\"]")?.focus();
+			} catch {
+				this._error = V(this.hass, "createLoadError"), await this.discard();
+			} finally {
+				this._busy = !1;
+			}
+		}
+	}
+	label(e, t = "data") {
+		return this.labels(`component.plantbased.config_subentries.${this.kind}.step.${this._step?.step_id ?? "user"}.${t}.${e.name}`) || (t === "data" ? e.name : "");
+	}
+	error(e) {
+		let t = this._step?.errors?.[e];
+		return t ? this.labels(`component.plantbased.config_subentries.${this.kind}.error.${t}`) || V(this.hass, "createError") : "";
+	}
+	field(e) {
+		let t = e.name, n = e.selector, r = this.values[t] ?? "", i;
+		if ("boolean" in n) i = A`<input
+        id=${t}
+        name=${t}
+        type="checkbox"
+        .checked=${r === !0}
+      />`;
+		else if (n.select || "area" in n) {
+			let a = n.select?.options ?? this.areas.map((e) => ({
+				value: e.area_id,
+				label: e.name
+			}));
+			i = A`<select id=${t} name=${t} ?required=${e.required}>
+        ${e.required ? N : A`<option value="" ?selected=${r === ""}>—</option>`}
+        ${a.map((e) => {
+				let t = typeof e == "string" ? e : e.value, i = n.select?.translation_key ? this.selectorLabels(`component.plantbased.selector.${n.select.translation_key}.options.${t}`) : "";
+				return A`<option
+            value=${t}
+            ?selected=${String(r) === t}
+          >
+            ${i || (typeof e == "string" ? e : e.label)}
+          </option>`;
+			})}
+      </select>`;
+		} else i = n.text?.multiline ? A`<textarea
+        id=${t}
+        name=${t}
+        .value=${String(r)}
+        ?required=${e.required}
+      ></textarea>` : A`<input
+        id=${t}
+        name=${t}
+        type=${"number" in n ? "number" : "date" in n ? "date" : "text"}
+        .value=${String(r)}
+        ?required=${e.required}
+        min=${n.number?.min ?? N}
+        max=${n.number?.max ?? N}
+        step=${n.number?.step ?? N}
+      />`;
+		let a = this.error(t), o = this.label(e, "data_description");
+		return A`<div class="field ${"boolean" in n ? "boolean" : ""}">
+      <label for=${t}
+        >${this.label(e)}${e.required && !("boolean" in n) ? " *" : ""}</label
+      >${i} ${o ? A`<p class="helper">${o}</p>` : N}
+      ${a ? A`<p class="error" role="alert">${a}</p>` : N}
+    </div>`;
+	}
+	async submit(e) {
+		if (e.preventDefault(), this._busy || !this.flowId || !this.hass.user?.is_admin) return;
+		let t = new FormData(e.currentTarget), n = {};
+		for (let e of this._step?.data_schema ?? []) {
+			let r = t.get(e.name);
+			"boolean" in e.selector ? n[e.name] = t.has(e.name) : r !== null && r !== "" ? n[e.name] = "number" in e.selector ? Number(r) : r : e.required && (n[e.name] = "");
+		}
+		this.values = n, this._busy = !0, this._error = "";
+		try {
+			let e = await this.hass.callApi("POST", `${$e}/${encodeURIComponent(this.flowId)}`, n, et);
+			if (!this.isConnected) return;
+			e.type === "create_entry" ? (this.flowId = void 0, this.dispatchEvent(new CustomEvent("created", {
+				bubbles: !0,
+				composed: !0
+			}))) : e.type === "form" ? this._step = e : (this.flowId = void 0, this._loading = !0, this._error = V(this.hass, "createError"));
+		} catch {
+			this._error = V(this.hass, "createError");
+		} finally {
+			this._busy = !1;
+		}
+	}
+	render() {
+		return A`<dialog
+      aria-labelledby="create-title"
+      @cancel=${(e) => {
+			e.preventDefault(), this.close();
+		}}
+    >
+      <h2 id="create-title">
+        ${V(this.hass, this.kind === "plant" ? "addPlant" : "addGroup")}
+      </h2>
+      ${this._error ? A`<p class="error" role="alert">${this._error}</p>` : N}
+      ${this._loading ? A`<p role="status">
+                ${this._error ? "" : V(this.hass, "loading")}
+              </p>
+              <div class="dialog-actions">
+                ${this._error ? A`<button ?disabled=${this._busy} @click=${() => this.load()}>${V(this.hass, "retry")}</button>` : N}<button
+                  @click=${() => this.close()}
+                >
+                  ${V(this.hass, "cancel")}
+                </button>
+              </div>` : A`<form @submit=${this.submit}>
+              <fieldset ?disabled=${this._busy}>
+                <div class="fields">
+                  ${this._step?.data_schema?.map((e) => this.field(e))}
+                </div>
+                ${this.error("base") ? A`<p class="error" role="alert">${this.error("base")}</p>` : N}
+              </fieldset>
+              <div class="dialog-actions">
+                <button
+                  type="button"
+                  ?disabled=${this._busy}
+                  @click=${() => this.close()}
+                >
+                  ${V(this.hass, "cancel")}</button
+                ><button class="primary" type="submit" ?disabled=${this._busy}>
+                  ${V(this.hass, "create")}
+                </button>
+              </div>
+            </form>`}
+    </dialog>`;
+	}
+	static {
+		this.styles = [J, o`
+      dialog[open] {
+        display: flex;
+        flex-direction: column;
+      }
+      dialog {
+        width: min(680px, calc(100vw - 32px));
+        max-height: 85vh;
+        max-height: 85dvh;
+        border: 1px solid var(--pb-line);
+        border-radius: 18px;
+        padding: 24px;
+        background: var(--pb-surface);
+        color: var(--primary-text-color, #263b31);
+        box-shadow: 0 12px 48px #0003;
+        overflow: hidden;
+      }
+      dialog::backdrop {
+        background: #0006;
+      }
+      h2 {
+        margin: 0 0 20px;
+        flex-shrink: 0;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      fieldset {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        min-width: 0;
+        min-height: 0;
+        overflow: auto;
+        padding: 4px;
+      }
+      .fields {
+        display: grid;
+        gap: 16px;
+      }
+      .field {
+        min-width: 0;
+      }
+      label {
+        margin: 0 0 6px;
+      }
+      input:not([type="checkbox"]),
+      textarea,
+      select {
+        width: 100%;
+        min-height: 44px;
+        font: inherit;
+        padding: 10px;
+        border: 1px solid var(--pb-line);
+        border-radius: 10px;
+        color: inherit;
+        background: var(--pb-surface);
+      }
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+      .helper {
+        margin: 5px 0 0;
+        font-size: 12px;
+      }
+      .error {
+        margin: 7px 0;
+        font-size: 13px;
+      }
+      .boolean {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .boolean label {
+        margin: 0;
+      }
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+        flex-shrink: 0;
+      }
+    `];
+	}
 };
 //#endregion
 //#region frontend/src/index.ts
@@ -2088,10 +2414,11 @@ for (let [e, t] of [
 	["plantbased-overview-card", Re],
 	["plantbased-card-editor", ze],
 	["plantbased-overview-card-editor", Be],
-	["plantbased-panel", Qe]
+	["plantbased-panel", Qe],
+	["plantbased-create-dialog", tt]
 ]) customElements.get(e) || customElements.define(e, t);
-var $e = window;
-$e.customCards ??= [];
+var nt = window;
+nt.customCards ??= [];
 for (let [e, t, n] of [[
 	"plantbased-card",
 	"PlantBased",
@@ -2100,7 +2427,7 @@ for (let [e, t, n] of [[
 	"plantbased-overview-card",
 	"PlantBased Overview / Übersicht",
 	"Pflanzenübersicht · Plant overview"
-]]) $e.customCards.some((t) => t.type === e) || $e.customCards.push({
+]]) nt.customCards.some((t) => t.type === e) || nt.customCards.push({
 	type: e,
 	name: t,
 	description: n,
