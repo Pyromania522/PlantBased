@@ -9,6 +9,7 @@ from homeassistant.config_entries import (
     ConfigFlow,
     ConfigFlowResult,
     ConfigSubentryFlow,
+    OptionsFlow,
     SubentryFlowResult,
 )
 from homeassistant.core import callback
@@ -19,6 +20,7 @@ from homeassistant.util import dt as dt_util
 
 from .const import DOMAIN, IMAGE_PRESETS, NAME
 from .registry import device_for_subentry
+from .reminder_options import ReminderOptions, available_targets
 from .schema import schema as vol
 
 
@@ -26,6 +28,11 @@ class PlantBasedConfigFlow(ConfigFlow, domain=DOMAIN):
     """Create one local hub after explicit confirmation."""
 
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
+        return PlantBasedOptionsFlow()
 
     @classmethod
     @callback
@@ -46,6 +53,68 @@ class PlantBasedConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_create_entry(title=NAME, data={})
 
         return self.async_show_form(step_id="user")
+
+
+class PlantBasedOptionsFlow(OptionsFlow):
+    """Configure reminders without a second reload listener or YAML."""
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        choices = available_targets(self.hass)
+        available = {choice["value"] for choice in choices}
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            options = ReminderOptions.from_data(user_input)
+            if any(target not in available for target in options.targets):
+                errors["notify_targets"] = "invalid_target"
+            elif options.enabled and not (options.targets or options.persistent):
+                errors["base"] = "target_required"
+            elif options.at.tzinfo is not None:
+                errors["reminder_time"] = "local_time_required"
+            else:
+                return self.async_create_entry(
+                    title="",
+                    data={
+                        **user_input,
+                        "reminder_time": options.at.isoformat(),
+                        "notify_targets": list(options.targets),
+                    },
+                )
+        defaults = dict(self.config_entry.options)
+        if user_input is not None:
+            defaults.update(user_input)
+        # Keep stale values visible so users can remove a disappeared target.
+        for target in defaults.get("notify_targets", []):
+            if target not in available:
+                choices.append({"value": target, "label": target.partition(":")[2]})
+        fields: dict[Any, Any] = {}
+        for key, default in (
+            ("reminder_enabled", False),
+            ("repeat_daily", True),
+            ("persistent_notification", False),
+            ("snooze_action", True),
+        ):
+            fields[vol.Required(key, default=defaults.get(key, default))] = (
+                selector.BooleanSelector()
+            )
+        fields[
+            vol.Required(
+                "reminder_time", default=defaults.get("reminder_time", "09:00:00")
+            )
+        ] = selector.TimeSelector()
+        fields[
+            vol.Required("notify_targets", default=defaults.get("notify_targets", []))
+        ] = selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=choices,
+                multiple=True,
+                mode=selector.SelectSelectorMode.DROPDOWN,
+            )
+        )
+        return self.async_show_form(
+            step_id="init", data_schema=vol.Schema(fields), errors=errors
+        )
 
 
 class CareSubentryFlow(ConfigSubentryFlow):

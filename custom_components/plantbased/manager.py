@@ -4,7 +4,10 @@ import asyncio
 from collections.abc import Callable, Iterable
 from copy import deepcopy
 from datetime import date, datetime, timedelta
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .reminders import ReminderCoordinator
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EVENT_CORE_CONFIG_UPDATE
@@ -48,6 +51,7 @@ class PlantManager:
         self._events_active = False
         self._due: set[tuple[str, CareType]] = set()
         self.care_labels: dict[CareType, str] = {}
+        self.reminders: ReminderCoordinator | None = None
 
     async def async_load(self) -> None:
         """Restore runtime data, seed new plants and prune deleted plants."""
@@ -170,6 +174,8 @@ class PlantManager:
         """Cancel startup/midnight listeners, including failed-setup cleanup."""
         self._stopped = True
         self._events_active = False
+        if self.reminders is not None:
+            self.reminders.async_stop()
         if self._midnight_unsubscribe is not None:
             self._midnight_unsubscribe()
             self._midnight_unsubscribe = None
@@ -220,6 +226,7 @@ class PlantManager:
         value: date | None = None,
         *,
         expected_due: date | None = None,
+        expected_tasks: set[str] | None = None,
     ) -> None:
         """Record each action in one serialized, durable transaction."""
         value = value or dt_util.now().date()
@@ -229,6 +236,10 @@ class PlantManager:
             )
         async with self._lock:
             selected = self._validate(ids)
+            if expected_tasks is not None:
+                self._validate_expected(
+                    [(key, care) for key in selected], expected_tasks
+                )
             if expected_due is not None:
                 for key in selected:
                     schedule = calculate(
@@ -274,15 +285,50 @@ class PlantManager:
         self, ids: Iterable[str], care: CareType, days: int = 1
     ) -> None:
         """Apply a bulk snooze as one checked storage transaction."""
+        await self.async_snooze_tasks([(key, care) for key in ids], days)
+
+    def _validate_expected(
+        self, tasks: Iterable[tuple[str, CareType]], expected: set[str]
+    ) -> None:
+        for key, care in tasks:
+            schedule = calculate(
+                self.configs[key], self.plants[key], dt_util.now().date(), self.vacation
+            )
+            day = (
+                schedule.next_watering if care == "water" else schedule.next_fertilizing
+            )
+            active = (
+                schedule.needs_water if care == "water" else schedule.needs_fertilizer
+            )
+            if (
+                not active
+                or day is None
+                or f"{key}:{care}:{day.isoformat()}" not in expected
+            ):
+                raise ServiceValidationError(
+                    translation_domain=DOMAIN, translation_key="stale_task"
+                )
+
+    async def async_snooze_tasks(
+        self,
+        tasks: Iterable[tuple[str, CareType]],
+        days: int = 1,
+        *,
+        expected_tasks: set[str] | None = None,
+    ) -> None:
+        """Snooze multiple care types with one save, including mobile bulk snooze."""
         if type(days) is not int or not 1 <= days <= 365:
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key="invalid_interval"
             )
         async with self._lock:
-            selected = self._validate(ids)
+            selected = list(dict.fromkeys(tasks))
+            self._validate([key for key, _ in selected])
+            if expected_tasks is not None:
+                self._validate_expected(selected, expected_tasks)
             plants = deepcopy(self.plants)
             today = dt_util.now().date()
-            for plant_id in selected:
+            for plant_id, care in selected:
                 state, config = plants[plant_id], self.configs[plant_id]
                 if care == "water":
                     base = state.last_watered + timedelta(days=config.watering_interval)

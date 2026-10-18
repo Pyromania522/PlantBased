@@ -1,8 +1,17 @@
 {
   "domain": "plantbased",
   "name": "PlantBased",
-  "codeowners": ["@Pyromania522"],
+  "after_dependencies": [
+    "mobile_app",
+    "notify"
+  ],
+  "codeowners": [
+    "@Pyromania522"
+  ],
   "config_flow": true,
+  "dependencies": [
+    "persistent_notification"
+  ],
   "documentation": "https://github.com/Pyromania522/PlantBased",
   "integration_type": "hub",
   "iot_class": "calculated",

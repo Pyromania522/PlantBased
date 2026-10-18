@@ -10,6 +10,8 @@ from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN
 from .manager import PlantBasedConfigEntry, PlantManager
+from .reminder_storage import ReminderStore
+from .reminders import ReminderCoordinator, async_remove_reminders
 from .services import async_register_actions
 from .storage import PlantStore
 
@@ -51,6 +53,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
     manager = entry.runtime_data = PlantManager(hass, entry)
     try:
         await manager.async_load()
+        manager.reminders = ReminderCoordinator(manager)
+        await manager.reminders.async_load()
     except (
         ValueError,
         TypeError,
@@ -84,6 +88,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     manager.async_start()
+    manager.reminders.async_start()
     return True
 
 
@@ -91,6 +96,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) 
     """Unload all entities and finish persistence before allowing a reload."""
     if not await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         return False
+    if entry.runtime_data.reminders is not None:
+        await entry.runtime_data.reminders.async_shutdown()
     await entry.runtime_data.async_shutdown()
     return True
 
@@ -102,4 +109,6 @@ async def async_reload_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) 
 
 async def async_remove_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -> None:
     """Removing the hub also removes its private runtime storage."""
+    await async_remove_reminders(hass, entry.entry_id)
     await PlantStore(hass, entry.entry_id).async_remove()
+    await ReminderStore(hass, entry.entry_id).async_remove()
