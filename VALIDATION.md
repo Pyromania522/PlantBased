@@ -1,5 +1,42 @@
 # Validation
 
+## v0.2.2 — compact automatic room dashboards
+
+Prepared for user review; publication follows the reviewed PR merge.
+
+| Check | Executed local result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **234 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **234 passed**, no skips or expected failures |
+| Integration statement/branch coverage | **98.06% current / 98.07% minimum** |
+| Strict mypy / Ruff lint and format | Passed; 26 integration modules |
+| TypeScript / Prettier / committed bundle | Passed; unchanged compiled frontend |
+| Playwright / Chromium | **33 passed** |
+| Actual-filesystem persistence, both HA versions | Passed |
+| Release ZIP | **129,622 bytes**; both Python outputs byte-identical |
+
+Four new real-HA tests verify three visible primary entities per plant, ten hidden
+but enabled auxiliary entities, working hidden care buttons, original entity IDs,
+one-time migration of existing plants, preserved user-hidden/disabled choices,
+manual re-show surviving reload and unchanged care history. New config flows
+record minor version 2. Future major versions are not migrated.
+
+The initial minimum-version run overlapped Vite's output-directory rebuild and
+failed while reading the temporarily absent bundle. The full minimum suite was
+rerun after the build completed; all 234 tests passed without test changes.
+
+Candidate SHA-256:
+
+```text
+f78ddf020c6b8a2d7e6180d867e7f18be5a2ef3844f37c4b54a081408cc4a97d  plantbased.zip
+```
+
+HA owns automatic room rendering. Official frontend source confirms hidden-entity
+and category filtering; a full HA browser capture of the reduced room layout
+remains manual. The PR checks record official hassfest/HACS acceptance.
+
+---
+
 ## v0.2.1 — creation from the sidebar overview
 
 Prepared for user review; publication follows the reviewed PR merge.

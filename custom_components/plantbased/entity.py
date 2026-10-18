@@ -3,7 +3,7 @@
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity import Entity
 
-from .const import DOMAIN
+from .const import DOMAIN, HIDDEN_PLANT_ENTITY_KEYS
 from .manager import PlantManager
 
 
@@ -18,6 +18,9 @@ class PlantBasedEntity(Entity):
         self.target_id = target_id or manager.entry.entry_id
         self.is_hub = target_id is None
         self.key = key
+        self._attr_entity_registry_visible_default = not (
+            self.target_id in manager.configs and key in HIDDEN_PLANT_ENTITY_KEYS
+        )
         self._attr_unique_id = f"{self.target_id}_{key}"
         self._attr_translation_key = key
         self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, self.target_id)})

@@ -1,5 +1,32 @@
 # Decisions and verified references
 
+## v0.2.2: compact automatic HA room dashboards
+
+The user declined species/database lookup; do not add a provider or credentials.
+The automatic HA room view exposed 13 primary tiles per plant. Keep care status
+and both day countdowns visible, with appropriate icons. Use the public
+`entity_registry_visible_default` property for ten additional per-plant entities.
+Hiding leaves their state and services active. Keep normal care data out of the
+diagnostic category; intervals/pause retain their existing configuration category.
+The existing PlantBased cards resolve enabled entities regardless of visibility.
+
+HA's `EntityPlatform` passes visibility defaults only when a registry entry is
+created. Existing entries require a one-time migration: config entry minor version
+1 → 2 hides only the known plant auxiliary keys in that entry. User-hidden entries,
+groups, hub entities, IDs, disabled flags, configuration and care history remain
+unchanged. Existing visible auxiliary entities receive the new default once;
+HA does not distinguish a previous explicit visible choice from the old default.
+After migration, manual visibility changes survive reloads and later upgrades.
+
+Verified actual entity/registry/config-entry APIs on installed HA 2025.10.0 and
+2026.10.2. Official frontend source at
+`b399dac7881d03df938fb4cad5200b68811c24f2`,
+`src/common/entity/entity_filter.ts` excludes hidden entries, and
+`src/panels/lovelace/strategies/home/home-area-view-strategy.ts` excludes category
+entities when generating device sections. HA controls that layout; avoid replacing
+its strategy or inserting custom cards into user-managed dashboards. Existing
+PlantBased cards remain the image/action option on editable dashboards.
+
 ## v0.2.1: create plants/groups on the sidebar page
 
 Add administrator-only creation buttons to the overview. The existing HA frontend

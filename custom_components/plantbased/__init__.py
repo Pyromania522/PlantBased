@@ -8,10 +8,11 @@ from homeassistant.exceptions import ConfigEntryError, HomeAssistantError
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.typing import ConfigType
 
 from .areas import AreaCoordinator, async_sync_group_area, plant_area
-from .const import DOMAIN
+from .const import DOMAIN, HIDDEN_PLANT_ENTITY_KEYS
 from .manager import PlantBasedConfigEntry, PlantManager
 from .reminder_storage import ReminderStore
 from .reminders import ReminderCoordinator, async_remove_reminders
@@ -66,6 +67,30 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Keep action descriptions available even when the hub is unloaded."""
     await async_register_frontend(hass)
     async_register_actions(hass)
+    return True
+
+
+async def async_migrate_entry(
+    hass: HomeAssistant, entry: PlantBasedConfigEntry
+) -> bool:
+    """Apply compact visibility once; subsequent user visibility edits win."""
+    if entry.version > 1:
+        return False
+    if entry.minor_version < 2:
+        plants = {
+            key for key, sub in entry.subentries.items() if sub.subentry_type == "plant"
+        }
+        registry = er.async_get(hass)
+        for entity in er.async_entries_for_config_entry(registry, entry.entry_id):
+            if (
+                entity.config_subentry_id in plants
+                and entity.translation_key in HIDDEN_PLANT_ENTITY_KEYS
+                and entity.hidden_by is None
+            ):
+                registry.async_update_entity(
+                    entity.entity_id, hidden_by=er.RegistryEntryHider.INTEGRATION
+                )
+        hass.config_entries.async_update_entry(entry, minor_version=2)
     return True
 
 

@@ -33,6 +33,7 @@ class PlantBasedConfigFlow(ConfigFlow, domain=DOMAIN):
     """Create one local hub after explicit confirmation."""
 
     VERSION = 1
+    MINOR_VERSION = 2
 
     @staticmethod
     @callback

@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased — 0.2.1
+## Unreleased — 0.2.2
+
+- Reduce automatically generated HA room dashboards from 13 primary tiles to
+  three per plant: care status and watering/fertilizing countdowns, with plant icons.
+- Hide additional plant entities without disabling them. Apply visibility once to
+  existing plants on upgrade; preserve later user choices and existing care history.
+
+## 0.2.1
 
 - Add administrator buttons for creating plants/groups directly on the sidebar
   overview, backed by HA's native subentry flow schema, defaults and translations.

@@ -26,6 +26,7 @@ async def test_confirm_hub_and_lifecycle(hass: HomeAssistant) -> None:
     entry = result["result"]
     assert entry.unique_id == DOMAIN
     assert entry.version == 1
+    assert entry.minor_version == 2
     assert entry.state is ConfigEntryState.LOADED
     assert await hass.config_entries.async_reload(entry.entry_id)
     assert entry.state is ConfigEntryState.LOADED
