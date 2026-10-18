@@ -58,6 +58,51 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: pip
       - run: python -m pip install -r ${{ matrix.requirements }}
-      - run: pytest
+      - run: pytest --junitxml=pytest-results.xml
+      - name: Annotate pytest fixture failures
+        if: failure()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree
+
+          report = Path("pytest-results.xml")
+          if report.is_file():
+              for case in ElementTree.parse(report).iter("testcase"):
+                  for error in case.findall("error"):
+                      detail = (error.text or error.get("message", ""))[-6000:]
+                      message = f"{case.get('classname')}.{case.get('name')}\n{detail}"
+                      message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+                      print(f"::error::{message}")
+          PY
       - name: Verify real filesystem storage
         run: python -m script.check_storage
+
+  frontend:
+    name: Frontend build and browser tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run format:check
+      - name: Verify original SVG sources
+        run: |
+          python3 script/build_illustrations.py
+          git diff --exit-code -- frontend/public/illustrations
+      - run: npm run check:bundle
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: plantbased-browser-evidence
+          path: |
+            /tmp/plantbased-*.png
+            test-results/
+          if-no-files-found: ignore

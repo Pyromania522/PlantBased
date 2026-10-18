@@ -11,3 +11,7 @@ updates:
     exclude-paths:
       # This fixture intentionally pins the declared minimum HA version.
       - requirements-test-min.txt
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly

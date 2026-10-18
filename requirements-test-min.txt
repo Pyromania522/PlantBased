@@ -2,3 +2,6 @@
 pytest-homeassistant-custom-component==0.13.285
 # aiodns 3.5 (required by HA 2025.10) predates the pycares 5 API removal.
 pycares==4.11.0
+
+# Official frontend required to test real HTTP/bootstrap/module registration.
+home-assistant-frontend==20251001.0

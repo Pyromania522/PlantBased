@@ -3,12 +3,13 @@
 Local, calendar-based houseplant care for Home Assistant. No plant sensors, cloud
 accounts, or external Python requirements.
 
-**Development status: M4 — care reminders and mobile notification actions.**
+**Development status: M5 — dashboard cards, visual editors and illustrations.**
 Plants and groups have care controls, automation actions/events, a care calendar
 and a task list. Optional reminders now send one grouped summary through selected
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
-Dashboard cards follow in M5. This remains a development milestone, not the
-complete v0.1.0.
+Single-plant, group and overview cards now include English/German controls and
+twelve original illustrations. This remains a development milestone; the complete
+v0.1.0 release follows in M6.
 
 ## Installation
 
@@ -63,8 +64,56 @@ care dates. Restore it from a known-good backup before reloading.
 PlantBased provides 16 entities per plant, five per group and eight on the hub. Care-status
 attributes include group, species, image metadata, overdue days and history.
 Calculated sensor entities do not require any physical sensor or sensor selection.
-Image presets are stored now; their illustrations/cards arrive in M5. Custom
-image paths/URLs are metadata and are not downloaded by the backend.
+Image presets resolve to bundled original SVGs. Custom image paths/URLs are
+loaded by the browser and are not downloaded by the backend.
+
+## Dashboard cards
+
+After restarting HA and adding PlantBased, refresh an already-open browser tab.
+The integration loads its card module automatically: **no manual dashboard
+resource entry or separate frontend repository is needed**.
+
+1. Open your dashboard, choose **Edit dashboard → Add card**, and search for
+   **PlantBased**.
+2. Choose **PlantBased** and select a PlantBased plant or group
+   in the visual editor. A group displays its current members in a compact grid.
+3. Add **PlantBased Overview / Übersicht** for hub counts and the list of due plants.
+4. Optionally set a title or hide the action buttons in either editor.
+
+Plant cards show watering/fertilizing countdowns, group names, and distinct
+healthy, due, overdue, paused and unavailable states. **Watered**, **Fertilized**
+and separate **Watering +1 day / Fertilizing +1 day** snooze choices use the existing care actions. Buttons wait
+for HA confirmation; failures show a message without marking care done. Care can
+still be recorded during a pause. Disabled fertilizing has no enabled action.
+The overview uses the hub's actual counters; pause/vacation plants stay out of its
+due list. Entity and device renames do not require editing the card configuration.
+
+These are optional dashboard YAML equivalents; integration setup stays UI-only:
+
+```yaml
+type: custom:plantbased-card
+device_id: YOUR_PLANT_OR_GROUP_DEVICE_ID
+title: Living room
+show_actions: true
+```
+
+```yaml
+type: custom:plantbased-overview-card
+show_actions: true
+```
+
+`device_id` is the registry ID selected by the editor, not an entity ID. An empty
+selection never targets all plants. `title` is optional; `show_actions` defaults
+to `true`. Overview needs no device selection. Device/group membership updates and
+care states arrive through HA's normal push connection, without polling.
+
+Choose an illustration in the plant's **Reconfigure** dialog: generic, monstera,
+ficus, pothos, snake plant, succulent, cactus, fern, orchid, herb, palm or hanging
+plant. Alternatively use `/local/plants/your-photo.png` (a file under HA's
+`www/plants/`) or an HTTP(S) image URL. A failed image falls back to the preset.
+External images require browser access to that host; bundled presets work locally.
+The cards follow the browser's HA language and theme, including dark mode and
+narrow mobile/dashboard columns. Other languages fall back to English.
 
 ## Calendar, tasks and automation actions
 
@@ -160,7 +209,7 @@ to configured HA notifiers and makes no notification network request itself.
 | M2 | Plant/group subentries, storage, scheduling, entities | Implemented; see VALIDATION.md |
 | M3 | Actions, events, calendar, to-do, diagnostics | Implemented; see VALIDATION.md |
 | M4 | Summary and actionable notifications | Implemented; see VALIDATION.md |
-| M5 | Lovelace cards, visual editors, illustrations | Planned |
+| M5 | Lovelace cards, visual editors, illustrations | Implemented; see VALIDATION.md |
 | M6 | Complete documentation and v0.1.0 release | Planned |
 
 The manifest's `0.1.0` is a development version. A public release is reserved for M6.
@@ -170,12 +219,12 @@ The manifest's `0.1.0` is a development version. A public release is reserved fo
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**Aktueller Stand: M4.** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**Aktueller Stand: M5.** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
 Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
 Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
-Sammelerinnerungen und mobile Pflegeaktionen sind jetzt enthalten; Dashboard-Karten
-folgen in M5.
+Sammelerinnerungen, mobile Pflegeaktionen und Dashboard-Karten mit zwölf eigenen
+Pflanzenillustrationen sind enthalten. Die Veröffentlichung von v0.1.0 folgt in M6.
 
 Installation: In HACS unter **Benutzerdefinierte Repositories** die oben genannte
 Adresse als **Integration** hinzufügen, herunterladen und Home Assistant neu
@@ -251,6 +300,28 @@ heute noch nicht versendete Meldung nach dem Start nachgeholt. Versandnachweise
 bleiben bei Neustarts erhalten; eine doppelte Uhrzeit bei der Zeitumstellung führt
 nicht zu einer zweiten Tagesmeldung. Geräteverbindung, App-Berechtigungen und
 Anbietergrenzen bestimmen die tatsächliche Zustellung.
+
+### Dashboard-Karten
+
+Nach dem HA-Neustart einen bereits geöffneten Browser-Tab neu laden. Die Karten
+werden automatisch geladen; ein manueller Ressourceneintrag ist nicht nötig.
+Unter **Dashboard bearbeiten → Karte hinzufügen** nach **PlantBased** suchen.
+**PlantBased** bietet im visuellen Editor die Auswahl einer
+Pflanze oder Gruppe. **PlantBased Overview / Übersicht** zeigt die Gesamtzahlen und alle
+aktuell fälligen Pflanzen. Titel und Aktionsknöpfe lassen sich im Editor anpassen.
+
+**Gewässert** und **Gedüngt** speichern die jeweilige Pflege. Unter
+**Verschieben** lässt sich **Gießen +1 Tag** oder **Düngen +1 Tag** getrennt wählen. Während des
+Speicherns sind doppelte Klicks gesperrt. Bei einem Fehler erscheint eine Meldung.
+Pausen, überfällige Pflege und nicht verfügbare Pflanzen sind unterscheidbar.
+Gruppenkarten folgen der aktuellen Zuordnung ihrer Pflanzen.
+
+Unter **Neu konfigurieren** an der Pflanze eines von zwölf lokalen SVG-Motiven
+wählen oder ein eigenes Bild wie `/local/plants/monstera.png` angeben. Die Datei
+liegt dann unter `www/plants/` in der HA-Konfiguration. HTTP(S)-Bildadressen sind
+ebenfalls möglich und werden vom Browser geladen. Ist das Bild nicht erreichbar,
+erscheint das gewählte Motiv. Die Karten unterstützen Deutsch, Englisch,
+HA-Themes, dunkle Darstellung und schmale Ansichten.
 
 ## Development and license
 

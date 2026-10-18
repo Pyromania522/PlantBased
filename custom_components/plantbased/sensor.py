@@ -10,6 +10,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .entity import PlantBasedEntity
 from .manager import PlantBasedConfigEntry, PlantManager
+from .web import illustration_url
 
 PARALLEL_UPDATES = 0
 COUNTS = (
@@ -90,7 +91,9 @@ class PlantSensor(PlantBasedEntity, SensorEntity):
             "subentry_id": self.target_id,
             "group": group.title if group else None,
             "group_id": config.group,
-            "image_url": config.image_url or None,
+            "image_url": config.image_url
+            or illustration_url(self.hass, config.image_preset),
+            "fertilizing_enabled": config.fertilizing_enabled,
             "image_preset": config.image_preset,
             "species": config.species,
             "notes": config.notes,

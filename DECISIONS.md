@@ -1,5 +1,69 @@
 # Decisions and verified references
 
+## M5 scope and verified frontend APIs
+
+Before coding, official developer-doc source
+`50b518898989b67bb76b69827f227aa6f0acd32a`, Core dev
+`1b740dcd4bc1e669827fc94c8b4bd7a4bbbae734`, frontend source
+`b399dac7881d03df938fb4cad5200b68811c24f2`, HACS documentation
+`4f06a5bd11088a21a453fdcb3eda1603353e6c8a`, and both installed supported
+releases were checked. The websites remain denied by this cloud policy; their
+official Git repositories are used.
+
+| Contract | Official reference |
+| --- | --- |
+| `async_register_static_paths([StaticPathConfig(...)])` | [Async static paths](https://developers.home-assistant.io/blog/2024/06/18/async_register_static_paths/) |
+| `frontend.add_extra_js_url(hass, url)` | Public custom-integration API documented in [Core frontend source](https://github.com/home-assistant/core/blob/dev/homeassistant/components/frontend/__init__.py), verified on both releases |
+| Custom elements, `setConfig`, `hass`, `getCardSize`, `getGridOptions`, visual editors, `config-changed`, `window.customCards` | [Custom cards](https://developers.home-assistant.io/docs/frontend/custom-ui/custom-card/) |
+| `hass.states`, `hass.locale.language`/`language`, `callWS`, `callService` with target | [Frontend data](https://developers.home-assistant.io/docs/frontend/data/), released frontend types |
+| Entity/device registry list and update subscriptions | [WebSocket API](https://developers.home-assistant.io/docs/api/websocket/), official frontend registry clients and both released Core handlers |
+
+The integration registers its bundle once as an extra **frontend module**, using
+the supported public API, rather than editing private Lovelace resource
+collections. It therefore works for both storage and YAML dashboard modes, without
+manual resource entries. Static registration and module loading live for the HA
+process; entry reloads/removal cannot register duplicate routes/modules. A fresh
+browser reload is needed if the UI was already open when the integration loaded.
+The JavaScript and illustration URLs include a content-derived cache version
+covering the compiled bundle and all twelve SVGs.
+There is one locally bundled TypeScript/Lit module, without CDN imports, external
+fonts, frontend telemetry or runtime Python requirements.
+
+The single/group card selects a plant/group device ID. The overview covers all
+PlantBased plants. Device/entity IDs and known translation keys/unique IDs are
+resolved through the registries, never guessed from entity names. Registry update
+subscriptions refresh metadata; normal hass state pushes update care displays.
+Connections/subscriptions are released when a card/editor is removed. The older
+supported `hass` property is used because the newly recommended context APIs are
+not available on the minimum release.
+
+The visual editor uses an accessible native device select populated only with
+PlantBased plant/group devices, avoiding undocumented lazy-loading of HA's picker
+components. Standard `getConfigElement`, stub configs and bubbling/composed
+`config-changed` events provide HA's graphical card editing contract. User titles,
+plant names and backend errors render as escaped text. Custom images allow only
+/local/ paths or HTTP(S) URLs without credentials and fall back to a local preset
+on failure. All twelve SVGs are authored from original vector primitives under
+MIT; no downloaded artwork or generated raster images are used.
+
+Care buttons call the existing integration actions with a device target; pending
+operations disable duplicate presses and failures are visible without optimistic
+state changes. Snooze offers independent watering/fertilizing choices. Paused and
+unavailable status remain distinct; overdue uses due flags and negative days, so
+seasonally inactive care is not colored overdue. Cards use HA theme variables,
+German/English labels, keyboard-accessible controls and responsive layouts.
+Image entities remain optional and are not added. Public release remains M6.
+
+HA's pytest plugin disables requirement installation, so dev/test requirements
+explicitly pin the official `home-assistant-frontend` package to each release's
+frontend manifest (20260930.4/current and 20251001.0/minimum). These are test-only
+dependencies. Native HTTP tests verify module injection into the actual frontend
+index and static assets, and authenticated WebSocket tests verify registry fields
+used by the cards. Browser tests use the real compiled module and a public-API
+fixture rather than a complete HA app; a full interactive HA/Companion smoke test
+is still a separate check. No claim of automatic HACS default-list submission or
+published release is made.
+
 ## M4 scope, verified APIs and behavior
 
 Before implementation, the official developer documentation at

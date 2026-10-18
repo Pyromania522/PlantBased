@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #eef2ed;
+        color: #263b31;
+        font-family: system-ui, sans-serif;
+        --primary-text-color: #263b31;
+        --secondary-text-color: #657368;
+        --card-background-color: #fff;
+        --secondary-background-color: #f2f5ef;
+        --divider-color: #e0e6dd;
+        --success-color: #397656;
+        --warning-color: #a66413;
+        --error-color: #b34e43;
+      }
+      body.dark {
+        background: #171e19;
+        --primary-text-color: #e2eadf;
+        --secondary-text-color: #aab7aa;
+        --card-background-color: #242d26;
+        --secondary-background-color: #303a31;
+        --divider-color: #435044;
+        --success-color: #9cbe91;
+        --warning-color: #e0b66f;
+        --error-color: #eb9788;
+      }
+      #root {
+        display: grid;
+        gap: 18px;
+        max-width: 760px;
+        margin: auto;
+      }
+      @media (max-width: 450px) {
+        body {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="root"></main>
+    <script
+      type="module"
+      src="/plantbased/plantbased.js?v=browser-test"
+    ></script>
+  </body>
+</html>
