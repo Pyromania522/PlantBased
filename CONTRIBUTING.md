@@ -1,7 +1,7 @@
 # Contributing
 
-PlantBased is developed in milestones. M5 adds bundled TypeScript/Lit cards,
-visual editors, automatic module registration and original SVG illustrations.
+PlantBased is developed in milestones. M6 adds documentation, executable
+automation examples and tested packaging/publication for v0.1.0.
 Before using an HA API, check the current official developer documentation and
 the supported minimum HA release. Record compatibility decisions in DECISIONS.md.
 
@@ -114,3 +114,26 @@ Include the milestone, behavior changed, exact validation results, and any
 assumptions or API compatibility findings. Do not commit tokens, personal HA
 configuration, storage files, environments, or generated test reports.
 Code and original artwork are contributed under the MIT license.
+
+## Release checks
+
+After building the frontend, build a reviewable release candidate:
+
+```sh
+.venv/bin/python -m script.build_release --tag v0.1.0
+cd dist
+sha256sum --check SHA256SUMS
+```
+
+The builder uses only tracked integration files, so stage newly added runtime
+assets before checking a changed tree. It rejects version mismatches, missing
+release notes, missing runtime files, tracked symlinks/caches and SVG mismatches.
+`tests/test_release.py` exercises actual ZIP creation/extraction, determinism,
+checksums, invalid packages and exclusion of untracked local data. The full HA
+suite also loads the exact documented automation YAML into the real engine.
+
+Use actionlint when changing workflows (M6 verified with **1.7.12**). The CI
+package job builds an artifact on PRs and is reused by the tag workflow. See
+[docs/RELEASING.md](docs/RELEASING.md) for versioning, merge/tag order, publishing,
+failed drafts and the distinction between tested preflight and actual publication.
+Never describe a release as published from a successful PR build alone.

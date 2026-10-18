@@ -2,8 +2,11 @@ name: Validate
 
 on:
   push:
+    branches:
+      - "**"
   pull_request:
   workflow_dispatch:
+  workflow_call:
   schedule:
     - cron: "23 6 * * 1"
 
@@ -106,3 +109,22 @@ jobs:
             /tmp/plantbased-*.png
             test-results/
           if-no-files-found: ignore
+
+  release-package:
+    name: Release package preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run check:bundle
+      - run: python3 -m script.build_release
+      - name: Upload verified release candidate
+        uses: actions/upload-artifact@v6
+        with:
+          name: plantbased-release-candidate
+          path: dist/
+          if-no-files-found: error

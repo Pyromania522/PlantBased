@@ -1,6 +1,22 @@
 # Changelog
 
-## Unreleased — 0.1.0 development
+## 0.1.0 — first complete version
+
+Publication status and assets are listed in
+[GitHub Releases](https://github.com/Pyromania522/PlantBased/releases).
+
+### Added in M6
+
+- Complete installation/update/backup/uninstall and troubleshooting guidance,
+  including HA Container paths and English/German user instructions.
+- Executable due/done notification and manual group-action automation examples,
+  verified through the real HA automation engine on both supported targets.
+- Real browser-fixture card previews and explicit full-HA/Companion screenshot
+  placeholders, release notes and maintainer release instructions.
+- Deterministic ZIP/checksum packaging with version/asset checks, original and
+  third-party licenses, extraction tests and local-file exclusion.
+- PR release-candidate artifacts and a version-tag workflow gated by all seven
+  validation jobs; complete draft upload before publishing, without extra secrets.
 
 ### Added in M5
 
@@ -63,4 +79,5 @@
 - Verified M1 on HA 2025.10.0 and 2026.10.2, with hassfest, HACS, Ruff, mypy,
   and both test jobs passing on GitHub.
 
-The complete v0.1.0 release is planned for M6. No release has been published.
+Public releases are created by the version-tag workflow after the reviewed merge;
+a version in this changelog does not by itself publish a GitHub Release.
