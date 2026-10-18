@@ -1,5 +1,14 @@
 import type { HomeAssistant } from "./types";
 const en = {
+  addPlant: "Add plant",
+  addGroup: "Add group",
+  create: "Create",
+  cancel: "Cancel",
+  created: "Added successfully",
+  createLoadError:
+    "The setup form could not be loaded. Check that the PlantBased hub is loaded and try again.",
+  createError:
+    "Could not add this plant or group. Check the values or try again.",
   groups: "Groups",
   areas: "Areas",
   yourPlants: "Your plants",
@@ -66,6 +75,15 @@ const en = {
   invalidActions: "Choose whether care buttons are shown.",
 };
 const de: typeof en = {
+  addPlant: "Pflanze hinzufügen",
+  addGroup: "Gruppe hinzufügen",
+  create: "Anlegen",
+  cancel: "Abbrechen",
+  created: "Erfolgreich hinzugefügt",
+  createLoadError:
+    "Das Formular konnte nicht geladen werden. Prüfe, ob der PlantBased-Hub geladen ist, und versuche es erneut.",
+  createError:
+    "Die Pflanze oder Gruppe konnte nicht angelegt werden. Prüfe die Eingaben oder versuche es erneut.",
   groups: "Gruppen",
   areas: "Bereiche",
   yourPlants: "Deine Pflanzen",

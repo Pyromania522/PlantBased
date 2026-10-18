@@ -1,6 +1,6 @@
 # Releasing PlantBased
 
-Versions v0.1.0 and v0.1.1 are published. Follow this process for subsequent releases.
+Versions through v0.2.0 are published. Follow this process for subsequent releases.
 Merging a release-preparation PR does not publish a release.
 The tag-triggered workflow publishes after all checks pass. Do not create a tag
 from a feature branch: the publisher requires the tagged commit to be on `main`.
@@ -17,15 +17,15 @@ from a feature branch: the publisher requires the tagged commit to be on `main`.
 4. Open a PR, inspect the `plantbased-release-candidate` CI artifact, and merge
    after validation. The artifact contains `plantbased.zip` and `SHA256SUMS`.
 
-## Publish v0.2.0 after its reviewed merge
+## Publish v0.2.1 after its reviewed merge
 
 From a clean checkout that includes the merged fix/version commit:
 
 ```sh
 git switch main
 git pull --ff-only origin main
-git tag -a v0.2.0 -m "PlantBased v0.2.0"
-git push origin v0.2.0
+git tag -a v0.2.1 -m "PlantBased v0.2.1"
+git push origin v0.2.1
 ```
 
 The **Release** workflow calls the same seven-job validation workflow used by PRs:
@@ -85,7 +85,7 @@ contributor. Default-list submission is outside v0.1.0.
 
 ## Deutsch
 
-Nach dem Merge der Korrektur den geprüften Stand von `main` mit **v0.2.0** markieren
+Nach dem Merge der Korrektur den geprüften Stand von `main` mit **v0.2.1** markieren
 und den Tag pushen. Der Workflow prüft alles erneut, baut das ZIP und veröffentlicht erst
 danach das vollständige GitHub Release. Ein Merge allein veröffentlicht nichts.
 Zusätzliche Zugangsdaten sind nicht nötig. Bis zum Tag-Lauf bleiben der

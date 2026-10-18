@@ -11,7 +11,7 @@ and a task list. Optional reminders now send one grouped summary through selecte
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
 Single-plant, group and overview cards now include English/German controls and
 twelve original illustrations. The new sidebar page provides plant/group cards,
-room grouping, live care status and access to settings. See [release notes](docs/releases/v0.2.0.md)
+room grouping, live care status and direct plant/group creation. See [release notes](docs/releases/v0.2.1.md)
 and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
 published versions and installation assets.
 
@@ -123,6 +123,9 @@ After setup, open **PlantBased** in HA's sidebar. The page is also available at
   plants remain visible in the unfiltered view. Disconnected actions are disabled.
 - Administrators can open **Settings** to add/reconfigure plants and groups or
   configure reminders, and use each card's device/group-details link.
+- From v0.2.1, administrators can select **Add plant** or **Add group** directly on
+  the overview. The dialog uses HA's existing fields, translated labels, defaults
+  and validation. Canceling leaves the existing plants unchanged.
 
 HA's native integration-management page keeps its standard device/subentry layout.
 The sidebar page provides the visual care overview. If PlantBased is hidden, check
@@ -380,6 +383,11 @@ Ansicht ein. Über **Einstellungen** gelangen Administratoren zur Verwaltung von
 Pflanzen, Gruppen und Erinnerungen. Die bisherige Integrationsverwaltung behält
 das normale HA-Layout. Für die neue Seite ist kein manuelles Dashboard nötig.
 Falls der Eintrag verborgen ist, die Seitenleisteneinstellungen im HA-Profil prüfen.
+
+Ab **v0.2.1** gibt es direkt auf der Übersicht **Pflanze hinzufügen** und
+**Gruppe hinzufügen** für Administratoren. Das Formular übernimmt die vorhandenen
+HA-Felder, Übersetzungen und Standardwerte. Nach dem Anlegen aktualisiert sich die
+Übersicht; beim Abbrechen wird keine Pflanze oder Gruppe erzeugt.
 
 [![PlantBased zu HACS hinzufügen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
 

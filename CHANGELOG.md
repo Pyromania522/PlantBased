@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased — 0.2.0
+## Unreleased — 0.2.1
+
+- Add administrator buttons for creating plants/groups directly on the sidebar
+  overview, backed by HA's native subentry flow schema, defaults and translations.
+- Keep creation on the overview, preserve values after validation errors and
+  clean up unfinished flows on cancellation/navigation. Block duplicate submissions.
+
+## 0.2.0
 
 - Add an automatic PlantBased sidebar page with every plant's image, live status,
   care countdowns and actions; no manual dashboard or resource setup is required.

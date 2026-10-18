@@ -1,5 +1,53 @@
 # Validation
 
+## v0.2.1 — creation from the sidebar overview
+
+Prepared for user review; publication follows the reviewed PR merge.
+
+| Check | Executed local result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **230 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **230 passed**, no skips or expected failures |
+| Integration statement/branch coverage | **98.04% current / 98.05% minimum** |
+| Strict mypy / Ruff lint and format | Passed; 26 integration modules |
+| TypeScript / Prettier / Vite build | Passed; **78.29 kB / 21.43 kB gzip** |
+| Playwright / Chromium 154.0.8037.57 | **33 passed**, including all existing card/panel tests |
+| Actual-filesystem persistence, both HA versions | Passed |
+| Official local hassfest | 1 integration, 0 invalid; all validators |
+| Release ZIP | **129,065 bytes**; both Python outputs byte-identical |
+
+Four new native HA HTTP tests exercise the exact authenticated subentry endpoints
+used by the panel: plant/group creation from returned schema defaults, local initial
+care dates, optional groups, area and interval values, unchanged existing history,
+duplicate-submit rejection, validation, cancellation and non-admin denial. Backend
+implementation modules are not mocked or changed.
+
+Six new browser tests exercise the compiled module and actual integration language
+resources: opening both dialogs, default values, native selector controls, typed
+values/omitted blanks, server validation, visible request failures, duplicate-submit
+protection, cancellation, detached late-flow cleanup, unloaded-hub retry, keyboard
+focus, mobile width and always-visible dialog actions. Native browser dialogs trap
+focus; field contents scroll independently from the action buttons.
+
+No species database or external provider calls are added. Research references and
+the distinction between display names, species and editable recommendations are
+recorded in DECISIONS.md. Existing README screenshot captions remain fixture-based;
+the user-provided original image is not claimed as copied into this checkout.
+
+Candidate SHA-256:
+
+```text
+6605452e89065270042e985f1763485470ad516bee6c801046844f544af6f830  plantbased.zip
+```
+
+Reproduce through CONTRIBUTING.md using both Python environments, filesystem
+checks, `npm test`, and `python -m script.build_release --tag v0.2.1`. Official local
+hassfest used Core source `1b740dcd4bc1e669827fc94c8b4bd7a4bbbae734` and its existing
+isolated environment. Full interactive HA/Companion acceptance remains manual.
+The PR body/checks record final GitHub acceptance. Historical records follow.
+
+---
+
 ## v0.2.0 — sidebar and visual plant overview
 
 The new version is prepared for user review; publication follows the PR merge.

@@ -16,7 +16,17 @@ export interface HomeAssistant {
   connected?: boolean;
   user?: { is_admin: boolean };
   connection: HAConnection;
-  callWS<T>(message: { type: string }): Promise<T>;
+  callWS<T>(message: { type: string; [key: string]: unknown }): Promise<T>;
+  callApi<T>(
+    method: string,
+    path: string,
+    parameters?: unknown,
+    headers?: Record<string, string>,
+  ): Promise<T>;
+  loadBackendTranslation(
+    category: string,
+    integration: string,
+  ): Promise<(key: string) => string>;
   callService(
     domain: string,
     service: string,
