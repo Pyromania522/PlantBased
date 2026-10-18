@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.1.0 development
 
+### Added in M3
+
+- Four translated care actions with plant/group/entity/area/label targets,
+  deduplication, whole-day validation and durable bulk marks/snoozes.
+- Due-transition and successfully saved care-done automation events, including
+  native button/date controls and task completion.
+- Read-only all-day care calendar and due-only to-do list; completing a task
+  records care, with stale/concurrent task protection.
+- Allowlisted downloadable diagnostics without free text other than plant names.
+- Eight hub entities total; calendar/task text follows HA's configured language.
+- Native service, automation-event, season, DST overlap, diagnostics-download,
+  translation and failure-path tests on minimum/current HA.
+
 ### Added in M2
 
 - Plant and group config subentries with translated create/reconfigure flows,

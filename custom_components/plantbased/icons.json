@@ -1,0 +1,16 @@
+{
+  "services": {
+    "mark_watered": {
+      "service": "mdi:watering-can"
+    },
+    "mark_fertilized": {
+      "service": "mdi:flower"
+    },
+    "snooze": {
+      "service": "mdi:alarm-snooze"
+    },
+    "set_interval": {
+      "service": "mdi:calendar-range"
+    }
+  }
+}

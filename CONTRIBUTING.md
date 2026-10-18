@@ -1,7 +1,7 @@
 # Contributing
 
-PlantBased is developed in milestones. M2 adds native plant/group subentries,
-calculated care entities and persisted runtime state.
+PlantBased is developed in milestones. M3 adds integration actions/events,
+calendar/to-do and safe diagnostics to M2’s native plant/group backend.
 Before using an HA API, check the current official developer documentation and
 the supported minimum HA release. Record compatibility decisions in DECISIONS.md.
 
@@ -42,13 +42,18 @@ topics, issues enabled, and the MIT license committed.
 
 Install in a disposable supported Home Assistant instance, restart, add PlantBased
 through Devices & services, and confirm setup. Check that a second hub is refused.
-Reload and remove the hub. On M2, add two groups and a plant in
-each. Confirm 16 entities per plant, five per group and six on the hub. Exercise
+Reload and remove the hub. Add two groups and a plant in each. Confirm
+16 entities per plant, five per group and eight on the hub. Exercise
 care buttons, date corrections, intervals, snooze, pause/vacation and group
 actions. Reconfigure and remove a group; its plants must survive unassigned.
 Reload/restart and verify histories and pause state persist. Both German and
-English dialogs and entity names should be readable. Calendar, to-do,
-integration-wide actions/events and cards are still future milestones.
+English dialogs and entity names should be readable. Check calendar all-day
+boundaries, overdue dates and due-only to-do items. Complete a task and verify
+history, counts, dates and calendar change together. In Developer tools, exercise
+all four PlantBased actions with plant/group/entity/area targets and listen for
+`plantbased_care_due` and `plantbased_care_done`. Download integration diagnostics
+and check no notes, image addresses or location text is exported. Notifications
+and frontend cards remain later milestones.
 
 ## Pull requests
 

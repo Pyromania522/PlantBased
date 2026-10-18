@@ -67,3 +67,23 @@ async def test_subentry_entity_and_selector_translations(
     )
     selectors = await async_get_translations(hass, language, "selector", {DOMAIN})
     assert selectors[f"component.{DOMAIN}.selector.month.options.3"]
+
+
+@pytest.mark.parametrize("language", ["en", "de"])
+async def test_m3_action_and_platform_translations(hass, language):
+    actions = await async_get_translations(hass, language, "services", {DOMAIN})
+    for action, fields in [
+        ("mark_watered", ["date"]),
+        ("mark_fertilized", ["date"]),
+        ("snooze", ["care_type", "days"]),
+        ("set_interval", ["care_type", "days"]),
+    ]:
+        prefix = f"component.{DOMAIN}.services.{action}"
+        assert actions[prefix + ".name"]
+        assert actions[prefix + ".description"]
+        for field in fields:
+            assert actions[f"{prefix}.fields.{field}.name"]
+            assert actions[f"{prefix}.fields.{field}.description"]
+    entities = await async_get_translations(hass, language, "entity", {DOMAIN})
+    assert entities[f"component.{DOMAIN}.entity.calendar.care_calendar.name"]
+    assert entities[f"component.{DOMAIN}.entity.todo.plant_care.name"]

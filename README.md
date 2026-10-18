@@ -3,11 +3,12 @@
 Local, calendar-based houseplant care for Home Assistant. No plant sensors, cloud
 accounts, or external Python requirements.
 
-**Development status: M2 — plants, groups and local care schedules.** Each plant
-has independent watering/fertilizing dates, editable intervals, care buttons,
-status and pause controls. Group actions and hub counts are available.
-Calendar/to-do entities, integration actions/events, notifications and dashboard
-cards follow in M3–M5. This is a development milestone, not the complete v0.1.0.
+**Development status: M3 — care actions, events, calendar, tasks and diagnostics.**
+Each plant has independent watering/fertilizing dates, editable intervals, care
+buttons, status and pause controls. Groups, overview counts, automation actions,
+a care calendar and a completable task list are available. Notifications and
+dashboard cards follow in M4–M5. This is a development milestone, not the complete
+v0.1.0.
 
 ## Installation
 
@@ -59,11 +60,56 @@ They survive hub reloads and HA restarts. Include HA's storage in your backups.
 An unreadable store stops setup with a translated error instead of resetting
 care dates. Restore it from a known-good backup before reloading.
 
-M2 provides 16 entities per plant, five per group and six on the hub. Care-status
+PlantBased provides 16 entities per plant, five per group and eight on the hub. Care-status
 attributes include group, species, image metadata, overdue days and history.
 Calculated sensor entities do not require any physical sensor or sensor selection.
 Image presets are stored now; their illustrations/cards arrive in M5. Custom
 image paths/URLs are metadata and are not downloaded by the backend.
+
+## Calendar, tasks and automation actions
+
+The hub's **Care calendar** shows one all-day event for each plant's next open
+watering/fertilizing date. An overdue task remains on its original date until
+care is recorded or snoozed; repeated future care is not assumed. Paused plants
+and global vacation are excluded. Outside the fertilizing season, the calendar
+resolves the season-start marker against the actual interval before showing an
+event. Thus a far-future interval does not create a premature calendar task.
+
+The hub's **Plant care** to-do list contains currently due tasks only. Check an
+item to record that care for today; dates, histories, counts and the calendar
+update together. Completed tasks leave the list and remain in the plant's
+history. Rename, manual task creation/deletion and due-date edits are unavailable;
+edit the plant's settings/date entities instead. Refresh a stale task list before
+completing a task from an older care cycle.
+
+Four actions are available under **Developer tools → Actions**:
+
+| Action | Fields | Targets |
+| --- | --- | --- |
+| `plantbased.mark_watered` | Optional `date`, defaults to today | Plant/group devices or their entities |
+| `plantbased.mark_fertilized` | Optional `date`, defaults to today | Plant/group devices or their entities |
+| `plantbased.snooze` | `care_type`: `water`/`fertilize`; `days`: 1–365, default 1 | Plant/group devices or their entities |
+| `plantbased.set_interval` | `care_type`: `water`/`fertilize`; `days`: 1–365 | Plant/group devices or their entities |
+
+Group targets expand to their current members, including paused plants. Multiple
+references to the same plant act only once. Area/label targeting is supported;
+`entity_id: all` explicitly selects every PlantBased plant. A missing target does
+not select all plants. Hub targets are not plant/group targets. Invalid direct
+targets fail before any plant changes. Bulk marks/snoozes save as one transaction.
+Future care dates and fractional day counts are rejected.
+
+The events `plantbased_care_due` and `plantbased_care_done` contain `device_id`,
+`name` and `care_type` (`water` or `fertilize`). Due events fire on transitions to
+due, including season entry, unpause and startup/reload for already-due care.
+They do not repeat every overdue day. Done events fire after a successful save,
+including care recorded through buttons, date entities, actions and to-do items.
+Use these events as automation triggers; built-in reminders arrive in M4.
+
+Download **Diagnostics** from the integration entry menu to inspect care state.
+The integration's payload includes plant names, dates, histories and care settings;
+it excludes notes, species, group names, areas, location notes and image paths/URLs.
+Calendar/task text follows HA's configured language; entity and action names are
+translated by Home Assistant.
 
 ## Roadmap
 
@@ -71,7 +117,7 @@ image paths/URLs are metadata and are not downloaded by the backend.
 | --- | --- | --- |
 | M1 | HACS structure, hub, translations, validation | Implemented; GitHub CI verified |
 | M2 | Plant/group subentries, storage, scheduling, entities | Implemented; see VALIDATION.md |
-| M3 | Actions, events, calendar, to-do, diagnostics | Planned |
+| M3 | Actions, events, calendar, to-do, diagnostics | Implemented; see VALIDATION.md |
 | M4 | Summary and actionable notifications | Planned |
 | M5 | Lovelace cards, visual editors, illustrations | Planned |
 | M6 | Complete documentation and v0.1.0 release | Planned |
@@ -83,10 +129,11 @@ The manifest's `0.1.0` is a development version. A public release is reserved fo
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**Aktueller Stand: M2.** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**Aktueller Stand: M3.** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
-Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Kalender, Aufgabenliste,
-Automationsereignisse, Erinnerungen und Dashboard-Karten folgen später.
+Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
+Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Erinnerungen
+und Dashboard-Karten folgen in M4 und M5.
 
 Installation: In HACS unter **Benutzerdefinierte Repositories** die oben genannte
 Adresse als **Integration** hinzufügen, herunterladen und Home Assistant neu
@@ -117,6 +164,30 @@ Beim Löschen einer Gruppe bleiben die Pflanzen erhalten und werden keiner Grupp
 mehr zugeordnet. Datumswerte, Verschiebungen, Pausen und die letzten zehn Einträge
 je Pflegeart bleiben nach einem Neustart erhalten. Ein defekter Speicher wird nicht stillschweigend
 zurückgesetzt; vor dem erneuten Laden muss eine Sicherung wiederhergestellt werden.
+
+Der **Pflegekalender** am Hub zeigt den jeweils nächsten offenen Gieß- und
+Düngetermin ganztägig. Überfällige Termine bleiben am ursprünglichen Datum;
+weitere Wiederholungen werden erst nach erfasster Pflege berechnet. Pausierte
+Pflanzen erscheinen weder im Kalender noch in der Aufgabenliste.
+
+In der Aufgabenliste **Pflanzenpflege** genügt ein Häkchen: Die jeweilige Pflege
+wird für heute gespeichert und die Aufgabe verschwindet. Der Verlauf bleibt
+erhalten. Namen und Termine werden an der Pflanze bearbeitet. Ist eine Aufgabe
+nicht mehr aktuell, die Liste vor dem Abhaken aktualisieren.
+
+Unter **Entwicklerwerkzeuge → Aktionen** stehen `plantbased.mark_watered`,
+`plantbased.mark_fertilized`, `plantbased.snooze` und `plantbased.set_interval`
+zur Verfügung. Als Ziel Pflanzen- oder Gruppengeräte beziehungsweise deren
+Entitäten wählen. Die Pflegeart lautet `water` oder `fertilize`, die Tageszahl
+ist ganzzahlig zwischen 1 und 365. Gruppenaktionen ändern nur aktuelle Mitglieder;
+mehrfach ausgewählte Pflanzen werden einmal bearbeitet.
+
+Die Automationsereignisse `plantbased_care_due` und `plantbased_care_done` liefern
+`device_id`, `name` und `care_type`. Fälligkeit wird beim Übergang gemeldet,
+auch beim Start/Neuladen bereits fälliger Pflege; die Meldung wiederholt sich
+nicht täglich. Erledigt-Ereignisse folgen erst nach erfolgreichem Speichern.
+**Diagnosedaten herunterladen** im Menü des Integrationseintrags liefert
+Pflegedaten mit Pflanzennamen, ohne Notizen, Standorte oder Bildadressen.
 
 ## Development and license
 

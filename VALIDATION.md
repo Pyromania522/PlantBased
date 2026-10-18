@@ -1,5 +1,77 @@
 # Validation
 
+## M3 — actions, events, calendar, to-do and diagnostics
+
+The M3 backend is implemented. These results executed locally on the milestone's
+final implementation. Exact-head GitHub validation is recorded in its PR checks
+and PR description; local success alone does not establish remote acceptance.
+
+| Check | Result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **131 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **131 passed**, no skips or expected failures |
+| Combined statement/branch coverage | **99.37%** on each target; 100% statements |
+| Strict mypy | Passed on all 20 integration modules |
+| Ruff lint and formatting | Passed |
+| Official local hassfest | 1 integration, 0 invalid; all integration validators |
+| Independent actual-filesystem checks, both HA versions | Passed |
+
+The full M2 suite remains included. M3 additionally exercises real HA domain
+services with native device/entity/UUID/area/label targets, group membership,
+deduplication, explicit all-plant selection, invalid-target rejection without
+partial mutations, empty groups, unloaded/stopping hubs and integer day schemas.
+Bulk configuration edits survive reload; concurrent care actions preserve history.
+
+Event tests subscribe to HA's bus and check registry device IDs, independent care
+types, exactly-on-transition due events, startup/reload, unpause, season entry,
+snooze expiry, button/date operations and no done event after a failed write.
+Native calendar/get_events and todo/get_items/update_item services verify actual
+platform registration, all-day dates, completion, shared state updates, language
+changes, snooze, pause/vacation, reload and removal. Exact range boundaries,
+midday overlap and both Europe/Berlin DST changes are tested. Seasonal markers
+cannot create a premature calendar fertilizing event. Stale and concurrent task
+completion is checked again under the storage lock; failed saves retain tasks.
+
+Diagnostics are tested both directly and through HA's authenticated diagnostics
+download endpoint, including disabled entries and setup failures without loaded
+runtime data. The allowlist excludes notes, species, area/location text,
+group names and image addresses; returned histories cannot mutate runtime data.
+Action/field, entity and care-label translations load through HA in English and
+German. No new integration runtime dependency, polling or network call is added.
+
+Reproduce using the environments in CONTRIBUTING.md:
+
+```sh
+.venv/bin/ruff check .
+.venv/bin/ruff format --check .
+.venv/bin/mypy
+.venv/bin/pytest
+.venv/bin/python -m script.check_storage
+COVERAGE_FILE=.coverage.min .venv-min/bin/pytest --cov-report=xml:/tmp/plantbased-m3-min-coverage.xml
+.venv-min/bin/python -m script.check_storage
+```
+
+Official local hassfest used Core source
+`5aeba2ef167655fe737cda9c2f3628f7f87f9847`:
+
+```sh
+PATH=/workspace/.venvs/plantbased-hassfest/bin:$PATH \
+PYTHONPATH=/tmp/plantbased-m3-core \
+/workspace/.venvs/plantbased-hassfest/bin/python -m script.hassfest \
+  --action validate \
+  --integration-path /workspace/PlantBased/custom_components/plantbased
+```
+
+No browser-based manual test or complete HA process restart is claimed. Actual
+storage serialization and fresh reads are separately exercised on real files;
+HA-native reloads are covered in the integration suite. HA's standard custom
+integration warning is not suppressed. Notifications/actionable mobile buttons
+remain M4; frontend cards/illustrations remain M5; release remains M6.
+
+The earlier milestone records follow for historical reference.
+
+---
+
 ## M2 — plants, groups, scheduling and persistence
 
 The M2 backend is implemented. The following checks executed locally on the
