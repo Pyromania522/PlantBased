@@ -58,8 +58,14 @@ class PlantSensor(PlantBasedEntity, SensorEntity):
             self._attr_device_class = SensorDeviceClass.DATE
         elif key.startswith("days_"):
             self._attr_native_unit_of_measurement = UnitOfTime.DAYS
+            self._attr_icon = (
+                "mdi:watering-can-outline"
+                if key == "days_until_watering"
+                else "mdi:leaf"
+            )
         else:
             self._attr_device_class = SensorDeviceClass.ENUM
+            self._attr_icon = "mdi:sprout"
             self._attr_options = [
                 "ok",
                 "water",

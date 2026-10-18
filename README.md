@@ -11,7 +11,9 @@ and a task list. Optional reminders now send one grouped summary through selecte
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
 Single-plant, group and overview cards now include English/German controls and
 twelve original illustrations. The new sidebar page provides plant/group cards,
-room grouping, live care status and direct plant/group creation. See [release notes](docs/releases/v0.2.1.md)
+room grouping, live care status and direct plant/group creation. Automatic HA room
+dashboards show three primary tiles per plant from v0.2.2.
+See [release notes](docs/releases/v0.2.2.md)
 and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
 published versions and installation assets.
 
@@ -183,6 +185,24 @@ entities from HA's pickers rather than copying an assumed entity ID. Disabling a
 required care-status/count entity in HA makes the corresponding card unavailable.
 
 ## Dashboard cards
+
+### Automatic Home Assistant room dashboards
+
+From v0.2.2, the automatically generated room view shows three primary entities
+per plant: **Care status**, **Days until watering** and **Days until fertilizing**.
+Plant icons replace generic sensor icons. Additional due flags, action/snooze
+buttons and last/next-care dates are hidden by default, while intervals and pause
+remain configuration entities. All 16 entities remain enabled and usable by
+PlantBased cards, automations and device controls.
+
+The first upgrade to v0.2.2 also hides those additional entities for existing
+plants. Previously hidden entities stay hidden. To show one again, open its
+settings under **Settings → Devices & services → Entities** and enable **Visible**.
+Later reloads/upgrades preserve that choice. Manually configured dashboards keep
+their explicit cards. HA controls the generated room layout; use the PlantBased
+cards below on an editable dashboard for images and combined care controls.
+
+### PlantBased cards
 
 After restarting HA and adding PlantBased, refresh an already-open browser tab.
 The integration loads its card module automatically: **no manual dashboard
@@ -504,6 +524,21 @@ Anbietergrenzen bestimmen die tatsächliche Zustellung.
 
 ### Dashboard-Karten
 
+Ab **v0.2.2** zeigt die automatisch erzeugte HA-Bereichsansicht je Pflanze nur
+**Pflegestatus**, **Tage bis zum Gießen** und **Tage bis zum Düngen**, mit passenden
+Pflanzensymbolen. Zusätzliche Fälligkeitsanzeigen, Aktions-/Verschiebeknöpfe und
+Datumswerte werden standardmäßig ausgeblendet. Alle 16 Entitäten bleiben aktiv
+und für PlantBased, Automationen und die Gerätesteuerung verfügbar.
+
+Das erste Update auf v0.2.2 wendet diese Sichtbarkeit auch auf vorhandene Pflanzen
+an. Bereits ausgeblendete Entitäten bleiben verborgen. Einzelne Entitäten lassen
+sich unter **Einstellungen → Geräte & Dienste → Entitäten** in ihren Einstellungen
+über **Sichtbar** wieder einblenden; diese Änderung bleibt bei späteren Neustarts
+und Updates erhalten. Manuell angelegte Dashboard-Karten bleiben bestehen.
+Das Layout der automatischen HA-Ansicht bestimmt Home Assistant. Für Pflanzenbilder
+und Pflegeknöpfe in einer gemeinsamen Karte die PlantBased-Karten auf einem
+bearbeitbaren Dashboard verwenden.
+
 Nach dem HA-Neustart einen bereits geöffneten Browser-Tab neu laden. Die Karten
 werden automatisch geladen; ein manueller Ressourceneintrag ist nicht nötig.
 Unter **Dashboard bearbeiten → Karte hinzufügen** nach **PlantBased** suchen.
@@ -543,9 +578,10 @@ Verschiebung prüfen. Erinnerungen sind anfangs aus; für mobile Aktionsknöpfe 
 Fehler bitte mit Versionsangaben, nachvollziehbaren Schritten und bereinigten
 Logs über die [Issue-Vorlage](https://github.com/Pyromania522/PlantBased/issues/new/choose)
 melden. Diagnosedaten enthalten Pflanzennamen und Pflegedaten. Die normale
-HA-Warnung für benutzerdefinierte Integrationen wird nicht unterdrückt. Die
-Vorschaubilder oben stammen aus dem Browsertest; echte HA-/Companion-Aufnahmen
-sind als [Platzhalter](docs/images/README.md) dokumentiert.
+HA-Warnung für benutzerdefinierte Integrationen wird nicht unterdrückt. Das Hauptbild
+oben zeigt PlantBased in Home Assistant; die zusätzlichen Vorschauen stammen aus
+dem Browsertest. Weitere geplante Aufnahmen sind als
+[Platzhalter](docs/images/README.md) dokumentiert.
 
 ## Development and license
 
