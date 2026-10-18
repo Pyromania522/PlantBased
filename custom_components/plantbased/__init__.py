@@ -33,6 +33,35 @@ PLATFORMS = [
 ]
 
 
+def _reload_snapshot(entry: PlantBasedConfigEntry) -> dict[str, object]:
+    """Area metadata is applied directly; all other edits still reload."""
+    return {
+        "options": dict(entry.options),
+        "subentries": {
+            key: (
+                subentry.subentry_type,
+                subentry.title,
+                subentry.unique_id,
+                {
+                    field: value
+                    for field, value in subentry.data.items()
+                    if field != "area"
+                },
+            )
+            for key, subentry in entry.subentries.items()
+        },
+    }
+
+
+def _refresh_areas(entry: PlantBasedConfigEntry) -> None:
+    """Keep runtime metadata current without restarting care timers."""
+    manager = entry.runtime_data
+    manager.configs = {
+        key: replace(config, area=entry.subentries[key].data.get("area"))
+        for key, config in manager.configs.items()
+    }
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Keep action descriptions available even when the hub is unloaded."""
     await async_register_frontend(hass)
@@ -101,12 +130,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
         if subentry.subentry_type == "group":
             async_sync_group_area(hass, entry, key, device.area_id)
     AreaCoordinator(hass, entry).async_start(orphaned_plants)
-    manager.configs = {
-        key: replace(config, area=entry.subentries[key].data.get("area"))
-        for key, config in manager.configs.items()
-    }
+    _refresh_areas(entry)
+    reload_snapshot = _reload_snapshot(entry)
+
+    async def async_updated(hass: HomeAssistant, entry: PlantBasedConfigEntry) -> None:
+        # HA may eagerly start update listeners inside async_update_subentry.
+        # Reloading halfway through an area transaction can lose own fallbacks.
+        if _reload_snapshot(entry) == reload_snapshot:
+            _refresh_areas(entry)
+            return
+        await async_reload_entry(hass, entry)
+
     entry.async_on_unload(manager.async_stop)
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    entry.async_on_unload(entry.add_update_listener(async_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     manager.async_start()
     manager.reminders.async_start()

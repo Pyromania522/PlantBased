@@ -34,8 +34,13 @@ edit is corrected to the group area. Standalone/area-less-group edits preserve
 their own areas. Coalesce registry updates until the current registry transaction
 finishes, process parents first, and cancel callbacks/listeners on unload. This
 prevents HA area deletion from clearing a restored fallback midway through its
-own update sequence. Persist only changed area metadata through native subentries;
-the existing reload listener and care persistence remain unchanged.
+own update sequence. Persist only changed area metadata through native subentries.
+The entry update listener refreshes runtime area metadata without reloading for
+area-only edits; all other configuration/options changes retain the reload path.
+HA can start update listeners eagerly inside a subentry update, so reloading in
+the middle of an area transaction can replace a fallback before member device
+updates finish. Tests assert that native group edits and area deletion preserve
+the live manager as well as the fallback. Care persistence remains unchanged.
 
 Version 0.1.1 is prepared with matching integration/npm/lockfile versions and
 versioned notes. Release tests derive their expected version from the manifest,

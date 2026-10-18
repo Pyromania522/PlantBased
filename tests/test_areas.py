@@ -145,6 +145,7 @@ async def test_native_group_area_edits_follow_and_clear_without_erasing_fallback
     hass, area_hub
 ):
     entry, _parent, own, other = area_hub
+    manager = entry.runtime_data
     registry = dr.async_get(hass)
     registry.async_update_device(device(hass, entry, "living").id, area_id=other.id)
     await hass.async_block_till_done()
@@ -155,6 +156,8 @@ async def test_native_group_area_edits_follow_and_clear_without_erasing_fallback
     await hass.async_block_till_done()
     assert device(hass, entry, "monstera").area_id == own.id
     assert device(hass, entry, "fern").area_id is None
+    assert entry.runtime_data is manager
+    assert manager.configs["monstera"].area == own.id
 
 
 async def test_native_conflicting_member_area_is_corrected_without_losing_fallback(
@@ -194,12 +197,14 @@ async def test_area_less_group_preserves_native_own_area_before_inheriting(
 
 async def test_deleted_parent_area_restores_valid_own_area(hass, area_hub):
     entry, parent, own, _other = area_hub
+    manager = entry.runtime_data
     ar.async_get(hass).async_delete(parent.id)
     await hass.async_block_till_done()
     assert device(hass, entry, "living").area_id is None
     assert device(hass, entry, "monstera").area_id == own.id
     assert device(hass, entry, "fern").area_id is None
     assert entry.subentries["monstera"].data["area"] == own.id
+    assert entry.runtime_data is manager
 
 
 async def test_removed_fallback_area_is_not_restored(hass, area_hub):

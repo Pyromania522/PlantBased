@@ -9,13 +9,13 @@ GitHub checks and the PR body record remote acceptance for the final commit.
 | --- | --- |
 | HA 2026.10.2 / Python 3.14.2 | **223 passed**, no skips or expected failures |
 | HA 2025.10.0 / Python 3.13.2 | **223 passed**, no skips or expected failures |
-| Combined integration statement/branch coverage | **98.02%** on both targets |
+| Combined integration statement/branch coverage | **98.03% current / 98.04% minimum** |
 | Strict mypy | Passed on all 26 integration modules |
 | Ruff lint / format | Passed |
 | Prettier / Vite committed bundle check | Passed; shipped frontend unchanged |
 | Actual-filesystem care/reminder persistence, both versions | Passed |
 | Official local hassfest | 1 integration, 0 invalid; all validators |
-| Release package | **121,341 bytes**; both Python outputs byte-identical |
+| Release package | **121,681 bytes**; both Python outputs byte-identical |
 
 Twenty-one additional tests exercise HA-native schema serialization and subentry
 flows, omitted/explicit **No group** creation and unassignment, area precedence,
@@ -26,7 +26,9 @@ through HA's translation helper. All existing package rejection gates now derive
 the release version from the actual manifest and still execute unchanged checks.
 
 The new area coordinator uses public registry events; coalesced parent/member
-updates prevent HA area deletion from overwriting restored fallback areas. Tests
+updates prevent HA area deletion from overwriting restored fallback areas. Pure
+area edits refresh metadata without reloading the live care manager, avoiding
+reentrant reloads midway through registry synchronization. Tests
 run against actual supported HA implementations, without replacing HA modules.
 The browser workflow still runs the existing 17 frontend tests. No full interactive
 HA installation or process restart is claimed for this patch.
@@ -34,7 +36,7 @@ HA installation or process restart is claimed for this patch.
 The final local candidate's SHA-256 is:
 
 ```text
-d7a00a44f7ea14a8a091b38dbf4e9901f65d6f3503f109b3687ec6be3750d8c5  plantbased.zip
+b0ec2c5ff3a03c1292761b2f9f716781a46d4cda90e6cca5f4645cff2f6cc709  plantbased.zip
 ```
 
 Reproduce using CONTRIBUTING.md, then run both `pytest` environments,
