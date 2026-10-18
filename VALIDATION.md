@@ -31,8 +31,9 @@ focus; field contents scroll independently from the action buttons.
 
 No species database or external provider calls are added. Research references and
 the distinction between display names, species and editable recommendations are
-recorded in DECISIONS.md. Existing README screenshot captions remain fixture-based;
-the user-provided original image is not claimed as copied into this checkout.
+recorded in DECISIONS.md. The README now features the project owner's original
+v0.2.0 Home Assistant screenshot, uploaded as `docs/images/Screenshot Overview.png`.
+Its caption distinguishes it from the additional browser fixture previews.
 
 Candidate SHA-256:
 
