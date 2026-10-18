@@ -1,5 +1,52 @@
 # Validation
 
+## v0.1.1 — optional groups and inherited areas
+
+The patch is prepared for review; v0.1.1 publication follows the user's PR merge.
+GitHub checks and the PR body record remote acceptance for the final commit.
+
+| Check | Executed local result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **223 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **223 passed**, no skips or expected failures |
+| Combined integration statement/branch coverage | **98.03% current / 98.04% minimum** |
+| Strict mypy | Passed on all 26 integration modules |
+| Ruff lint / format | Passed |
+| Prettier / Vite committed bundle check | Passed; shipped frontend unchanged |
+| Actual-filesystem care/reminder persistence, both versions | Passed |
+| Official local hassfest | 1 integration, 0 invalid; all validators |
+| Release package | **121,681 bytes**; both Python outputs byte-identical |
+
+Twenty-one additional tests exercise HA-native schema serialization and subentry
+flows, omitted/explicit **No group** creation and unassignment, area precedence,
+own-area fallback, moving/removing groups, native registry edits, deleted HA areas,
+unload/reload and listener cleanup. Existing device identity, care history and
+standalone areas survive these operations. Both language resources are loaded
+through HA's translation helper. All existing package rejection gates now derive
+the release version from the actual manifest and still execute unchanged checks.
+
+The new area coordinator uses public registry events; coalesced parent/member
+updates prevent HA area deletion from overwriting restored fallback areas. Pure
+area edits refresh metadata without reloading the live care manager, avoiding
+reentrant reloads midway through registry synchronization. Tests
+run against actual supported HA implementations, without replacing HA modules.
+The browser workflow still runs the existing 17 frontend tests. No full interactive
+HA installation or process restart is claimed for this patch.
+
+The final local candidate's SHA-256 is:
+
+```text
+b0ec2c5ff3a03c1292761b2f9f716781a46d4cda90e6cca5f4645cff2f6cc709  plantbased.zip
+```
+
+Reproduce using CONTRIBUTING.md, then run both `pytest` environments,
+`python -m script.check_storage` in each, and `python -m script.build_release
+--tag v0.1.1`. Official local hassfest used Core source
+`1b740dcd4bc1e669827fc94c8b4bd7a4bbbae734` with the existing isolated validator
+environment. No checks are ignored. Earlier milestone records follow.
+
+---
+
 ## M6 — documentation, automation examples and release preflight
 
 M6 prepares the complete v0.1.0 documentation and release machinery. A passing PR

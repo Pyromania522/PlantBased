@@ -67,6 +67,15 @@ async def test_subentry_entity_and_selector_translations(
     )
     selectors = await async_get_translations(hass, language, "selector", {DOMAIN})
     assert selectors[f"component.{DOMAIN}.selector.month.options.3"]
+    assert selectors[f"component.{DOMAIN}.selector.plant_group.options.none"] == (
+        "Keine Gruppe" if language == "de" else "No group"
+    )
+    assert subentries[
+        f"component.{DOMAIN}.config_subentries.plant.step.user.data_description.group"
+    ]
+    assert subentries[
+        f"component.{DOMAIN}.config_subentries.plant.step.reconfigure.data_description.area"
+    ]
 
 
 @pytest.mark.parametrize("language", ["en", "de"])

@@ -3,16 +3,17 @@
 All integration settings are edited in **Settings → Devices & services →
 PlantBased**. There is exactly one hub. Add plant/group creates native subentries;
 **Reconfigure** edits one subentry. **Configure** on the hub edits reminders.
-Areas are HA registry areas; the plant/group suggests its selected area when its
-device is created. No physical sensor, account, credential or integration YAML is used.
+Areas are HA registry areas. A group area takes precedence for its member plants;
+otherwise each plant can use its own area. The own area stays saved as a fallback.
+No physical sensor, account, credential or integration YAML is used.
 
 ## Plant
 
 | Field | Default / effect |
 | --- | --- |
 | Name | Required; device name, freely editable |
-| Group | Optional existing PlantBased group; removing the group leaves the plant unassigned |
-| Area | Optional HA area |
+| Group | Optional; choose **No group** for an independent plant. Removing the group leaves the plant unassigned |
+| Own area | Optional fallback HA area, used when the plant has no group area |
 | Species, notes, location note | Optional free text for your own care records; no species database lookup |
 | Image preset | Generic; one of twelve bundled original illustrations |
 | Custom image path/URL | Optional `/local/...` or browser-accessible HTTP(S); overrides the preset, falls back on load failure |
@@ -38,7 +39,11 @@ paused members because the action records work actually performed.
 Name is required. Area and image preset are optional. A group stores no independent
 care schedule: its counts and two care buttons use current members. The dashboard
 group card displays each member's plant illustration. Removing a group never
-removes its plants.
+removes its plants. A group's area is inherited by current members. Clearing
+the group area or removing a plant from its group restores valid own areas.
+Changes through the group device's HA area selector also synchronize members.
+A conflicting area on a member device is corrected to the group area; edit the
+group instead. Groups without an area allow members in different rooms.
 
 ## Hub reminders
 
@@ -69,7 +74,11 @@ HA labels and calendar/reminder text use HA's configured language.
 
 **Pflanze hinzufügen / Gruppe hinzufügen** erzeugt einen eigenen Eintrag unter
 PlantBased. Über **Neu konfigurieren** lassen sich Name, Zuordnung und weitere
-Felder ändern. **Konfigurieren** am Hub öffnet die Erinnerungen. Die Gerätebereiche
+Felder ändern. **Keine Gruppe** hält die Pflanze unabhängig. Ein Gruppenbereich
+hat Vorrang; der eigene Bereich bleibt als Rückfallwert gespeichert. Ohne
+Gruppenbereich oder nach dem Entfernen aus der Gruppe wird er wieder verwendet.
+Für Änderungen am aktiven Bereich einer gruppierten Pflanze den Bereich an der
+Gruppe ändern. **Konfigurieren** am Hub öffnet die Erinnerungen. Die Gerätebereiche
 werden über die HA-Geräteverwaltung geführt.
 
 Bei einer Pflanze sind Gruppe, Bereich, Art, Notizen, Standortnotiz und Bild

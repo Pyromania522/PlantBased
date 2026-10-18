@@ -1,5 +1,7 @@
 """PlantBased: local, calendar-based plant care."""
 
+from dataclasses import replace
+
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError, HomeAssistantError
@@ -8,6 +10,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
+from .areas import AreaCoordinator, async_sync_group_area, plant_area
 from .const import DOMAIN
 from .manager import PlantBasedConfigEntry, PlantManager
 from .reminder_storage import ReminderStore
@@ -30,6 +33,35 @@ PLATFORMS = [
 ]
 
 
+def _reload_snapshot(entry: PlantBasedConfigEntry) -> dict[str, object]:
+    """Area metadata is applied directly; all other edits still reload."""
+    return {
+        "options": dict(entry.options),
+        "subentries": {
+            key: (
+                subentry.subentry_type,
+                subentry.title,
+                subentry.unique_id,
+                {
+                    field: value
+                    for field, value in subentry.data.items()
+                    if field != "area"
+                },
+            )
+            for key, subentry in entry.subentries.items()
+        },
+    }
+
+
+def _refresh_areas(entry: PlantBasedConfigEntry) -> None:
+    """Keep runtime metadata current without restarting care timers."""
+    manager = entry.runtime_data
+    manager.configs = {
+        key: replace(config, area=entry.subentries[key].data.get("area"))
+        for key, config in manager.configs.items()
+    }
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Keep action descriptions available even when the hub is unloaded."""
     await async_register_frontend(hass)
@@ -42,6 +74,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
     groups = {
         key for key, sub in entry.subentries.items() if sub.subentry_type == "group"
     }
+    orphaned_plants: set[str] = set()
     # This runs before subscribing: clearing orphaned groups cannot reload-loop.
     for subentry in entry.subentries.values():
         if (
@@ -49,6 +82,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
             and subentry.data.get("group")
             and subentry.data["group"] not in groups
         ):
+            orphaned_plants.add(subentry.subentry_id)
             hass.config_entries.async_update_subentry(
                 entry, subentry, data={**subentry.data, "group": None}
             )
@@ -76,9 +110,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
         entry_type=dr.DeviceEntryType.SERVICE,
     )
     areas = ar.async_get(hass)
-    for key, subentry in entry.subentries.items():
-        area = areas.async_get_area(subentry.data.get("area", ""))
-        registry.async_get_or_create(
+    for key, subentry in sorted(
+        entry.subentries.items(), key=lambda item: item[1].subentry_type != "group"
+    ):
+        area_id = (
+            plant_area(hass, entry, subentry.data)
+            if subentry.subentry_type == "plant"
+            else subentry.data.get("area")
+        )
+        area = areas.async_get_area(area_id) if area_id else None
+        device = registry.async_get_or_create(
             config_entry_id=entry.entry_id,
             config_subentry_id=key,
             identifiers={(DOMAIN, key)},
@@ -86,8 +127,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -
             model="Plant" if subentry.subentry_type == "plant" else "Group",
             suggested_area=area.name if area else None,
         )
+        if subentry.subentry_type == "group":
+            async_sync_group_area(hass, entry, key, device.area_id)
+    AreaCoordinator(hass, entry).async_start(orphaned_plants)
+    _refresh_areas(entry)
+    reload_snapshot = _reload_snapshot(entry)
+
+    async def async_updated(hass: HomeAssistant, entry: PlantBasedConfigEntry) -> None:
+        # HA may eagerly start update listeners inside async_update_subentry.
+        # Reloading halfway through an area transaction can lose own fallbacks.
+        if _reload_snapshot(entry) == reload_snapshot:
+            _refresh_areas(entry)
+            return
+        await async_reload_entry(hass, entry)
+
     entry.async_on_unload(manager.async_stop)
-    entry.async_on_unload(entry.add_update_listener(async_reload_entry))
+    entry.async_on_unload(entry.add_update_listener(async_updated))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     manager.async_start()
     manager.reminders.async_start()

@@ -18,7 +18,12 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import selector
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN, IMAGE_PRESETS, NAME
+from .areas import (
+    async_change_group_area,
+    inherited_area,
+    plant_area,
+)
+from .const import DOMAIN, IMAGE_PRESETS, NAME, NO_GROUP
 from .registry import device_for_subentry
 from .reminder_options import ReminderOptions, available_targets
 from .schema import schema as vol
@@ -124,6 +129,15 @@ class CareSubentryFlow(ConfigSubentryFlow):
 
     def _schema(self, reconfigure: bool) -> vol.Schema:
         defaults = dict(self._get_reconfigure_subentry().data) if reconfigure else {}
+        if reconfigure and (
+            self.kind == "group"
+            or not inherited_area(self.hass, self._get_entry(), defaults)
+        ):
+            subentry = self._get_reconfigure_subentry()
+            if device := device_for_subentry(
+                self.hass, self._get_entry().entry_id, subentry.subentry_id
+            ):
+                defaults["area"] = device.area_id
         fields: dict[Any, Any] = {
             vol.Required(
                 "name", default=defaults.get("name", "")
@@ -142,17 +156,24 @@ class CareSubentryFlow(ConfigSubentryFlow):
             ),
         }
         if self.kind == "plant":
-            groups: list[selector.SelectOptionDict] = [{"value": "", "label": "—"}]
+            groups: list[selector.SelectOptionDict] = [
+                {"value": NO_GROUP, "label": "No group"}
+            ]
             groups.extend(
                 {"value": key, "label": sub.title}
                 for key, sub in self._get_entry().subentries.items()
                 if sub.subentry_type == "group"
             )
-            fields[vol.Required("group", default=defaults.get("group") or "")] = (
-                selector.SelectSelector(
-                    selector.SelectSelectorConfig(
-                        options=groups, mode=selector.SelectSelectorMode.DROPDOWN
-                    )
+            fields[
+                vol.Optional(
+                    "group",
+                    description={"suggested_value": defaults.get("group") or NO_GROUP},
+                )
+            ] = selector.SelectSelector(
+                selector.SelectSelectorConfig(
+                    options=groups,
+                    translation_key="plant_group",
+                    mode=selector.SelectSelectorMode.DROPDOWN,
                 )
             )
             for key in ("species", "notes", "location_note", "image_url"):
@@ -202,7 +223,7 @@ class CareSubentryFlow(ConfigSubentryFlow):
         # live references here too: an area/group may have disappeared meanwhile.
         data = dict(user_input)
         data["name"] = data["name"].strip()
-        data["area"] = data.get("area")
+        data["area"] = data.get("area") or None
         if not data["name"]:
             return data, {"name": "name_required"}
         if area_id := data.get("area"):
@@ -211,7 +232,9 @@ class CareSubentryFlow(ConfigSubentryFlow):
         if self.kind == "plant":
             for key in ("species", "notes", "location_note", "image_url"):
                 data.setdefault(key, "")
-            data["group"] = data.get("group") or None
+            data["group"] = (
+                None if data.get("group") == NO_GROUP else data.get("group") or None
+            )
             group = self._get_entry().subentries.get(data["group"])
             if data["group"] and (group is None or group.subentry_type != "group"):
                 return data, {"group": "invalid_group"}
@@ -259,21 +282,32 @@ class CareSubentryFlow(ConfigSubentryFlow):
                 if not reconfigure:
                     return self.async_create_entry(title=data["name"], data=data)
                 entry, subentry = self._get_entry(), self._get_reconfigure_subentry()
-                if subentry.data.get("area") != data.get("area"):
-                    registry = dr.async_get(self.hass)
-                    if device := device_for_subentry(
-                        self.hass, entry.entry_id, subentry.subentry_id
-                    ):
-                        registry.async_update_device(
-                            device.id, area_id=data.get("area")
-                        )
+                update_plant_area = self.kind == "plant" and (
+                    subentry.data.get("area") != data.get("area")
+                    or subentry.data.get("group") != data.get("group")
+                )
+                if self.kind == "group" and subentry.data.get("area") != data.get(
+                    "area"
+                ):
+                    async_change_group_area(
+                        self.hass, entry, subentry.subentry_id, data.get("area")
+                    )
                 # Preserve creation-only seeds; editable dates use the date entities.
-                return self.async_update_and_abort(
+                result = self.async_update_and_abort(
                     entry,
                     subentry,
                     title=data["name"],
                     data={**subentry.data, **data, "area": data.get("area")},
                 )
+                if update_plant_area:
+                    registry = dr.async_get(self.hass)
+                    if device := device_for_subentry(
+                        self.hass, entry.entry_id, subentry.subentry_id
+                    ):
+                        registry.async_update_device(
+                            device.id, area_id=plant_area(self.hass, entry, data)
+                        )
+                return result
         return self.async_show_form(
             step_id="reconfigure" if reconfigure else "user",
             data_schema=self._schema(reconfigure),

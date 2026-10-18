@@ -12,6 +12,9 @@ import pytest
 from script.build_release import PREFIX, build_release, release_version
 
 ROOT = Path(__file__).parents[1]
+VERSION = json.loads((ROOT / PREFIX / "manifest.json").read_text())["version"]
+TAG = f"v{VERSION}"
+OTHER_VERSION = f"{int(VERSION.split('.')[0]) + 1}.0.0"
 
 
 @pytest.fixture
@@ -39,8 +42,8 @@ def test_zip_is_complete_extractable_reproducible_and_has_only_runtime(
     cache = runtime / "__pycache__"
     cache.mkdir()
     (cache / "local.pyc").write_bytes(b"local-cache")
-    one = build_release(release_tree, tmp_path / "one", "v0.1.0")
-    two = build_release(release_tree, tmp_path / "two", "v0.1.0")
+    one = build_release(release_tree, tmp_path / "one", TAG)
+    two = build_release(release_tree, tmp_path / "two", TAG)
     assert one.read_bytes() == two.read_bytes()
     assert (one.parent / "SHA256SUMS").read_text() == (
         f"{sha256(one.read_bytes()).hexdigest()}  plantbased.zip\n"
@@ -54,7 +57,7 @@ def test_zip_is_complete_extractable_reproducible_and_has_only_runtime(
         )
         assert archive.read("plantbased/LICENSE") == (ROOT / "LICENSE").read_bytes()
         assert (
-            json.loads(archive.read("plantbased/manifest.json"))["version"] == "0.1.0"
+            json.loads(archive.read("plantbased/manifest.json"))["version"] == VERSION
         )
         tracked = subprocess.check_output(
             ["git", "ls-files", "-z", "--", PREFIX], cwd=release_tree
@@ -71,7 +74,9 @@ def test_zip_is_complete_extractable_reproducible_and_has_only_runtime(
         compile(path.read_text(), str(path), "exec")
 
 
-@pytest.mark.parametrize("tag", ["v0.2.0", "0.1.0", "v0.1.0-rc.1", "v0.1.0;invalid"])
+@pytest.mark.parametrize(
+    "tag", [f"v{OTHER_VERSION}", VERSION, f"{TAG}-rc.1", f"{TAG};invalid"]
+)
 def test_wrong_or_unstable_tag_is_rejected_before_output(release_tree, tmp_path, tag):
     output = tmp_path / "output"
     with pytest.raises(ValueError, match="tag"):
@@ -83,16 +88,16 @@ def test_wrong_or_unstable_tag_is_rejected_before_output(release_tree, tmp_path,
 def test_frontend_version_mismatch_is_rejected(release_tree, name):
     path = release_tree / name
     data = json.loads(path.read_text())
-    data["version"] = "0.2.0"
+    data["version"] = OTHER_VERSION
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="versions differ"):
-        release_version(release_tree, "v0.1.0")
+        release_version(release_tree, TAG)
 
 
 def test_lock_root_version_must_match(release_tree):
     path = release_tree / "package-lock.json"
     data = json.loads(path.read_text())
-    data["packages"][""]["version"] = "0.2.0"
+    data["packages"][""]["version"] = OTHER_VERSION
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="versions differ"):
         release_version(release_tree, None)
@@ -113,9 +118,9 @@ def test_missing_runtime_file_is_rejected(release_tree, tmp_path, name):
 
 
 def test_missing_release_notes_are_rejected(release_tree):
-    (release_tree / "docs/releases/v0.1.0.md").unlink()
+    (release_tree / f"docs/releases/{TAG}.md").unlink()
     with pytest.raises(ValueError, match="release notes"):
-        release_version(release_tree, "v0.1.0")
+        release_version(release_tree, TAG)
 
 
 def test_changed_or_missing_illustration_is_rejected(release_tree, tmp_path):

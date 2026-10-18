@@ -20,7 +20,10 @@
             "area": "Area",
             "image_preset": "Illustration"
           },
-          "description": "Group plants for shared care actions."
+          "description": "Group plants for shared care actions.",
+          "data_description": {
+            "area": "All member plants inherit this area. Without a group area, plants keep their own areas."
+          }
         },
         "reconfigure": {
           "title": "Edit Group",
@@ -28,6 +31,9 @@
             "name": "Name",
             "area": "Area",
             "image_preset": "Illustration"
+          },
+          "data_description": {
+            "area": "All member plants inherit this area. Without a group area, plants keep their own areas."
           }
         }
       },
@@ -55,9 +61,9 @@
           "title": "Add Plant",
           "data": {
             "name": "Name",
-            "area": "Area",
+            "area": "Own area (without a group area)",
             "image_preset": "Illustration",
-            "group": "Group",
+            "group": "Group (optional)",
             "species": "Species",
             "notes": "Notes",
             "location_note": "Location note",
@@ -71,15 +77,19 @@
             "initial_last_watered": "Last watered",
             "initial_last_fertilized": "Last fertilized"
           },
-          "description": "Set the care intervals in local calendar days. Initial dates are used once; edit last-care dates using the date entities."
+          "description": "Set the care intervals in local calendar days. Initial dates are used once; edit last-care dates using the date entities.",
+          "data_description": {
+            "group": "Choose No group to manage this plant independently.",
+            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback."
+          }
         },
         "reconfigure": {
           "title": "Edit Plant",
           "data": {
             "name": "Name",
-            "area": "Area",
+            "area": "Own area (without a group area)",
             "image_preset": "Illustration",
-            "group": "Group",
+            "group": "Group (optional)",
             "species": "Species",
             "notes": "Notes",
             "location_note": "Location note",
@@ -90,6 +100,10 @@
             "all_year": "Fertilize all year",
             "season_start": "Fertilizing season starts",
             "season_end": "Fertilizing season ends"
+          },
+          "data_description": {
+            "group": "Choose No group to manage this plant independently.",
+            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback."
           }
         }
       },
@@ -149,6 +163,11 @@
       "options": {
         "water": "Water",
         "fertilize": "Fertilize"
+      }
+    },
+    "plant_group": {
+      "options": {
+        "none": "No group"
       }
     }
   },
