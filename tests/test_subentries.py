@@ -3,6 +3,7 @@
 from homeassistant.config_entries import SOURCE_RECONFIGURE, SOURCE_USER
 from homeassistant.data_entry_flow import FlowResultType, InvalidData
 from homeassistant.helpers import area_registry as ar
+from homeassistant.helpers.data_entry_flow import FlowManagerIndexView
 import pytest
 
 from .common import device, make_hub, state
@@ -54,6 +55,62 @@ async def test_add_group_and_plant_with_defaults(hass, freezer):
         state(hass, plant.subentry_id, "care_status").attributes["group"]
         == "Kitchen plants"
     )
+
+
+@pytest.mark.parametrize("with_groups", [False, True])
+async def test_group_field_is_optional_with_explicit_none_choice(hass, with_groups):
+    entry = make_hub(hass, with_plants=with_groups)
+    result = await hass.config_entries.subentries.async_init(
+        (entry.entry_id, "plant"), context={"source": SOURCE_USER}
+    )
+    fields = FlowManagerIndexView(hass.config_entries.subentries)._prepare_result_json(
+        result
+    )["data_schema"]
+    group = next(field for field in fields if field["name"] == "group")
+    assert not group["required"]
+    assert group["description"]["suggested_value"] == "none"
+    selection = group["selector"]["select"]
+    assert selection["translation_key"] == "plant_group"
+    assert {"value": "none", "label": "No group"} in selection["options"]
+    assert all(option["value"] for option in selection["options"])
+
+
+@pytest.mark.parametrize("group_data", [{}, {"group": "none"}])
+async def test_standalone_plant_can_be_created_with_or_without_groups(
+    hass, freezer, group_data
+):
+    freezer.move_to("2026-06-15T10:00:00Z")
+    entry = make_hub(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    result, plant = await create(
+        hass, entry, "plant", {"name": "Standalone", **group_data}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert plant.data["group"] is None
+    assert device(hass, entry, plant.subentry_id)
+    assert state(hass, plant.subentry_id, "care_status").attributes["group"] is None
+
+
+@pytest.mark.parametrize("group_data", [{}, {"group": "none"}])
+async def test_reconfigure_can_remove_group_without_losing_history(
+    hass, plant_hub, group_data
+):
+    entry = plant_hub
+    before = entry.runtime_data.plants["monstera"].to_data()
+    original_device = device(hass, entry, "monstera").id
+    result = await hass.config_entries.subentries.async_init(
+        (entry.entry_id, "plant"),
+        context={"source": SOURCE_RECONFIGURE, "subentry_id": "monstera"},
+    )
+    result = await hass.config_entries.subentries.async_configure(
+        result["flow_id"], {"name": "Monstera", **group_data}
+    )
+    assert result["reason"] == "reconfigure_successful"
+    await hass.async_block_till_done()
+    assert entry.subentries["monstera"].data["group"] is None
+    assert entry.runtime_data.plants["monstera"].to_data() == before
+    assert device(hass, entry, "monstera").id == original_device
+    assert state(hass, "living", "total_plants").state == "0"
 
 
 @pytest.mark.parametrize(

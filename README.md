@@ -5,7 +5,7 @@ accounts, or external Python requirements.
 
 [![Add PlantBased to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Pyromania522&repository=PlantBased&category=integration)
 
-**[v0.1.0 — released](https://github.com/Pyromania522/PlantBased/releases/tag/v0.1.0).**
+**[Latest release](https://github.com/Pyromania522/PlantBased/releases/latest).**
 Plants and groups have care controls, automation actions/events, a care calendar
 and a task list. Optional reminders now send one grouped summary through selected
 HA notifiers, with mobile care/snooze actions and an optional persistent HA copy.
@@ -51,7 +51,8 @@ You can also add it manually:
 4. Confirm the dialog. One PlantBased hub is allowed per installation.
 5. On the integration card, choose **Add group** (optional) or **Add plant**.
    Give the plant a name, review the default care intervals and initial dates,
-   and select its group and area if desired.
+   and select a group if desired. **No group** keeps the plant independent.
+   A group area takes precedence; the own area is a fallback.
 
 For a manual release install, download `plantbased.zip` and `SHA256SUMS` from the
 matching [GitHub Release](https://github.com/Pyromania522/PlantBased/releases),
@@ -79,7 +80,10 @@ fertilizing to 28 days, and initial care dates to today in HA's configured time
 zone. Review those dates if the plant was cared for earlier. Groups, areas,
 species, notes and images are optional. The group does not replace a plant's
 individual intervals. Change group membership with the plant's **Reconfigure**
-dialog; the selected area can also be managed in HA's device settings.
+dialog. If a group has an HA area, its members inherit it. Otherwise plants use
+their own areas. Own areas are kept as fallbacks when joining a group; leaving
+the group or clearing its area restores them. Change a grouped plant's active
+area through its group. Native HA device-area edits follow the same rule.
 
 ### Updates, backups and uninstall
 
@@ -318,7 +322,7 @@ Diagnostics include plant names and care dates; review before sharing.
 | M5 | Lovelace cards, visual editors, illustrations | Implemented; see VALIDATION.md |
 | M6 | Complete documentation and v0.1.0 release | Released; see GitHub Releases |
 
-The manifest and frontend version are `0.1.0`. See
+Versioned packages and checksums are available from GitHub Releases. See
 [RELEASING.md](docs/RELEASING.md) for the checked package, tag and publication steps.
 Physical sensors, species databases, weather, cloud sync and HACS default-list
 submission are outside this version.
@@ -328,7 +332,7 @@ submission are outside this version.
 PlantBased bietet lokale, kalenderbasierte Pflanzenpflege für Home Assistant.
 Feuchtigkeits-, Licht- und Bodensensoren sowie Cloud-Dienste sind nicht vorgesehen.
 
-**[v0.1.0 ist veröffentlicht](https://github.com/Pyromania522/PlantBased/releases/tag/v0.1.0).** Pflanzen und Gruppen lassen sich über die Integrationskarte
+**[Aktuelle Veröffentlichung](https://github.com/Pyromania522/PlantBased/releases/latest).** Pflanzen und Gruppen lassen sich über die Integrationskarte
 hinzufügen. Jede Pflanze erhält eigene Gieß- und Düngetermine, Datums- und
 Intervallfelder, Pflegeknöpfe und einen Pausenschalter. Pflegekalender,
 Aufgabenliste, Automationsaktionen und Ereignisse sind verfügbar. Optionale
@@ -370,7 +374,11 @@ einer passenden Sicherung zurückholen.
 
 Über **Pflanze hinzufügen** genügt zunächst ein Name; die Intervalle sind mit
 sieben Tagen fürs Gießen und 28 Tagen fürs Düngen vorbelegt. Gruppen und Bereiche
-sind optional. **Wässern** und **Düngen** tragen das heutige Datum ein. Mit den
+sind optional. **Keine Gruppe** legt eine unabhängige Pflanze an. Hat eine Gruppe
+einen Bereich, übernehmen ihre Pflanzen diesen. Ohne Gruppenbereich gilt der
+eigene Bereich. Dieser bleibt als Rückfallwert gespeichert und wird nach dem
+Entfernen aus der Gruppe oder dem Leeren des Gruppenbereichs wieder verwendet.
+**Wässern** und **Düngen** tragen das heutige Datum ein. Mit den
 Datumsentitäten lässt sich eine zurückliegende Pflege nachtragen. Ein Datum in
 der Zukunft wird abgelehnt.
 

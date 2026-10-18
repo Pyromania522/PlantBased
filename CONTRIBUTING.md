@@ -120,7 +120,7 @@ Code and original artwork are contributed under the MIT license.
 After building the frontend, build a reviewable release candidate:
 
 ```sh
-.venv/bin/python -m script.build_release --tag v0.1.0
+.venv/bin/python -m script.build_release
 cd dist
 sha256sum --check SHA256SUMS
 ```

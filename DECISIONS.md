@@ -1,5 +1,48 @@
 # Decisions and verified references
 
+## v0.1.1: optional groups and inherited areas
+
+The first user installation exposed a UI-specific defect: the backend accepted
+an unassigned plant, but its group selector was a required field with an empty
+option. HA's native frontend treats that empty required value as missing. Make
+the field optional, use a nonempty `none` choice translated as **No group / Keine
+Gruppe**, and keep only `None` in stored plant data. Use suggested values rather
+than a schema default so clearing a previously assigned group does not silently
+restore the old assignment. Native HA schema serialization and subentry-flow
+tests cover creation and removing the assignment while preserving identity/history.
+
+The user explicitly chose this area policy: a group's area applies to its members;
+without a group area, each plant may use its own area. Keep the plant's configured
+own area as a fallback. Group changes/clearing/deletion restore valid fallbacks.
+Field labels/helper text explain precedence in English/German, while retaining
+the existing single-form setup. Area inheritance overrides earlier v0.1.0
+independent group/member area behavior; care dates and storage versions do not change.
+
+Verified the public device-registry `async_get_or_create`, `async_get`,
+`async_entries_for_config_entry`, `async_update_device(area_id=...)`,
+`EVENT_DEVICE_REGISTRY_UPDATED` event/action/changes fields and native subentry
+updates in both HA 2025.10.0 and 2026.10.2. References: [device registry](https://developers.home-assistant.io/docs/device_registry_index/),
+[events/lifecycle](https://developers.home-assistant.io/docs/integration_listen_events/),
+and the official frontend select-selector source at
+`b399dac7881d03df938fb4cad5200b68811c24f2` (translation_key, required and empty values).
+Existing official developer-doc source remains
+`50b518898989b67bb76b69827f227aa6f0acd32a`.
+
+Register groups before plants, then synchronize registered device areas. Native
+HA group-area changes follow the same rule; a member's conflicting direct area
+edit is corrected to the group area. Standalone/area-less-group edits preserve
+their own areas. Coalesce registry updates until the current registry transaction
+finishes, process parents first, and cancel callbacks/listeners on unload. This
+prevents HA area deletion from clearing a restored fallback midway through its
+own update sequence. Persist only changed area metadata through native subentries;
+the existing reload listener and care persistence remain unchanged.
+
+Version 0.1.1 is prepared with matching integration/npm/lockfile versions and
+versioned notes. Release tests derive their expected version from the manifest,
+so future version bumps continue to exercise the same actual-package gates.
+The user-reviewed PR merge still precedes the v0.1.1 release tag; do not describe
+the patch as installed or published before that workflow succeeds.
+
 ## M6 documentation, packages and publication
 
 Verified the current official developer-doc and HACS publishing sources again

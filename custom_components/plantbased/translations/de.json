@@ -20,7 +20,10 @@
             "area": "Bereich",
             "image_preset": "Illustration"
           },
-          "description": "Fasse Pflanzen für gemeinsame Pflegeaktionen zusammen."
+          "description": "Fasse Pflanzen für gemeinsame Pflegeaktionen zusammen.",
+          "data_description": {
+            "area": "Diesen Bereich übernehmen alle Pflanzen der Gruppe. Ohne Gruppenbereich behalten Pflanzen ihren eigenen Bereich."
+          }
         },
         "reconfigure": {
           "title": "Gruppe bearbeiten",
@@ -28,6 +31,9 @@
             "name": "Name",
             "area": "Bereich",
             "image_preset": "Illustration"
+          },
+          "data_description": {
+            "area": "Diesen Bereich übernehmen alle Pflanzen der Gruppe. Ohne Gruppenbereich behalten Pflanzen ihren eigenen Bereich."
           }
         }
       },
@@ -55,9 +61,9 @@
           "title": "Pflanze hinzufügen",
           "data": {
             "name": "Name",
-            "area": "Bereich",
+            "area": "Eigener Bereich (ohne Gruppenbereich)",
             "image_preset": "Illustration",
-            "group": "Gruppe",
+            "group": "Gruppe (optional)",
             "species": "Pflanzenart",
             "notes": "Notizen",
             "location_note": "Standorthinweis",
@@ -71,15 +77,19 @@
             "initial_last_watered": "Zuletzt gegossen",
             "initial_last_fertilized": "Zuletzt gedüngt"
           },
-          "description": "Lege die Pflegeintervalle in lokalen Kalendertagen fest. Die Anfangsdaten werden einmalig übernommen; später lassen sie sich über die Datumsentitäten ändern."
+          "description": "Lege die Pflegeintervalle in lokalen Kalendertagen fest. Die Anfangsdaten werden einmalig übernommen; später lassen sie sich über die Datumsentitäten ändern.",
+          "data_description": {
+            "group": "Keine Gruppe wählen, um die Pflanze unabhängig zu verwalten.",
+            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert."
+          }
         },
         "reconfigure": {
           "title": "Pflanze bearbeiten",
           "data": {
             "name": "Name",
-            "area": "Bereich",
+            "area": "Eigener Bereich (ohne Gruppenbereich)",
             "image_preset": "Illustration",
-            "group": "Gruppe",
+            "group": "Gruppe (optional)",
             "species": "Pflanzenart",
             "notes": "Notizen",
             "location_note": "Standorthinweis",
@@ -90,6 +100,10 @@
             "all_year": "Ganzjährig düngen",
             "season_start": "Beginn der Düngesaison",
             "season_end": "Ende der Düngesaison"
+          },
+          "data_description": {
+            "group": "Keine Gruppe wählen, um die Pflanze unabhängig zu verwalten.",
+            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert."
           }
         }
       },
@@ -149,6 +163,11 @@
       "options": {
         "water": "Wässern",
         "fertilize": "Düngen"
+      }
+    },
+    "plant_group": {
+      "options": {
+        "none": "Keine Gruppe"
       }
     }
   },
