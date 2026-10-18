@@ -1,0 +1,59 @@
+mark_watered:
+  target:
+    entity:
+      integration: plantbased
+  fields:
+    date:
+      selector:
+        date: {}
+mark_fertilized:
+  target:
+    entity:
+      integration: plantbased
+  fields:
+    date:
+      selector:
+        date: {}
+snooze:
+  target:
+    entity:
+      integration: plantbased
+  fields:
+    care_type:
+      required: true
+      selector:
+        select:
+          options:
+          - water
+          - fertilize
+          translation_key: care_type
+    days:
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 365
+          step: 1
+          mode: box
+      default: 1
+set_interval:
+  target:
+    entity:
+      integration: plantbased
+  fields:
+    care_type:
+      required: true
+      selector:
+        select:
+          options:
+          - water
+          - fertilize
+          translation_key: care_type
+    days:
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 365
+          step: 1
+          mode: box

@@ -144,6 +144,12 @@
         "11": "November",
         "12": "Dezember"
       }
+    },
+    "care_type": {
+      "options": {
+        "water": "Wässern",
+        "fertilize": "Düngen"
+      }
     }
   },
   "device": {
@@ -254,6 +260,16 @@
       "vacation_mode": {
         "name": "Urlaubsmodus"
       }
+    },
+    "calendar": {
+      "care_calendar": {
+        "name": "Pflegekalender"
+      }
+    },
+    "todo": {
+      "plant_care": {
+        "name": "Pflanzenpflege"
+      }
     }
   },
   "exceptions": {
@@ -271,6 +287,65 @@
     },
     "storage_write_error": {
       "message": "Die Pflegedaten konnten nicht gespeichert werden. Prüfe den verfügbaren Speicherplatz und die Schreibrechte."
+    },
+    "invalid_target": {
+      "message": "Wähle vorhandene PlantBased-Pflanzen oder -Gruppen als Ziel."
+    },
+    "stale_task": {
+      "message": "Diese Pflegeaufgabe ist nicht mehr aktuell. Aktualisiere die Aufgabenliste."
+    },
+    "task_read_only": {
+      "message": "Pflegeaufgaben können nur als erledigt markiert werden. Bearbeite Termine und Namen an der Pflanze."
+    }
+  },
+  "services": {
+    "mark_watered": {
+      "name": "Als gewässert markieren",
+      "description": "Erfasst das Wässern für ausgewählte Pflanzen oder alle Mitglieder ausgewählter Gruppen.",
+      "fields": {
+        "date": {
+          "name": "Datum",
+          "description": "Pflegedatum, höchstens heute. Ohne Angabe gilt das heutige lokale Datum."
+        }
+      }
+    },
+    "mark_fertilized": {
+      "name": "Als gedüngt markieren",
+      "description": "Erfasst das Düngen für ausgewählte Pflanzen oder alle Mitglieder ausgewählter Gruppen.",
+      "fields": {
+        "date": {
+          "name": "Datum",
+          "description": "Pflegedatum, höchstens heute. Ohne Angabe gilt das heutige lokale Datum."
+        }
+      }
+    },
+    "snooze": {
+      "name": "Pflege verschieben",
+      "description": "Verschiebt die ausgewählte Pflege. Überfällige Pflege wird frühestens morgen fällig.",
+      "fields": {
+        "care_type": {
+          "name": "Pflegeart",
+          "description": "Wässern oder Düngen."
+        },
+        "days": {
+          "name": "Tage",
+          "description": "Ganze Zahl von 1 bis 365."
+        }
+      }
+    },
+    "set_interval": {
+      "name": "Pflegeintervall festlegen",
+      "description": "Ändert das Pflegeintervall der ausgewählten Pflanzen in ganzen Kalendertagen.",
+      "fields": {
+        "care_type": {
+          "name": "Pflegeart",
+          "description": "Wässern oder Düngen."
+        },
+        "days": {
+          "name": "Tage",
+          "description": "Ganze Zahl von 1 bis 365."
+        }
+      }
     }
   }
 }

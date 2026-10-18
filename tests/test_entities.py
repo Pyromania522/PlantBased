@@ -21,7 +21,7 @@ async def test_all_entities_bind_to_native_subentries(hass, plant_hub):
     entry = plant_hub
     registry = er.async_get(hass)
     entries = er.async_entries_for_config_entry(registry, entry.entry_id)
-    assert len(entries) == 48  # 16 per plant, 5 per group, 6 on the hub.
+    assert len(entries) == 50  # 16 per plant, 5 per group, 8 on the hub.
     assert (
         len([item for item in entries if item.config_subentry_id == "monstera"]) == 16
     )

@@ -1,5 +1,65 @@
 # Decisions and verified references
 
+## M3 scope, verified APIs and assumptions
+
+Before M3 coding, the official developer-doc source at
+`50b518898989b67bb76b69827f227aa6f0acd32a`, current Core dev at
+`5aeba2ef167655fe737cda9c2f3628f7f87f9847` and both installed supported
+releases were inspected. To-do runtime imports use the documented public
+platform exports on both releases; static checking uses the current entity/const
+modules because current Core does not mark those public re-exports in `__all__`.
+The documentation websites return HTTP 403 in this
+cloud session; their official Git repositories are accessible. HACS documentation
+HEAD remains `4f06a5bd11088a21a453fdcb3eda1603353e6c8a`.
+
+| M3 API | Official reference |
+| --- | --- |
+| Domain actions in `async_setup`, `async_register`, target schemas, `async_extract_entity_ids` | [Actions](https://developers.home-assistant.io/docs/dev_101_services/), released `helpers/service.py` and `config_validation.py` |
+| Event bus `async_fire` with registry `device_id` | [Events](https://developers.home-assistant.io/docs/integration_events/) |
+| `CalendarEntity.event`, `async_get_events`, all-day `CalendarEvent` with exclusive end | [Calendar](https://developers.home-assistant.io/docs/core/entity/calendar/) |
+| `TodoListEntity.todo_items`, `TodoItem`, status-only `async_update_todo_item` | [To-do](https://developers.home-assistant.io/docs/core/entity/todo/) |
+| `async_get_config_entry_diagnostics` | [Diagnostics](https://developers.home-assistant.io/docs/core/integration/diagnostics/) |
+| Action/field and selector translations | [Internationalization](https://developers.home-assistant.io/docs/internationalization/core/#service-actions) |
+
+Actions register once in integration setup and remain registered when the hub is
+unloaded. They require explicit targets, expand group membership, deduplicate
+plants and validate all direct targets before mutation. Standard device/entity,
+area and label targeting uses HA's public target resolver; indirect foreign
+entities in an area are ignored. Direct foreign, missing or hub targets fail.
+`entity_id: all` explicitly selects all loaded PlantBased plants. No target never
+means all plants. An empty valid group is a successful no-op. Intervals remain
+subentry configuration; bulk snooze and marks are single storage transactions.
+
+The calendar shows each plant's next outstanding watering/fertilizing date,
+including its original overdue date when that date is in the requested range.
+It does not invent repeated future actions before actual care has happened.
+All-day ends are exclusive; queries use true time overlap in HA's local zone.
+Paused plants/global vacation are absent. Outside the fertilizer season the
+sensor's season-resume marker is resolved against the actual interval before
+creating a calendar event. Disabled fertilizer is absent. Read-only calendar
+mutation features are not advertised.
+
+The to-do list contains only currently due tasks. Completing one records care
+for the current local date and removes it. Other task edits are rejected. Task
+UIDs include plant ID, care type and due date, preventing a stale UI completion
+from marking a later care cycle done. Validation and completion share the storage
+lock. Completed items are represented in care history, not retained in this
+computed task list. Calendar/task text uses HA's configured language and translated
+care labels; language changes refresh those labels.
+
+`plantbased_care_due` fires once per false-to-true due transition, including
+unpause, season entry and startup/reload for already-due plants; it does not fire
+every overdue day. `plantbased_care_done` fires after a verified successful save,
+for each selected plant/care, from buttons, date edits, actions and task completion.
+The requested two event names take precedence over the docs' general naming
+recommendation. Event logic belongs to the manager, never individual entities.
+
+Diagnostics use an allowlist. Plant names are the only included user free text;
+notes, species, group names, areas, location, image URLs/paths, config entry
+contents and credentials are excluded. Care dates, histories, intervals, season,
+pause, computed status and counts remain useful for debugging. Notifications are
+M4; frontend cards/artwork are M5. No public release or Silver tier is claimed.
+
 ## M2 scope and current API verification
 
 M2 adds plant/group subentries, native devices, persisted care state and the six

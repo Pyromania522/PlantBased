@@ -144,6 +144,12 @@
         "11": "November",
         "12": "December"
       }
+    },
+    "care_type": {
+      "options": {
+        "water": "Water",
+        "fertilize": "Fertilize"
+      }
     }
   },
   "device": {
@@ -254,6 +260,16 @@
       "vacation_mode": {
         "name": "Vacation mode"
       }
+    },
+    "calendar": {
+      "care_calendar": {
+        "name": "Care calendar"
+      }
+    },
+    "todo": {
+      "plant_care": {
+        "name": "Plant care"
+      }
     }
   },
   "exceptions": {
@@ -271,6 +287,65 @@
     },
     "storage_write_error": {
       "message": "Care data could not be saved. Check available disk space and write permissions."
+    },
+    "invalid_target": {
+      "message": "Select existing PlantBased plants or groups as targets."
+    },
+    "stale_task": {
+      "message": "This care task is no longer current. Refresh the task list."
+    },
+    "task_read_only": {
+      "message": "Care tasks can only be completed. Edit dates and names on the plant."
+    }
+  },
+  "services": {
+    "mark_watered": {
+      "name": "Mark watered",
+      "description": "Record watering for selected plants or all members of selected groups.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "Care date, no later than today. Defaults to the current local date."
+        }
+      }
+    },
+    "mark_fertilized": {
+      "name": "Mark fertilized",
+      "description": "Record fertilizing for selected plants or all members of selected groups.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "Care date, no later than today. Defaults to the current local date."
+        }
+      }
+    },
+    "snooze": {
+      "name": "Snooze care",
+      "description": "Postpone the selected care. Overdue care becomes due no earlier than tomorrow.",
+      "fields": {
+        "care_type": {
+          "name": "Care type",
+          "description": "Watering or fertilizing."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Whole number from 1 to 365."
+        }
+      }
+    },
+    "set_interval": {
+      "name": "Set care interval",
+      "description": "Change selected plants’ care interval in whole calendar days.",
+      "fields": {
+        "care_type": {
+          "name": "Care type",
+          "description": "Watering or fertilizing."
+        },
+        "days": {
+          "name": "Days",
+          "description": "Whole number from 1 to 365."
+        }
+      }
     }
   }
 }

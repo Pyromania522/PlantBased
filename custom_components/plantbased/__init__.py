@@ -4,20 +4,33 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryError, HomeAssistantError
 from homeassistant.helpers import area_registry as ar
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN
 from .manager import PlantBasedConfigEntry, PlantManager
+from .services import async_register_actions
 from .storage import PlantStore
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
     Platform.BUTTON,
+    Platform.CALENDAR,
     Platform.DATE,
     Platform.NUMBER,
     Platform.SENSOR,
     Platform.SWITCH,
+    Platform.TODO,
 ]
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Keep action descriptions available even when the hub is unloaded."""
+    async_register_actions(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: PlantBasedConfigEntry) -> bool:
