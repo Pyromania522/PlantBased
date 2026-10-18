@@ -21,17 +21,25 @@ published versions and installation assets.
 
 Field defaults and limits: [Configuration reference / Einstellungen](docs/CONFIGURATION.md).
 
-## Card preview
+## PlantBased in Home Assistant
 
-<img src="docs/images/panel-desktop.png" alt="PlantBased sidebar page with plant cards and live care status" width="720">
+<img src="docs/images/Screenshot%20Overview.png" alt="PlantBased v0.2.0 plant overview in Home Assistant, showing two plants and their care status in German" width="960">
 
+PlantBased v0.2.0 running in Home Assistant (German, light theme). Screenshot
+provided by the project owner. The **Add plant** and **Add group** buttons were
+introduced in v0.2.1 and are not shown in this capture.
+
+### Additional previews
+
+[Desktop sidebar page](docs/images/panel-desktop.png) ·
 [Groups](docs/images/panel-groups.png) · [Areas](docs/images/panel-areas.png) ·
 [Mobile sidebar page](docs/images/panel-mobile.png)
 
 <img src="docs/images/overview-mobile.png" alt="German PlantBased overview in a narrow light theme" width="260"> <img src="docs/images/overview-dark.png" alt="PlantBased overview in a dark theme" width="300">
 
-Actual Chromium captures of the compiled panel/cards with demonstration data in the
-browser test fixture. Full HA setup/editor/calendar/Companion screenshots remain
+These additional previews are Chromium captures of the compiled panel/cards with
+demonstration data in the browser test fixture. HA setup/editor/calendar/Companion
+screenshots remain
 [documented capture placeholders](docs/images/README.md).
 
 ## Installation
