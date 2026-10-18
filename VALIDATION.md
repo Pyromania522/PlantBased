@@ -1,5 +1,59 @@
 # Validation
 
+## v0.2.0 — sidebar and visual plant overview
+
+The new version is prepared for user review; publication follows the PR merge.
+The PR checks/body record remote acceptance for the final commit.
+
+| Check | Executed local result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **226 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **226 passed**, no skips or expected failures |
+| Combined integration statement/branch coverage | **98.04% current / 98.05% minimum** |
+| Strict mypy | Passed on all 26 integration modules |
+| Ruff lint / format | Passed |
+| TypeScript / Prettier / Vite production build | Passed; **67.13 kB / 18.80 kB gzip** |
+| Playwright / Chromium 154.0.8037.57 | **27 passed**, including all existing card tests |
+| Actual-filesystem care/reminder persistence, both versions | Passed |
+| Official local hassfest | 1 integration, 0 invalid; all validators |
+| Release ZIP | **126,458 bytes**, valid/extractable; byte-identical on both Python versions |
+
+HA-native tests verify panel registration in actual `get_panels` responses,
+authenticated entity/device/area registry reads for admins and read-only users,
+direct page HTTP bootstrap, reload/removal lifecycle, failed unload preserving the
+page, stable care history and process-wide asset registration. Existing care,
+reminder and package-rejection tests remain included. No HA modules are replaced.
+
+Ten added browser tests exercise the compiled panel: all-plant cards, group
+collages/empty groups, expandable members, area moves/renames, unassigned plants,
+search, due-only filtering, admin links, escaped names, safe care targets,
+disconnects, retries, subscription cleanup, touch controls and light/dark layouts.
+Keyed rendering preserves an expanded group when preceding cards are filtered out.
+Existing card fixtures moved into a shared helper; their 17 assertions/tests remain.
+
+Committed screenshots in `docs/images/panel-*.png` are actual Chromium fixture
+captures with demonstration data. They are not a full Home Assistant installation
+or a claim of manual Companion/process-restart acceptance. The sidebar menu event
+and custom-panel contract were checked in official frontend source; API references
+and lifecycle choices are recorded in DECISIONS.md.
+
+The local candidate SHA-256 is:
+
+```text
+5dba46ec5c859ec0e6f786f3e24e8aae1adba040a22f0cb73ed94a5be07a85f2  plantbased.zip
+```
+
+Reproduce with CONTRIBUTING.md's checks, `pytest` and filesystem checks in both
+Python environments, `npm test`, and `python -m script.build_release --tag v0.2.0`.
+Official local hassfest used Core source
+`1b740dcd4bc1e669827fc94c8b4bd7a4bbbae734` with its isolated validator environment.
+The unchanged CI workflow runs official HACS/hassfest, both HA targets, browser
+checks, strict quality checks and the actual release-package preflight.
+
+Earlier version and milestone evidence follows as historical records.
+
+---
+
 ## v0.1.1 — optional groups and inherited areas
 
 The patch is prepared for review; v0.1.1 publication follows the user's PR merge.

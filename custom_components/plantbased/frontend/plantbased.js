@@ -58,7 +58,7 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 		}
 		return n;
 	}
-}, re = (e, t) => !l(e, t), v = {
+}, re = (e, t) => !l(e, t), ie = {
 	attribute: !0,
 	type: String,
 	converter: _,
@@ -67,14 +67,14 @@ var e = globalThis, t = e.ShadowRoot && (e.ShadyCSS === void 0 || e.ShadyCSS.nat
 	hasChanged: re
 };
 Symbol.metadata ??= Symbol("metadata"), h.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
-var y = class extends HTMLElement {
+var v = class extends HTMLElement {
 	static addInitializer(e) {
 		this._$Ei(), (this.l ??= []).push(e);
 	}
 	static get observedAttributes() {
 		return this.finalize(), this._$Eh && [...this._$Eh.keys()];
 	}
-	static createProperty(e, t = v) {
+	static createProperty(e, t = ie) {
 		if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
 			let n = Symbol(), r = this.getPropertyDescriptor(e, n, t);
 			r !== void 0 && u(this.prototype, e, r);
@@ -100,7 +100,7 @@ var y = class extends HTMLElement {
 		};
 	}
 	static getPropertyOptions(e) {
-		return this.elementProperties.get(e) ?? v;
+		return this.elementProperties.get(e) ?? ie;
 	}
 	static _$Ei() {
 		if (this.hasOwnProperty(g("elementProperties"))) return;
@@ -251,89 +251,89 @@ var y = class extends HTMLElement {
 	updated(e) {}
 	firstUpdated(e) {}
 };
-y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[g("elementProperties")] = /* @__PURE__ */ new Map(), y[g("finalized")] = /* @__PURE__ */ new Map(), ne?.({ ReactiveElement: y }), (h.reactiveElementVersions ??= []).push("2.1.2");
+v.elementStyles = [], v.shadowRootOptions = { mode: "open" }, v[g("elementProperties")] = /* @__PURE__ */ new Map(), v[g("finalized")] = /* @__PURE__ */ new Map(), ne?.({ ReactiveElement: v }), (h.reactiveElementVersions ??= []).push("2.1.2");
 //#endregion
 //#region node_modules/lit-html/lit-html.js
-var b = globalThis, ie = (e) => e, x = b.trustedTypes, ae = x ? x.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, S = "$lit$", C = `lit$${Math.random().toFixed(9).slice(2)}$`, oe = "?" + C, se = `<${oe}>`, w = document, T = () => w.createComment(""), E = (e) => e === null || typeof e != "object" && typeof e != "function", D = Array.isArray, ce = (e) => D(e) || typeof e?.[Symbol.iterator] == "function", O = "[ 	\n\f\r]", k = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, A = /-->/g, j = />/g, M = RegExp(`>|${O}(?:([^\\s"'>=/]+)(${O}*=${O}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), N = /'/g, le = /"/g, ue = /^(?:script|style|textarea|title)$/i, de = (e) => (t, ...n) => ({
+var y = globalThis, ae = (e) => e, b = y.trustedTypes, oe = b ? b.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, se = "$lit$", x = `lit$${Math.random().toFixed(9).slice(2)}$`, S = "?" + x, ce = `<${S}>`, C = document, w = () => C.createComment(""), T = (e) => e === null || typeof e != "object" && typeof e != "function", E = Array.isArray, le = (e) => E(e) || typeof e?.[Symbol.iterator] == "function", D = "[ 	\n\f\r]", O = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ue = /-->/g, de = />/g, k = RegExp(`>|${D}(?:([^\\s"'>=/]+)(${D}*=${D}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), fe = /'/g, pe = /"/g, me = /^(?:script|style|textarea|title)$/i, he = (e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}), P = de(1), F = de(2), I = Symbol.for("lit-noChange"), L = Symbol.for("lit-nothing"), fe = /* @__PURE__ */ new WeakMap(), R = w.createTreeWalker(w, 129);
-function pe(e, t) {
-	if (!D(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return ae === void 0 ? t : ae.createHTML(t);
+}), A = he(1), j = he(2), M = Symbol.for("lit-noChange"), N = Symbol.for("lit-nothing"), ge = /* @__PURE__ */ new WeakMap(), P = C.createTreeWalker(C, 129);
+function _e(e, t) {
+	if (!E(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	return oe === void 0 ? t : oe.createHTML(t);
 }
-var me = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = k;
+var ve = (e, t) => {
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = O;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === k ? c[1] === "!--" ? o = A : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = M) : (ue.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = M) : o = j : o === M ? c[0] === ">" ? (o = i ?? k, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? M : c[3] === "\"" ? le : N) : o === le || o === N ? o = M : o === A || o === j ? o = k : (o = M, i = void 0);
-		let d = o === M && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === k ? n + se : l >= 0 ? (r.push(s), n.slice(0, l) + S + n.slice(l) + C + d) : n + C + (l === -2 ? t : d);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === O ? c[1] === "!--" ? o = ue : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = k) : (me.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = k) : o = de : o === k ? c[0] === ">" ? (o = i ?? O, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? k : c[3] === "\"" ? pe : fe) : o === pe || o === fe ? o = k : o === ue || o === de ? o = O : (o = k, i = void 0);
+		let d = o === k && e[t + 1].startsWith("/>") ? " " : "";
+		a += o === O ? n + ce : l >= 0 ? (r.push(s), n.slice(0, l) + se + n.slice(l) + x + d) : n + x + (l === -2 ? t : d);
 	}
-	return [pe(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
-}, z = class e {
+	return [_e(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
+}, F = class e {
 	constructor({ strings: t, _$litType$: n }, r) {
 		let i;
 		this.parts = [];
-		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = me(t, n);
-		if (this.el = e.createElement(l, r), R.currentNode = this.el.content, n === 2 || n === 3) {
+		let a = 0, o = 0, s = t.length - 1, c = this.parts, [l, u] = ve(t, n);
+		if (this.el = e.createElement(l, r), P.currentNode = this.el.content, n === 2 || n === 3) {
 			let e = this.el.content.firstChild;
 			e.replaceWith(...e.childNodes);
 		}
-		for (; (i = R.nextNode()) !== null && c.length < s;) {
+		for (; (i = P.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(S)) {
-					let t = u[o++], n = i.getAttribute(e).split(C), r = /([.?@])?(.*)/.exec(t);
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(se)) {
+					let t = u[o++], n = i.getAttribute(e).split(x), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
 						index: a,
 						name: r[2],
 						strings: n,
-						ctor: r[1] === "." ? ge : r[1] === "?" ? _e : r[1] === "@" ? ve : H
+						ctor: r[1] === "." ? be : r[1] === "?" ? xe : r[1] === "@" ? Se : R
 					}), i.removeAttribute(e);
-				} else e.startsWith(C) && (c.push({
+				} else e.startsWith(x) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
-				if (ue.test(i.tagName)) {
-					let e = i.textContent.split(C), t = e.length - 1;
+				if (me.test(i.tagName)) {
+					let e = i.textContent.split(x), t = e.length - 1;
 					if (t > 0) {
-						i.textContent = x ? x.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], T()), R.nextNode(), c.push({
+						i.textContent = b ? b.emptyScript : "";
+						for (let n = 0; n < t; n++) i.append(e[n], w()), P.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], T());
+						i.append(e[t], w());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === oe) c.push({
+				if (i.data === S) c.push({
 					type: 2,
 					index: a
 				});
 				else {
 					let e = -1;
-					for (; (e = i.data.indexOf(C, e + 1)) !== -1;) c.push({
+					for (; (e = i.data.indexOf(x, e + 1)) !== -1;) c.push({
 						type: 7,
 						index: a
-					}), e += C.length - 1;
+					}), e += x.length - 1;
 				}
 			}
 			a++;
 		}
 	}
 	static createElement(e, t) {
-		let n = w.createElement("template");
+		let n = C.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
-function B(e, t, n = e, r) {
-	if (t === I) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = E(t) ? void 0 : t._$litDirective$;
-	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = B(e, i._$AS(e, t.values), i, r)), t;
+function I(e, t, n = e, r) {
+	if (t === M) return t;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = T(t) ? void 0 : t._$litDirective$;
+	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = I(e, i._$AS(e, t.values), i, r)), t;
 }
-var he = class {
+var ye = class {
 	constructor(e, t) {
 		this._$AV = [], this._$AN = void 0, this._$AD = e, this._$AM = t;
 	}
@@ -344,28 +344,28 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? w).importNode(t, !0);
-		R.currentNode = r;
-		let i = R.nextNode(), a = 0, o = 0, s = n[0];
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? C).importNode(t, !0);
+		P.currentNode = r;
+		let i = P.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
 			if (a === s.index) {
 				let t;
-				s.type === 2 ? t = new V(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new ye(i, this, e)), this._$AV.push(t), s = n[++o];
+				s.type === 2 ? t = new L(i, i.nextSibling, this, e) : s.type === 1 ? t = new s.ctor(i, s.name, s.strings, this, e) : s.type === 6 && (t = new Ce(i, this, e)), this._$AV.push(t), s = n[++o];
 			}
-			a !== s?.index && (i = R.nextNode(), a++);
+			a !== s?.index && (i = P.nextNode(), a++);
 		}
-		return R.currentNode = w, r;
+		return P.currentNode = C, r;
 	}
 	p(e) {
 		let t = 0;
 		for (let n of this._$AV) n !== void 0 && (n.strings === void 0 ? n._$AI(e[t]) : (n._$AI(e, n, t), t += n.strings.length - 2)), t++;
 	}
-}, V = class e {
+}, L = class e {
 	get _$AU() {
 		return this._$AM?._$AU ?? this._$Cv;
 	}
 	constructor(e, t, n, r) {
-		this.type = 2, this._$AH = L, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
+		this.type = 2, this._$AH = N, this._$AN = void 0, this._$AA = e, this._$AB = t, this._$AM = n, this.options = r, this._$Cv = r?.isConnected ?? !0;
 	}
 	get parentNode() {
 		let e = this._$AA.parentNode, t = this._$AM;
@@ -378,7 +378,7 @@ var he = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = B(this, e, t), E(e) ? e === L || e == null || e === "" ? (this._$AH !== L && this._$AR(), this._$AH = L) : e !== this._$AH && e !== I && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? ce(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = I(this, e, t), T(e) ? e === N || e == null || e === "" ? (this._$AH !== N && this._$AR(), this._$AH = N) : e !== this._$AH && e !== M && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? le(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -387,36 +387,36 @@ var he = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== L && E(this._$AH) ? this._$AA.nextSibling.data = e : this.T(w.createTextNode(e)), this._$AH = e;
+		this._$AH !== N && T(this._$AH) ? this._$AA.nextSibling.data = e : this.T(C.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
-		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = z.createElement(pe(n.h, n.h[0]), this.options)), n);
+		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = F.createElement(_e(n.h, n.h[0]), this.options)), n);
 		if (this._$AH?._$AD === r) this._$AH.p(t);
 		else {
-			let e = new he(r, this), n = e.u(this.options);
+			let e = new ye(r, this), n = e.u(this.options);
 			e.p(t), this.T(n), this._$AH = e;
 		}
 	}
 	_$AC(e) {
-		let t = fe.get(e.strings);
-		return t === void 0 && fe.set(e.strings, t = new z(e)), t;
+		let t = ge.get(e.strings);
+		return t === void 0 && ge.set(e.strings, t = new F(e)), t;
 	}
 	k(t) {
-		D(this._$AH) || (this._$AH = [], this._$AR());
+		E(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(T()), this.O(T()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(w()), this.O(w()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
 		for (this._$AP?.(!1, !0, t); e !== this._$AB;) {
-			let t = ie(e).nextSibling;
-			ie(e).remove(), e = t;
+			let t = ae(e).nextSibling;
+			ae(e).remove(), e = t;
 		}
 	}
 	setConnected(e) {
 		this._$AM === void 0 && (this._$Cv = e, this._$AP?.(e));
 	}
-}, H = class {
+}, R = class {
 	get tagName() {
 		return this.element.tagName;
 	}
@@ -424,47 +424,47 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	constructor(e, t, n, r, i) {
-		this.type = 1, this._$AH = L, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = L;
+		this.type = 1, this._$AH = N, this._$AN = void 0, this.element = e, this.name = t, this._$AM = r, this.options = i, n.length > 2 || n[0] !== "" || n[1] !== "" ? (this._$AH = Array(n.length - 1).fill(/* @__PURE__ */ new String()), this.strings = n) : this._$AH = N;
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = B(this, e, t, 0), a = !E(e) || e !== this._$AH && e !== I, a && (this._$AH = e);
+		if (i === void 0) e = I(this, e, t, 0), a = !T(e) || e !== this._$AH && e !== M, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = B(this, r[n + o], t, o), s === I && (s = this._$AH[o]), a ||= !E(s) || s !== this._$AH[o], s === L ? e = L : e !== L && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = I(this, r[n + o], t, o), s === M && (s = this._$AH[o]), a ||= !T(s) || s !== this._$AH[o], s === N ? e = N : e !== N && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
 	j(e) {
-		e === L ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
+		e === N ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, e ?? "");
 	}
-}, ge = class extends H {
+}, be = class extends R {
 	constructor() {
 		super(...arguments), this.type = 3;
 	}
 	j(e) {
-		this.element[this.name] = e === L ? void 0 : e;
+		this.element[this.name] = e === N ? void 0 : e;
 	}
-}, _e = class extends H {
+}, xe = class extends R {
 	constructor() {
 		super(...arguments), this.type = 4;
 	}
 	j(e) {
-		this.element.toggleAttribute(this.name, !!e && e !== L);
+		this.element.toggleAttribute(this.name, !!e && e !== N);
 	}
-}, ve = class extends H {
+}, Se = class extends R {
 	constructor(e, t, n, r, i) {
 		super(e, t, n, r, i), this.type = 5;
 	}
 	_$AI(e, t = this) {
-		if ((e = B(this, e, t, 0) ?? L) === I) return;
-		let n = this._$AH, r = e === L && n !== L || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== L && (n === L || r);
+		if ((e = I(this, e, t, 0) ?? N) === M) return;
+		let n = this._$AH, r = e === N && n !== N || e.capture !== n.capture || e.once !== n.once || e.passive !== n.passive, i = e !== N && (n === N || r);
 		r && this.element.removeEventListener(this.name, this, n), i && this.element.addEventListener(this.name, this, e), this._$AH = e;
 	}
 	handleEvent(e) {
 		typeof this._$AH == "function" ? this._$AH.call(this.options?.host ?? this.element, e) : this._$AH.handleEvent(e);
 	}
-}, ye = class {
+}, Ce = class {
 	constructor(e, t, n) {
 		this.element = e, this.type = 6, this._$AN = void 0, this._$AM = t, this.options = n;
 	}
@@ -472,18 +472,33 @@ var he = class {
 		return this._$AM._$AU;
 	}
 	_$AI(e) {
-		B(this, e);
+		I(this, e);
 	}
-}, be = b.litHtmlPolyfillSupport;
-be?.(z, V), (b.litHtmlVersions ??= []).push("3.3.3");
-var xe = (e, t, n) => {
+}, we = {
+	M: se,
+	P: x,
+	A: S,
+	C: 1,
+	L: ve,
+	R: ye,
+	D: le,
+	V: I,
+	I: L,
+	H: R,
+	N: xe,
+	U: Se,
+	B: be,
+	F: Ce
+}, Te = y.litHtmlPolyfillSupport;
+Te?.(F, L), (y.litHtmlVersions ??= []).push("3.3.3");
+var Ee = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new V(t.insertBefore(T(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new L(t.insertBefore(w(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
-}, U = globalThis, W = class extends y {
+}, z = globalThis, B = class extends v {
 	constructor() {
 		super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
 	}
@@ -493,7 +508,7 @@ var xe = (e, t, n) => {
 	}
 	update(e) {
 		let t = this.render();
-		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = xe(t, this.renderRoot, this.renderOptions);
+		this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(e), this._$Do = Ee(t, this.renderRoot, this.renderOptions);
 	}
 	connectedCallback() {
 		super.connectedCallback(), this._$Do?.setConnected(!0);
@@ -502,15 +517,33 @@ var xe = (e, t, n) => {
 		super.disconnectedCallback(), this._$Do?.setConnected(!1);
 	}
 	render() {
-		return I;
+		return M;
 	}
 };
-W._$litElement$ = !0, W.finalized = !0, U.litElementHydrateSupport?.({ LitElement: W });
-var Se = U.litElementPolyfillSupport;
-Se?.({ LitElement: W }), (U.litElementVersions ??= []).push("4.2.2");
+B._$litElement$ = !0, B.finalized = !0, z.litElementHydrateSupport?.({ LitElement: B });
+var De = z.litElementPolyfillSupport;
+De?.({ LitElement: B }), (z.litElementVersions ??= []).push("4.2.2");
 //#endregion
 //#region frontend/src/localize.ts
-var Ce = {
+var Oe = {
+	groups: "Groups",
+	areas: "Areas",
+	yourPlants: "Your plants",
+	panelHint: "Care, groups and rooms at a glance.",
+	settings: "Settings",
+	details: "Device details",
+	groupDetails: "Group details",
+	noArea: "No area",
+	noGroup: "No group",
+	showPlants: "Show plants",
+	view: "View",
+	search: "Search",
+	searchHint: "Plant, group or area…",
+	dueOnly: "Care due only",
+	noMatches: "No matching plants",
+	noMatchesHint: "Change the search or turn off the care filter.",
+	openMenu: "Open sidebar",
+	offline: "Disconnected. Care actions are unavailable until Home Assistant reconnects.",
 	plants: "Plants",
 	overview: "Plant overview",
 	total: "Total",
@@ -556,7 +589,25 @@ var Ce = {
 	invalidConfig: "Choose a PlantBased plant or group device.",
 	invalidTitle: "Enter a text title.",
 	invalidActions: "Choose whether care buttons are shown."
-}, we = {
+}, ke = {
+	groups: "Gruppen",
+	areas: "Bereiche",
+	yourPlants: "Deine Pflanzen",
+	panelHint: "Pflege, Gruppen und Räume auf einen Blick.",
+	settings: "Einstellungen",
+	details: "Gerätedetails",
+	groupDetails: "Gruppendetails",
+	noArea: "Ohne Bereich",
+	noGroup: "Keine Gruppe",
+	showPlants: "Pflanzen anzeigen",
+	view: "Ansicht",
+	search: "Suchen",
+	searchHint: "Pflanze, Gruppe oder Bereich…",
+	dueOnly: "Nur fällige Pflege",
+	noMatches: "Keine passenden Pflanzen",
+	noMatchesHint: "Ändere die Suche oder deaktiviere den Pflegefilter.",
+	openMenu: "Seitenleiste öffnen",
+	offline: "Verbindung getrennt. Pflegeaktionen sind nach der Wiederverbindung mit Home Assistant verfügbar.",
 	plants: "Pflanzen",
 	overview: "Pflanzenübersicht",
 	total: "Gesamt",
@@ -602,13 +653,13 @@ var Ce = {
 	invalidConfig: "Wähle ein PlantBased-Pflanzen- oder Gruppengerät.",
 	invalidTitle: "Gib einen Titel als Text ein.",
 	invalidActions: "Wähle, ob Pflegeaktionen angezeigt werden."
-}, Te = (e) => (e?.locale?.language ?? e?.language ?? "en").toLowerCase().startsWith("de") ? "de" : "en", G = (e, t, n) => (Te(e) === "de" ? we : Ce)[t].replace("{n}", String(n ?? ""));
-function Ee(e, t) {
-	return t === null ? G(e, "unavailable") : t === 0 ? G(e, "today") : t === 1 ? G(e, "tomorrow") : t === -1 ? G(e, "overdueDay") : G(e, t < 0 ? "overdueDays" : "days", Math.abs(t));
+}, Ae = (e) => (e?.locale?.language ?? e?.language ?? "en").toLowerCase().startsWith("de") ? "de" : "en", V = (e, t, n) => (Ae(e) === "de" ? ke : Oe)[t].replace("{n}", String(n ?? ""));
+function je(e, t) {
+	return t === null ? V(e, "unavailable") : t === 0 ? V(e, "today") : t === 1 ? V(e, "tomorrow") : t === -1 ? V(e, "overdueDay") : V(e, t < 0 ? "overdueDays" : "days", Math.abs(t));
 }
 //#endregion
 //#region frontend/src/model.ts
-var De = [
+var Me = [
 	"generic",
 	"monstera",
 	"ficus",
@@ -622,34 +673,34 @@ var De = [
 	"palm",
 	"hanging_plant"
 ];
-function K(e) {
-	let t = new URL(import.meta.url), n = new URL(`illustrations/${De.includes(e) ? e : "generic"}.svg`, t);
+function H(e) {
+	let t = new URL(import.meta.url), n = new URL(`illustrations/${Me.includes(e) ? e : "generic"}.svg`, t);
 	return n.search = new URL(import.meta.url).search, n.href;
 }
-function Oe(e, t) {
-	if (typeof e != "string") return K(t);
+function Ne(e, t) {
+	if (typeof e != "string") return H(t);
 	try {
 		if (e.startsWith("/local/") || e.startsWith("/plantbased/illustrations/")) return new URL(e, location.origin).href;
 		let t = new URL(e);
 		if (["http:", "https:"].includes(t.protocol) && !t.username && !t.password) return t.href;
 	} catch {}
-	return K(t);
+	return H(t);
 }
-function ke(e, t = !1, n) {
-	if (!e || typeof e != "object" || !t && e.device_id !== void 0 && typeof e.device_id != "string") throw Error(G(n, "invalidConfig"));
-	if (e.title !== void 0 && typeof e.title != "string") throw Error(G(n, "invalidTitle"));
-	if (e.show_actions !== void 0 && typeof e.show_actions != "boolean") throw Error(G(n, "invalidActions"));
+function Pe(e, t = !1, n) {
+	if (!e || typeof e != "object" || !t && e.device_id !== void 0 && typeof e.device_id != "string") throw Error(V(n, "invalidConfig"));
+	if (e.title !== void 0 && typeof e.title != "string") throw Error(V(n, "invalidTitle"));
+	if (e.show_actions !== void 0 && typeof e.show_actions != "boolean") throw Error(V(n, "invalidActions"));
 	return { ...e };
 }
-var q = (e) => e.name_by_user || e.name || "PlantBased";
-function J(e) {
+var U = (e) => e.name_by_user || e.name || "PlantBased";
+function W(e) {
 	return e.translation_key || e.unique_id.slice((e.config_subentry_id || e.config_entry_id || "").length + 1);
 }
-function Y(e, t, n, r) {
-	let i = t.entities.find((e) => e.device_id === n && J(e) === r && !e.disabled_by);
+function G(e, t, n, r) {
+	let i = t.entities.find((e) => e.device_id === n && W(e) === r && !e.disabled_by);
 	return i ? e.states[i.entity_id] : void 0;
 }
-function X(e) {
+function K(e) {
 	if (!e || [
 		"unknown",
 		"unavailable",
@@ -658,50 +709,53 @@ function X(e) {
 	let t = Number(e.state);
 	return Number.isFinite(t) ? t : null;
 }
-function Ae(e, t) {
-	return t.devices.filter((e) => e.model === "Plant").map((n) => {
-		let r = t.entities.filter((e) => e.device_id === n.id), i = Y(e, t, n.id, "care_status"), a = i?.attributes ?? {}, o = r.find((e) => e.config_subentry_id)?.config_subentry_id ?? String(a.subentry_id ?? ""), s = !!i && [
+function q(e, t) {
+	let n = new Map(t.devices.filter((e) => e.model === "Group").map((e) => [t.entities.find((t) => t.device_id === e.id && t.config_subentry_id)?.config_subentry_id ?? e.identifiers.find(([e]) => e === "plantbased")?.[1], U(e)]));
+	return t.devices.filter((e) => e.model === "Plant").map((r) => {
+		let i = t.entities.filter((e) => e.device_id === r.id), a = G(e, t, r.id, "care_status"), o = a?.attributes ?? {}, s = i.find((e) => e.config_subentry_id)?.config_subentry_id ?? String(o.subentry_id ?? ""), c = !!a && [
 			"ok",
 			"water",
 			"fertilize",
 			"water_and_fertilize",
 			"paused"
-		].includes(i.state) && !n.disabled_by && e.connected !== !1, c = s && ["water", "water_and_fertilize"].includes(i.state), l = s && ["fertilize", "water_and_fertilize"].includes(i.state), u = X(Y(e, t, n.id, "days_until_watering")), d = X(Y(e, t, n.id, "days_until_fertilizing")), f = s ? i.state : "unavailable", p = s ? f === "paused" ? "paused" : c && u !== null && u < 0 || l && d !== null && d < 0 ? "overdue" : c || l ? "due" : "ok" : "unavailable", m = typeof a.image_preset == "string" ? a.image_preset : "generic";
+		].includes(a.state) && !r.disabled_by && e.connected !== !1, l = c && ["water", "water_and_fertilize"].includes(a.state), u = c && ["fertilize", "water_and_fertilize"].includes(a.state), d = K(G(e, t, r.id, "days_until_watering")), f = K(G(e, t, r.id, "days_until_fertilizing")), p = c ? a.state : "unavailable", m = c ? p === "paused" ? "paused" : l && d !== null && d < 0 || u && f !== null && f < 0 ? "overdue" : l || u ? "due" : "ok" : "unavailable", h = typeof o.image_preset == "string" ? o.image_preset : "generic";
 		return {
-			deviceId: n.id,
-			subentryId: o,
-			name: q(n),
-			group: typeof a.group == "string" ? a.group : null,
-			groupId: typeof a.group_id == "string" ? a.group_id : null,
-			image: Oe(a.image_url, m),
-			preset: m,
-			status: f,
-			tone: p,
-			available: s,
-			waterDue: c,
-			fertilizerDue: l,
-			waterDays: u,
-			fertilizerDays: d,
-			fertilizingEnabled: a.fertilizing_enabled !== !1
+			deviceId: r.id,
+			subentryId: s,
+			name: U(r),
+			group: n.get(typeof o.group_id == "string" ? o.group_id : void 0) ?? (typeof o.group == "string" ? o.group : null),
+			groupId: typeof o.group_id == "string" ? o.group_id : null,
+			areaId: r.area_id ?? null,
+			area: t.areas?.find((e) => e.area_id === r.area_id)?.name ?? null,
+			image: Ne(o.image_url, h),
+			preset: h,
+			status: p,
+			tone: m,
+			available: c,
+			waterDue: l,
+			fertilizerDue: u,
+			waterDays: d,
+			fertilizerDays: f,
+			fertilizingEnabled: o.fertilizing_enabled !== !1
 		};
 	}).sort((e, t) => e.name.localeCompare(t.name));
 }
-function je(e, t) {
+function Fe(e, t) {
 	return [
 		"total_plants",
 		"plants_needing_water",
 		"plants_needing_fertilizer",
 		"plants_overdue"
 	].map((n) => {
-		let r = t.entities.find((e) => !e.config_subentry_id && J(e) === n && !e.disabled_by);
-		return e.connected === !1 ? null : X(r ? e.states[r.entity_id] : void 0);
+		let r = t.entities.find((e) => !e.config_subentry_id && W(e) === n && !e.disabled_by);
+		return e.connected === !1 ? null : K(r ? e.states[r.entity_id] : void 0);
 	});
 }
 //#endregion
 //#region frontend/src/registry.ts
-var Z = class {
-	constructor(e) {
-		this.host = e, this.error = !1, this.connected = !1, this.generation = 0, this.unsubs = [], this.loading = !1, this.dirty = !1, this.onReady = () => {
+var Ie = class {
+	constructor(e, t = !1) {
+		this.host = e, this.includeAreas = t, this.error = !1, this.connected = !1, this.generation = 0, this.unsubs = [], this.loading = !1, this.dirty = !1, this.onReady = () => {
 			this.refresh();
 		}, e.addController(this);
 	}
@@ -718,7 +772,11 @@ var Z = class {
 		if (!this.connected || !this.hass || this.connection) return;
 		let e = this.connection = this.hass.connection, t = this.generation;
 		e.addEventListener("ready", this.onReady);
-		for (let n of ["entity_registry_updated", "device_registry_updated"]) e.subscribeEvents(this.onReady, n).then((e) => {
+		for (let n of [
+			"entity_registry_updated",
+			"device_registry_updated",
+			...this.includeAreas ? ["area_registry_updated"] : []
+		]) e.subscribeEvents(this.onReady, n).then((e) => {
 			t === this.generation ? this.unsubs.push(e) : e();
 		}).catch(() => {
 			t === this.generation && (this.error = !0, this.host.requestUpdate());
@@ -737,9 +795,14 @@ var Z = class {
 		let e = this.generation;
 		this.loading = !0;
 		try {
-			let [t, n] = await Promise.all([this.hass.callWS({ type: "config/entity_registry/list" }), this.hass.callWS({ type: "config/device_registry/list" })]);
+			let [t, n, r] = await Promise.all([
+				this.hass.callWS({ type: "config/entity_registry/list" }),
+				this.hass.callWS({ type: "config/device_registry/list" }),
+				this.includeAreas ? this.hass.callWS({ type: "config/area_registry/list" }) : Promise.resolve([])
+			]);
 			if (e !== this.generation) return;
 			this.data = {
+				areas: r,
 				entities: t.filter((e) => e.platform === "plantbased"),
 				devices: n.filter((e) => e.identifiers.some(([e]) => e === "plantbased"))
 			}, this.error = !1;
@@ -749,7 +812,7 @@ var Z = class {
 			e === this.generation && (this.loading = !1, this.host.requestUpdate(), this.dirty && (this.dirty = !1, this.refresh()));
 		}
 	}
-}, Me = o`
+}, J = o`
   :host {
     container-type: inline-size;
     display: block;
@@ -1115,7 +1178,7 @@ var Z = class {
       transition: background 0.12s;
     }
   }
-`, Q = (e) => P`<svg
+`, Y = (e) => A`<svg
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -1124,10 +1187,10 @@ var Z = class {
     stroke-linejoin="round"
     aria-hidden="true"
   >
-    ${e === "water" ? F`<path d="M12 3C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-12Z"/><path d="M8 15a4 4 0 0 0 4 4"/>` : e === "leaf" ? F`<path d="M5 20 17 8M5 16C2 6 12 3 21 3c0 9-3 19-13 16"/>` : e === "clock" ? F`<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>` : F`<path d="M7 15h10l-1 6H8l-1-6ZM12 15V6M12 11C4 12 4 5 4 4c6-1 8 3 8 7ZM12 9c0-5 4-6 8-6 0 5-3 8-8 6Z"/>`}
-  </svg>`, Ne = class extends W {
+    ${e === "water" ? j`<path d="M12 3C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-12Z"/><path d="M8 15a4 4 0 0 0 4 4"/>` : e === "leaf" ? j`<path d="M5 20 17 8M5 16C2 6 12 3 21 3c0 9-3 19-13 16"/>` : e === "clock" ? j`<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>` : j`<path d="M7 15h10l-1 6H8l-1-6ZM12 15V6M12 11C4 12 4 5 4 4c6-1 8 3 8 7ZM12 9c0-5 4-6 8-6 0 5-3 8-8 6Z"/>`}
+  </svg>`, X = class extends B {
 	constructor(...e) {
-		super(...e), this._message = "", this._error = !1, this.pending = /* @__PURE__ */ new Set(), this.registry = new Z(this);
+		super(...e), this._message = "", this._error = !1, this.pending = /* @__PURE__ */ new Set(), this.registry = new Ie(this, this.includeAreas);
 	}
 	static {
 		this.properties = {
@@ -1138,10 +1201,13 @@ var Z = class {
 		};
 	}
 	static {
-		this.styles = Me;
+		this.styles = J;
+	}
+	get includeAreas() {
+		return !1;
 	}
 	setConfig(e) {
-		this._config = ke(e, this.overview, this.hass);
+		this._config = Pe(e, this.overview, this.hass);
 	}
 	willUpdate(e) {
 		e.has("hass") && this.registry.setHass(this.hass);
@@ -1157,17 +1223,17 @@ var Z = class {
 		};
 	}
 	renderStatus() {
-		return this.registry.error ? P`<div class="empty" role="alert">
-        <p>${G(this.hass, "registryError")}</p>
+		return this.registry.error ? A`<div class="empty" role="alert">
+        <p>${V(this.hass, "registryError")}</p>
         <button @click=${() => this.registry.refresh()}>
-          ${G(this.hass, "retry")}
+          ${V(this.hass, "retry")}
         </button>
-      </div>` : !this.hass || !this.registry.data ? P`<div class="empty" role="status">
-        ${G(this.hass, "loading")}
-      </div>` : L;
+      </div>` : !this.hass || !this.registry.data ? A`<div class="empty" role="status">
+        ${V(this.hass, "loading")}
+      </div>` : N;
 	}
 	feedback() {
-		return P`<div
+		return A`<div
       class="feedback ${this._error ? "error" : ""}"
       role=${this._error ? "alert" : "status"}
       aria-live="polite"
@@ -1182,17 +1248,20 @@ var Z = class {
 				await this.hass.callService("plantbased", t, n ? {
 					care_type: n,
 					days: 1
-				} : {}, { device_id: e.deviceId }, !1), this._message = G(this.hass, "saved"), this._error = !1;
+				} : {}, { device_id: e.deviceId }, !1), this._message = V(this.hass, "saved"), this._error = !1;
 			} catch {
-				this._message = G(this.hass, "actionError"), this._error = !0;
+				this._message = V(this.hass, "actionError"), this._error = !0;
 			} finally {
 				this.pending.delete(e.deviceId), this.requestUpdate();
 			}
 		}
 	}
+	plantLinks(e) {
+		return N;
+	}
 	row(e) {
 		let t = this.pending.has(e.deviceId) || !e.available, n = e.tone === "paused";
-		return P`<article
+		return A`<article
       class="plant"
       data-device=${e.deviceId}
       aria-label=${e.name}
@@ -1205,76 +1274,77 @@ var Z = class {
           loading="lazy"
           referrerpolicy="no-referrer"
           @error=${(t) => {
-			let n = t.currentTarget, r = K(e.preset);
+			let n = t.currentTarget, r = H(e.preset);
 			n.src !== r && (n.src = r);
 		}}
         />
         <div>
           <h3>${e.name}</h3>
-          ${e.group ? P`<p class="plant-group">${e.group}</p>` : L}<span
+          ${e.group ? A`<p class="plant-group">${e.group}</p>` : N}<span
             class="badge ${e.tone}"
-            >${G(this.hass, e.tone)}</span
+            >${V(this.hass, e.tone)}</span
           >
         </div>
       </div>
       <div class="chips">
         <div class="chip ${e.waterDue && !n ? "active" : ""}">
           <span class="chip-label"
-            >${Q("water")}${G(this.hass, "water")}</span
+            >${Y("water")}${V(this.hass, "water")}</span
           ><span class="chip-value"
-            >${Ee(this.hass, e.available ? e.waterDays : null)}</span
+            >${je(this.hass, e.available ? e.waterDays : null)}</span
           >
         </div>
         <div class="chip ${e.fertilizerDue && !n ? "active" : ""}">
           <span class="chip-label"
-            >${Q("leaf")}${G(this.hass, "fertilize")}</span
+            >${Y("leaf")}${V(this.hass, "fertilize")}</span
           ><span class="chip-value"
-            >${e.fertilizingEnabled ? Ee(this.hass, e.available ? e.fertilizerDays : null) : G(this.hass, "disabled")}</span
+            >${e.fertilizingEnabled ? je(this.hass, e.available ? e.fertilizerDays : null) : V(this.hass, "disabled")}</span
           >
         </div>
       </div>
-      ${this._config?.show_actions === !1 ? L : P`<div class="actions">
+      ${this._config?.show_actions === !1 ? N : A`<div class="actions">
               <button
                 class="primary"
                 ?disabled=${t}
                 @click=${() => this.act(e, "mark_watered")}
               >
-                ${Q("water")}${G(this.hass, "watered")}
+                ${Y("water")}${V(this.hass, "watered")}
               </button>
               <button
                 ?disabled=${t || !e.fertilizingEnabled}
                 @click=${() => this.act(e, "mark_fertilized")}
               >
-                ${Q("leaf")}${G(this.hass, "fertilized")}
+                ${Y("leaf")}${V(this.hass, "fertilized")}
               </button>
-              ${t ? P`<button disabled aria-label=${G(this.hass, "snooze")}>
-                      ${Q("clock")}
-                    </button>` : P`<details>
+              ${t ? A`<button disabled aria-label=${V(this.hass, "snooze")}>
+                      ${Y("clock")}
+                    </button>` : A`<details>
                       <summary
-                        aria-label=${G(this.hass, "snooze")}
-                        title=${G(this.hass, "snooze")}
+                        aria-label=${V(this.hass, "snooze")}
+                        title=${V(this.hass, "snooze")}
                       >
-                        ${Q("clock")}
+                        ${Y("clock")}
                       </summary>
                       <div class="snooze-menu">
                         <button
                           @click=${() => this.act(e, "snooze", "water")}
                         >
-                          ${G(this.hass, "snoozeWater")}</button
-                        >${e.fertilizingEnabled ? P`<button @click=${() => this.act(e, "snooze", "fertilize")}>${G(this.hass, "snoozeFertilizer")}</button>` : L}
+                          ${V(this.hass, "snoozeWater")}</button
+                        >${e.fertilizingEnabled ? A`<button @click=${() => this.act(e, "snooze", "fertilize")}>${V(this.hass, "snoozeFertilizer")}</button>` : N}
                       </div>
                     </details>`}
             </div>`}
+      ${this.plantLinks(e)}
     </article>`;
 	}
 	empty(e, t) {
-		return P`<div class="empty">
-      <img src=${K("generic")} alt="" />
-      <h3>${G(this.hass, e)}</h3>
-      <p>${G(this.hass, t)}</p>
+		return A`<div class="empty">
+      <img src=${H("generic")} alt="" />
+      <h3>${V(this.hass, e)}</h3>
+      <p>${V(this.hass, t)}</p>
     </div>`;
 	}
-}, Pe = class extends Ne {
+}, Le = class extends X {
 	constructor(...e) {
 		super(...e), this.overview = !1;
 	}
@@ -1288,21 +1358,21 @@ var Z = class {
 		};
 	}
 	render() {
-		if (!this.hass || !this.registry.data || this.registry.error) return P`<ha-card>${this.renderStatus()}</ha-card>`;
+		if (!this.hass || !this.registry.data || this.registry.error) return A`<ha-card>${this.renderStatus()}</ha-card>`;
 		let e = this.registry.data, t = e.devices.find((e) => e.id === this._config?.device_id && ["Plant", "Group"].includes(e.model ?? ""));
-		if (!t) return P`<ha-card
+		if (!t) return A`<ha-card
         >${this.empty(this._config?.device_id ? "missingDevice" : "chooseDevice", "noDevices")}</ha-card
       >`;
-		let n = t.model === "Group", r = e.entities.find((e) => e.device_id === t.id && e.config_subentry_id)?.config_subentry_id, i = Ae(this.hass, e).filter((e) => n ? e.groupId === r : e.deviceId === t.id);
-		return P`<ha-card
+		let n = t.model === "Group", r = e.entities.find((e) => e.device_id === t.id && e.config_subentry_id)?.config_subentry_id, i = q(this.hass, e).filter((e) => n ? e.groupId === r : e.deviceId === t.id);
+		return A`<ha-card
       ><header class="header">
         <div class="brand">PlantBased</div>
-        ${this._config?.title || n ? P`<h2>${this._config?.title || q(t)}</h2>` : L}${n ? P`<p>${i.length} ${G(this.hass, i.length === 1 ? "plant" : "plants")}</p>` : L}
+        ${this._config?.title || n ? A`<h2>${this._config?.title || U(t)}</h2>` : N}${n ? A`<p>${i.length} ${V(this.hass, i.length === 1 ? "plant" : "plants")}</p>` : N}
       </header>
-      ${i.length ? P`<div class=${n ? "grid" : "single"}>${i.map((e) => this.row(e))}</div>` : P`<div class="empty"><p>${G(this.hass, "groupEmpty")}</p></div>`}${this.feedback()}</ha-card
+      ${i.length ? A`<div class=${n ? "grid" : "single"}>${i.map((e) => this.row(e))}</div>` : A`<div class="empty"><p>${V(this.hass, "groupEmpty")}</p></div>`}${this.feedback()}</ha-card
     >`;
 	}
-}, Fe = class extends Ne {
+}, Re = class extends X {
 	constructor(...e) {
 		super(...e), this.overview = !0;
 	}
@@ -1313,8 +1383,8 @@ var Z = class {
 		return { show_actions: !0 };
 	}
 	render() {
-		if (!this.hass || !this.registry.data || this.registry.error) return P`<ha-card>${this.renderStatus()}</ha-card>`;
-		let e = Ae(this.hass, this.registry.data), t = e.filter((e) => e.waterDue || e.fertilizerDue).sort((e, t) => Number(t.tone === "overdue") - Number(e.tone === "overdue") || e.name.localeCompare(t.name)), n = je(this.hass, this.registry.data), r = [
+		if (!this.hass || !this.registry.data || this.registry.error) return A`<ha-card>${this.renderStatus()}</ha-card>`;
+		let e = q(this.hass, this.registry.data), t = e.filter((e) => e.waterDue || e.fertilizerDue).sort((e, t) => Number(t.tone === "overdue") - Number(e.tone === "overdue") || e.name.localeCompare(t.name)), n = Fe(this.hass, this.registry.data), r = [
 			"total",
 			"water",
 			"fertilize",
@@ -1324,21 +1394,21 @@ var Z = class {
 			"water",
 			"leaf",
 			"clock"
-		], a = this.registry.data.entities.some((e) => !e.config_subentry_id && J(e) === "total_plants");
-		return P`<ha-card
+		], a = this.registry.data.entities.some((e) => !e.config_subentry_id && W(e) === "total_plants");
+		return A`<ha-card
       ><header class="header">
         <div class="brand">PlantBased</div>
-        <h2>${this._config?.title || G(this.hass, "overview")}</h2>
+        <h2>${this._config?.title || V(this.hass, "overview")}</h2>
       </header>
       <div class="counts">
-        ${r.map((e, t) => P`<div class="count ${e}" aria-label=${G(this.hass, e)}><span>${Q(i[t])}${G(this.hass, e)}</span><strong>${n[t] ?? "—"}</strong></div>`)}
+        ${r.map((e, t) => A`<div class="count ${e}" aria-label=${V(this.hass, e)}><span>${Y(i[t])}${V(this.hass, e)}</span><strong>${n[t] ?? "—"}</strong></div>`)}
       </div>
-      ${e.length ? !a || n.some((e) => e === null) ? P`<div class="empty"><p>${G(this.hass, "unavailable")}</p></div>` : t.length ? P`<div class="overview-list">${t.map((e) => this.row(e))}</div>` : this.empty("allDone", "allDoneHint") : this.empty("noPlants", "noPlantsHint")}${this.feedback()}</ha-card
+      ${e.length ? !a || n.some((e) => e === null) ? A`<div class="empty"><p>${V(this.hass, "unavailable")}</p></div>` : t.length ? A`<div class="overview-list">${t.map((e) => this.row(e))}</div>` : this.empty("allDone", "allDoneHint") : this.empty("noPlants", "noPlantsHint")}${this.feedback()}</ha-card
     >`;
 	}
-}, Ie = class extends W {
+}, ze = class extends B {
 	constructor(...e) {
-		super(...e), this._config = { type: "custom:plantbased-card" }, this.overview = !1, this.registry = new Z(this);
+		super(...e), this._config = { type: "custom:plantbased-card" }, this.overview = !1, this.registry = new Ie(this);
 	}
 	static {
 		this.properties = {
@@ -1347,7 +1417,7 @@ var Z = class {
 		};
 	}
 	static {
-		this.styles = Me;
+		this.styles = J;
 	}
 	setConfig(e) {
 		this._config = { ...e };
@@ -1367,24 +1437,24 @@ var Z = class {
 		}));
 	}
 	render() {
-		let e = this.registry.data?.devices.filter((e) => ["Plant", "Group"].includes(e.model ?? "")).sort((e, t) => q(e).localeCompare(q(t))) ?? [], t = this._config.device_id && !e.some((e) => e.id === this._config.device_id);
-		return P`<div class="editor">
-      ${this.overview ? L : P`<label for="device">${G(this.hass, "chooseDevice")}</label
+		let e = this.registry.data?.devices.filter((e) => ["Plant", "Group"].includes(e.model ?? "")).sort((e, t) => U(e).localeCompare(U(t))) ?? [], t = this._config.device_id && !e.some((e) => e.id === this._config.device_id);
+		return A`<div class="editor">
+      ${this.overview ? N : A`<label for="device">${V(this.hass, "chooseDevice")}</label
               ><select
                 id="device"
                 .value=${this._config.device_id || ""}
                 @change=${(e) => this.change("device_id", e.currentTarget.value)}
               >
-                <option value="">${G(this.hass, "chooseDevice")}</option>
-                ${t ? P`<option value=${this._config.device_id}>${G(this.hass, "unavailable")}</option>` : L}${e.map((e) => P`<option value=${e.id}>${q(e)} · ${G(this.hass, e.model === "Plant" ? "plant" : "group")}</option>`)}</select
-              >${e.length ? L : P`<p>${G(this.hass, this.registry.data ? "noDevices" : "loading")}</p>`}${this.registry.error ? P`<p role="alert">${G(this.hass, "registryError")}</p>
+                <option value="">${V(this.hass, "chooseDevice")}</option>
+                ${t ? A`<option value=${this._config.device_id}>${V(this.hass, "unavailable")}</option>` : N}${e.map((e) => A`<option value=${e.id}>${U(e)} · ${V(this.hass, e.model === "Plant" ? "plant" : "group")}</option>`)}</select
+              >${e.length ? N : A`<p>${V(this.hass, this.registry.data ? "noDevices" : "loading")}</p>`}${this.registry.error ? A`<p role="alert">${V(this.hass, "registryError")}</p>
                       <button @click=${() => this.registry.refresh()}>
-                        ${G(this.hass, "retry")}
-                      </button>` : L}`} <label for="title">${G(this.hass, "title")}</label
+                        ${V(this.hass, "retry")}
+                      </button>` : N}`} <label for="title">${V(this.hass, "title")}</label
       ><input
         id="title"
         type="text"
-        placeholder=${G(this.hass, "titleHint")}
+        placeholder=${V(this.hass, "titleHint")}
         .value=${this._config.title ?? ""}
         @input=${(e) => this.change("title", e.currentTarget.value)}
       />
@@ -1393,25 +1463,635 @@ var Z = class {
           type="checkbox"
           .checked=${this._config.show_actions !== !1}
           @change=${(e) => this.change("show_actions", e.currentTarget.checked)}
-        />${G(this.hass, "showActions")}</label
+        />${V(this.hass, "showActions")}</label
       >
     </div>`;
 	}
-}, Le = class extends Ie {
+}, Be = class extends ze {
 	constructor(...e) {
 		super(...e), this.overview = !0;
+	}
+}, Ve = {
+	ATTRIBUTE: 1,
+	CHILD: 2,
+	PROPERTY: 3,
+	BOOLEAN_ATTRIBUTE: 4,
+	EVENT: 5,
+	ELEMENT: 6
+}, He = (e) => (...t) => ({
+	_$litDirective$: e,
+	values: t
+}), Ue = class {
+	constructor(e) {}
+	get _$AU() {
+		return this._$AM._$AU;
+	}
+	_$AT(e, t, n) {
+		this._$Ct = e, this._$AM = t, this._$Ci = n;
+	}
+	_$AS(e, t) {
+		return this.update(e, t);
+	}
+	update(e, t) {
+		return this.render(...t);
+	}
+}, { I: We } = we, Ge = (e) => e, Ke = () => document.createComment(""), Z = (e, t, n) => {
+	let r = e._$AA.parentNode, i = t === void 0 ? e._$AB : t._$AA;
+	if (n === void 0) n = new We(r.insertBefore(Ke(), i), r.insertBefore(Ke(), i), e, e.options);
+	else {
+		let t = n._$AB.nextSibling, a = n._$AM, o = a !== e;
+		if (o) {
+			let t;
+			n._$AQ?.(e), n._$AM = e, n._$AP !== void 0 && (t = e._$AU) !== a._$AU && n._$AP(t);
+		}
+		if (t !== i || o) {
+			let e = n._$AA;
+			for (; e !== t;) {
+				let t = Ge(e).nextSibling;
+				Ge(r).insertBefore(e, i), e = t;
+			}
+		}
+	}
+	return n;
+}, Q = (e, t, n = e) => (e._$AI(t, n), e), qe = {}, Je = (e, t = qe) => e._$AH = t, Ye = (e) => e._$AH, Xe = (e) => {
+	e._$AR(), e._$AA.remove();
+}, Ze = (e, t, n) => {
+	let r = /* @__PURE__ */ new Map();
+	for (let i = t; i <= n; i++) r.set(e[i], i);
+	return r;
+}, $ = He(class extends Ue {
+	constructor(e) {
+		if (super(e), e.type !== Ve.CHILD) throw Error("repeat() can only be used in text expressions");
+	}
+	dt(e, t, n) {
+		let r;
+		n === void 0 ? n = t : t !== void 0 && (r = t);
+		let i = [], a = [], o = 0;
+		for (let t of e) i[o] = r ? r(t, o) : o, a[o] = n(t, o), o++;
+		return {
+			values: a,
+			keys: i
+		};
+	}
+	render(e, t, n) {
+		return this.dt(e, t, n).values;
+	}
+	update(e, [t, n, r]) {
+		let i = Ye(e), { values: a, keys: o } = this.dt(t, n, r);
+		if (!Array.isArray(i)) return this.ut = o, a;
+		let s = this.ut ??= [], c = [], l, u, d = 0, f = i.length - 1, p = 0, m = a.length - 1;
+		for (; d <= f && p <= m;) if (i[d] === null) d++;
+		else if (i[f] === null) f--;
+		else if (s[d] === o[p]) c[p] = Q(i[d], a[p]), d++, p++;
+		else if (s[f] === o[m]) c[m] = Q(i[f], a[m]), f--, m--;
+		else if (s[d] === o[m]) c[m] = Q(i[d], a[m]), Z(e, c[m + 1], i[d]), d++, m--;
+		else if (s[f] === o[p]) c[p] = Q(i[f], a[p]), Z(e, i[d], i[f]), f--, p++;
+		else if (l === void 0 && (l = Ze(o, p, m), u = Ze(s, d, f)), l.has(s[d])) {
+			if (l.has(s[f])) {
+				let t = u.get(o[p]), n = t === void 0 ? null : i[t];
+				if (n === null) {
+					let t = Z(e, i[d]);
+					Q(t, a[p]), c[p] = t;
+				} else c[p] = Q(n, a[p]), Z(e, i[d], n), i[t] = null;
+				p++;
+			} else Xe(i[f]), f--;
+		} else Xe(i[d]), d++;
+		for (; p <= m;) {
+			let t = Z(e, c[m + 1]);
+			Q(t, a[p]), c[p++] = t;
+		}
+		for (; d <= f;) {
+			let e = i[d++];
+			e !== null && Xe(e);
+		}
+		return this.ut = o, Je(e, c), M;
+	}
+}), Qe = class extends X {
+	constructor(...e) {
+		super(...e), this.overview = !0, this.narrow = !1, this._view = "plants", this._search = "", this._dueOnly = !1;
+	}
+	static {
+		this.properties = {
+			...X.properties,
+			narrow: { type: Boolean },
+			_view: { state: !0 },
+			_search: { state: !0 },
+			_dueOnly: { state: !0 }
+		};
+	}
+	get includeAreas() {
+		return !0;
+	}
+	image(e) {
+		return A`<img
+      src=${e?.image ?? H("generic")}
+      alt=""
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      @error=${(t) => {
+			let n = t.currentTarget, r = H(e?.preset ?? "generic");
+			n.src !== r && (n.src = r);
+		}}
+    />`;
+	}
+	plantLinks(e) {
+		return A`<footer class="plant-footer">
+      <span>${e.area ?? V(this.hass, "noArea")}</span>
+      ${this.hass?.user?.is_admin ? A`<a href=${`/config/devices/device/${encodeURIComponent(e.deviceId)}`}>${V(this.hass, "details")}</a>` : N}
+    </footer>`;
+	}
+	counts(e) {
+		let t = [
+			e.length,
+			e.filter((e) => e.waterDue).length,
+			e.filter((e) => e.fertilizerDue).length,
+			e.filter((e) => e.tone === "overdue").length
+		], n = [
+			"total",
+			"water",
+			"fertilize",
+			"overdue"
+		], r = [
+			"plants",
+			"water",
+			"leaf",
+			"clock"
+		];
+		return A`<div class="counts">
+      ${n.map((e, n) => A`<div class="count ${e}"><span>${Y(r[n])}${V(this.hass, e)}</span><strong>${t[n]}</strong></div>`)}
+    </div>`;
+	}
+	plantMatches(e) {
+		let t = this._search.trim().toLocaleLowerCase();
+		return (!this._dueOnly || e.waterDue || e.fertilizerDue) && (!t || [
+			e.name,
+			e.group,
+			e.area
+		].some((e) => e?.toLocaleLowerCase().includes(t)));
+	}
+	collections(e) {
+		let t = this.registry.data;
+		if (this._view === "areas") {
+			let t = /* @__PURE__ */ new Map();
+			for (let n of e) {
+				let e = n.areaId ?? "";
+				t.has(e) || t.set(e, {
+					id: e,
+					name: n.area ?? V(this.hass, "noArea"),
+					members: []
+				}), t.get(e).members.push(n);
+			}
+			return [...t.values()].sort((e, t) => e.name.localeCompare(t.name));
+		}
+		let n = t.devices.filter((e) => e.model === "Group").map((n) => {
+			let r = t.entities.find((e) => e.device_id === n.id && e.config_subentry_id)?.config_subentry_id ?? n.identifiers.find(([e]) => e === "plantbased")?.[1] ?? n.id;
+			return {
+				id: r,
+				deviceId: n.id,
+				name: U(n),
+				members: e.filter((e) => e.groupId === r)
+			};
+		}), r = e.filter((e) => !n.some((t) => t.id === e.groupId)), i = n;
+		return r.length && i.push({
+			id: "unassigned",
+			name: V(this.hass, "noGroup"),
+			members: r
+		}), i.sort((e, t) => e.name.localeCompare(t.name));
+	}
+	visibleCollections(e) {
+		let t = this._search.trim().toLocaleLowerCase();
+		return this.collections(e).map((e) => {
+			let n = e.name.toLocaleLowerCase().includes(t), r = e.members.filter((e) => n ? !this._dueOnly || e.waterDue || e.fertilizerDue : this.plantMatches(e));
+			return {
+				collection: e,
+				shown: r,
+				visible: r.length > 0 || !e.members.length && n && !this._dueOnly
+			};
+		}).filter((e) => e.visible);
+	}
+	collection(e, t) {
+		if (this._view === "areas") return A`<section class="area-section" aria-label=${e.name}>
+        <div class="section-title">
+          <h2>${e.name}</h2>
+          <span
+            >${t.length}
+            ${V(this.hass, t.length === 1 ? "plant" : "plants")}</span
+          >
+        </div>
+        <div class="plant-grid">
+          ${$(t, (e) => e.deviceId, (e) => this.row(e))}
+        </div>
+      </section>`;
+		let n = [
+			"overdue",
+			"due",
+			"unavailable",
+			"paused",
+			"ok"
+		].find((t) => e.members.some((e) => e.tone === t)) ?? "ok";
+		return A`<article class="collection-card" aria-label=${e.name}>
+      <div class="collection-heading">
+        <div class="collection-images">
+          ${(e.members.length ? e.members.slice(0, 3) : [void 0]).map((e) => this.image(e))}
+        </div>
+        <div>
+          <h2>${e.name}</h2>
+          <p>
+            ${e.members.length}
+            ${V(this.hass, e.members.length === 1 ? "plant" : "plants")}
+          </p>
+          ${e.members.length ? A`<span class="badge ${n}">${V(this.hass, n)}</span>` : N}
+        </div>
+      </div>
+      ${this.counts(e.members)}
+      ${t.length ? A`<details class="members">
+              <summary>${V(this.hass, "showPlants")} · ${t.length}</summary>
+              <div class="member-grid">
+                ${$(t, (e) => e.deviceId, (e) => this.row(e))}
+              </div>
+            </details>` : A`<p class="group-empty">${V(this.hass, "groupEmpty")}</p>`}
+      ${e.deviceId && this.hass?.user?.is_admin ? A`<a class="collection-link" href=${`/config/devices/device/${encodeURIComponent(e.deviceId)}`}>${V(this.hass, "groupDetails")}</a>` : N}
+    </article>`;
+	}
+	render() {
+		let e = this.hass && this.registry.data ? q(this.hass, this.registry.data) : [], t = e.filter((e) => this.plantMatches(e)), n = this.registry.data ? this.visibleCollections(e) : [];
+		return A`<div class="toolbar">
+        <button
+          class="menu"
+          aria-label=${V(this.hass, "openMenu")}
+          @click=${() => this.dispatchEvent(new CustomEvent("hass-toggle-menu", {
+			bubbles: !0,
+			composed: !0
+		}))}
+        >
+          ☰
+        </button>
+        <span class="toolbar-brand">${Y("plants")} PlantBased</span>
+        ${this.hass?.user?.is_admin ? A`<a class="settings" href="/config/integrations/integration/plantbased">${V(this.hass, "settings")}</a>` : N}
+      </div>
+      <main>
+        <header class="page-heading">
+          <div class="brand">PlantBased</div>
+          <h1>${V(this.hass, "yourPlants")}</h1>
+          <p>${V(this.hass, "panelHint")}</p>
+        </header>
+        ${this.renderStatus()}
+        ${this.hass && this.registry.data && !this.registry.error ? A`
+                ${this.counts(e)}
+                <div class="controls">
+                  <nav aria-label=${V(this.hass, "view")}>
+                    ${[
+			"plants",
+			"groups",
+			"areas"
+		].map((e) => A`<button
+                          aria-pressed=${this._view === e}
+                          @click=${() => {
+			this._view = e;
+		}}
+                        >
+                          ${V(this.hass, e)}
+                        </button>`)}
+                  </nav>
+                  <label class="search"
+                    ><span>${V(this.hass, "search")}</span
+                    ><input
+                      type="search"
+                      .value=${this._search}
+                      placeholder=${V(this.hass, "searchHint")}
+                      @input=${(e) => {
+			this._search = e.target.value;
+		}}
+                  /></label>
+                  <label class="due-filter"
+                    ><input
+                      type="checkbox"
+                      .checked=${this._dueOnly}
+                      @change=${(e) => {
+			this._dueOnly = e.target.checked;
+		}}
+                    />${V(this.hass, "dueOnly")}</label
+                  >
+                </div>
+                ${!e.length && (this._view !== "groups" || !this.registry.data.devices.some((e) => e.model === "Group")) ? this.empty("noPlants", "noPlantsHint") : this._view === "plants" ? t.length ? A`<div class="plant-grid">
+                            ${$(t, (e) => e.deviceId, (e) => this.row(e))}
+                          </div>` : this.empty("noMatches", "noMatchesHint") : A`<div
+                            class=${this._view === "groups" ? "collection-grid" : "area-list"}
+                          >
+                            ${$(n, ({ collection: e }) => `${this._view}:${e.id}`, ({ collection: e, shown: t }) => this.collection(e, t))}
+                          </div>
+                          ${n.length ? N : this.empty("noMatches", "noMatchesHint")}`}
+                ${this.hass.connected === !1 ? A`<p role="status" class="offline">${V(this.hass, "offline")}</p>` : N}
+                ${this.feedback()}
+              ` : N}
+      </main>`;
+	}
+	static {
+		this.styles = [J, o`
+      :host {
+        min-height: 100%;
+        background: var(--primary-background-color, #f6f8f4);
+      }
+      .toolbar {
+        min-height: 64px;
+        padding: 8px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--pb-line);
+        background: var(--app-header-background-color, var(--pb-surface));
+        color: var(--app-header-text-color, var(--primary-text-color));
+      }
+      .toolbar-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 600;
+      }
+      .toolbar-brand svg {
+        width: 24px;
+        height: 24px;
+        color: var(--pb-green);
+      }
+      .menu {
+        width: 44px;
+        border: 0;
+        font-size: 22px;
+        color: inherit;
+        background: transparent;
+      }
+      a {
+        color: var(--primary-color, #397656);
+        text-underline-offset: 3px;
+        font-size: 13px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      a:focus-visible {
+        outline: 2px solid var(--primary-color, #397656);
+        outline-offset: 3px;
+      }
+      .settings {
+        margin-left: auto;
+        font-weight: 600;
+      }
+      main {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 36px 32px 48px;
+      }
+      .page-heading {
+        margin-bottom: 26px;
+      }
+      h1 {
+        font-size: clamp(28px, 4vw, 38px);
+        font-weight: 550;
+        letter-spacing: -0.04em;
+        margin: 10px 0 0;
+      }
+      .page-heading p {
+        margin-top: 10px;
+      }
+      .counts {
+        padding: 0;
+        gap: 12px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .count {
+        background: var(--pb-surface);
+        border: 1px solid var(--pb-line);
+        padding: 16px;
+      }
+      .count strong {
+        font-size: 30px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 16px;
+        margin: 28px 0 22px;
+      }
+      nav {
+        display: inline-flex;
+        padding: 4px;
+        gap: 3px;
+        border: 1px solid var(--pb-line);
+        border-radius: 13px;
+        background: var(--pb-surface);
+      }
+      nav button {
+        border: 0;
+        padding: 8px 18px;
+        font-size: 13px;
+      }
+      nav button[aria-pressed="true"] {
+        background: color-mix(in srgb, var(--pb-green) 12%, var(--pb-surface));
+        color: var(--pb-green);
+        font-weight: 600;
+      }
+      label {
+        margin: 0;
+      }
+      .search {
+        flex: 1;
+        min-width: 180px;
+      }
+      .search span {
+        display: block;
+        font-size: 11px;
+        color: var(--pb-muted);
+        margin: 0 0 6px 2px;
+      }
+      input[type="search"] {
+        width: 100%;
+        min-height: 46px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--pb-line);
+        background: var(--pb-surface);
+        font: inherit;
+        color: inherit;
+        font-size: 13px;
+      }
+      .due-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 46px;
+        cursor: pointer;
+      }
+      .plant-grid,
+      .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+      }
+      .plant {
+        padding: 20px;
+      }
+      .plant-top {
+        grid-template-columns: 94px minmax(0, 1fr);
+        gap: 16px;
+      }
+      .illustration {
+        width: 94px;
+        height: 112px;
+      }
+      .plant-footer {
+        border-top: 1px solid var(--pb-line);
+        margin-top: 14px;
+        padding-top: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .plant-footer span {
+        color: var(--pb-muted);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .collection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+        gap: 18px;
+        align-items: start;
+      }
+      .collection-card {
+        min-width: 0;
+        background: var(--pb-surface);
+        border: 1px solid var(--pb-line);
+        border-radius: 16px;
+        padding: 22px;
+      }
+      .collection-heading {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+      }
+      .collection-heading h2 {
+        margin-top: 0;
+        font-size: 21px;
+      }
+      .collection-heading p {
+        font-size: 12px;
+        margin: 4px 0 7px;
+      }
+      .collection-images {
+        display: flex;
+        min-width: 100px;
+        padding-left: 8px;
+      }
+      .collection-images img {
+        width: 62px;
+        height: 88px;
+        object-fit: contain;
+        border-radius: 12px;
+        background: var(--secondary-background-color, #f2f5ef);
+        border: 2px solid var(--pb-surface);
+        margin-left: -8px;
+      }
+      .collection-card .counts {
+        gap: 6px;
+      }
+      .collection-card .count {
+        padding: 10px 8px;
+      }
+      .collection-card .count strong {
+        font-size: 22px;
+      }
+      .members {
+        margin-top: 18px;
+      }
+      .members summary {
+        display: inline-flex;
+        min-width: 150px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: var(--pb-green);
+      }
+      .member-grid {
+        margin-top: 14px;
+      }
+      .collection-link {
+        margin-top: 10px;
+      }
+      .group-empty {
+        font-size: 13px;
+        padding: 16px 0 6px;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 0 0 16px;
+      }
+      .section-title h2 {
+        margin: 0;
+      }
+      .section-title span {
+        font-size: 12px;
+        color: var(--pb-muted);
+      }
+      .area-section + .area-section {
+        margin-top: 30px;
+      }
+      .feedback {
+        padding: 18px 0 0;
+      }
+      .offline {
+        font-size: 13px;
+      }
+      @media (max-width: 600px) {
+        main {
+          padding: 24px 16px 32px;
+        }
+        .toolbar {
+          padding: 8px 12px;
+        }
+        .counts {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .controls {
+          align-items: stretch;
+          gap: 12px;
+        }
+        nav {
+          width: 100%;
+        }
+        nav button {
+          flex: 1;
+        }
+        .collection-card {
+          padding: 16px;
+        }
+        .collection-images img {
+          width: 48px;
+        }
+        .collection-images {
+          min-width: 65px;
+        }
+        .plant {
+          padding: 16px;
+        }
+      }
+    `];
 	}
 };
 //#endregion
 //#region frontend/src/index.ts
 for (let [e, t] of [
-	["plantbased-card", Pe],
-	["plantbased-overview-card", Fe],
-	["plantbased-card-editor", Ie],
-	["plantbased-overview-card-editor", Le]
+	["plantbased-card", Le],
+	["plantbased-overview-card", Re],
+	["plantbased-card-editor", ze],
+	["plantbased-overview-card-editor", Be],
+	["plantbased-panel", Qe]
 ]) customElements.get(e) || customElements.define(e, t);
-var $ = window;
-$.customCards ??= [];
+var $e = window;
+$e.customCards ??= [];
 for (let [e, t, n] of [[
 	"plantbased-card",
 	"PlantBased",
@@ -1420,7 +2100,7 @@ for (let [e, t, n] of [[
 	"plantbased-overview-card",
 	"PlantBased Overview / Übersicht",
 	"Pflanzenübersicht · Plant overview"
-]]) $.customCards.some((t) => t.type === e) || $.customCards.push({
+]]) $e.customCards.some((t) => t.type === e) || $e.customCards.push({
 	type: e,
 	name: t,
 	description: n,

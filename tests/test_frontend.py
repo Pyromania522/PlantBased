@@ -6,11 +6,14 @@ from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 from homeassistant.components import frontend
+import pytest
 
+from custom_components.plantbased import async_unload_entry
 from custom_components.plantbased.const import DOMAIN, IMAGE_PRESETS
 from custom_components.plantbased.web import (
     ASSET_PATH,
     ASSETS,
+    PANEL_PATH,
     async_register_frontend,
     illustration_url,
 )
@@ -48,6 +51,7 @@ async def test_real_static_http_js_svg_and_frontend_bootstrap(
     assert "javascript" in response.headers["Content-Type"]
     body = await response.text()
     assert "plantbased-overview-card" in body
+    assert "plantbased-panel" in body
     for preset in IMAGE_PRESETS:
         response = await client.get(illustration_url(hass, preset))
         assert response.status == 200
@@ -59,7 +63,66 @@ async def test_real_static_http_js_svg_and_frontend_bootstrap(
         response = await client.get("/")
         assert response.status == 200
         assert f"/plantbased/plantbased.js?v={version}" in await response.text()
+        response = await client.get(f"/{PANEL_PATH}")
+        assert response.status == 200
+        assert "<html" in await response.text()
     assert "generic.svg" in illustration_url(hass, "not-a-preset")
+
+
+async def test_sidebar_panel_lifecycle_preserves_assets_and_care(hass, plant_hub):
+    before = plant_hub.runtime_data.plants["monstera"].to_data()
+    panel = hass.data[frontend.DATA_PANELS][PANEL_PATH].to_response()
+    assert panel["component_name"] == "custom"
+    assert panel["title"] == "PlantBased"
+    assert panel["icon"] == "mdi:sprout"
+    assert not panel["require_admin"]
+    assert panel["config"]["_panel_custom"]["name"] == "plantbased-panel"
+    assert panel["config"]["_panel_custom"]["module_url"] in extra_modules(hass)
+    for _ in range(2):
+        assert await hass.config_entries.async_reload(plant_hub.entry_id)
+        await hass.async_block_till_done()
+        assert PANEL_PATH in hass.data[frontend.DATA_PANELS]
+        assert plant_hub.runtime_data.plants["monstera"].to_data() == before
+    with patch.object(
+        hass.config_entries, "async_unload_platforms", return_value=False
+    ):
+        assert not await async_unload_entry(hass, plant_hub)
+        assert PANEL_PATH in hass.data[frontend.DATA_PANELS]
+    assert await hass.config_entries.async_unload(plant_hub.entry_id)
+    assert PANEL_PATH not in hass.data[frontend.DATA_PANELS]
+    assert await hass.config_entries.async_setup(plant_hub.entry_id)
+    await hass.async_block_till_done()
+    assert PANEL_PATH in hass.data[frontend.DATA_PANELS]
+    assert await hass.config_entries.async_remove(plant_hub.entry_id)
+    assert PANEL_PATH not in hass.data[frontend.DATA_PANELS]
+
+
+@pytest.mark.parametrize("admin", [True, False])
+async def test_sidebar_and_area_registry_available_to_authenticated_users(
+    hass,
+    plant_hub,
+    hass_ws_client,
+    hass_access_token,
+    hass_read_only_access_token,
+    admin,
+):
+    # Exercise HA's real permission filtering, not just the registration arguments.
+    token = hass_access_token if admin else hass_read_only_access_token
+    client = await hass_ws_client(hass, access_token=token)
+    for message_id, command in enumerate(
+        [
+            "get_panels",
+            "config/area_registry/list",
+            "config/device_registry/list",
+            "config/entity_registry/list",
+        ],
+        1,
+    ):
+        await client.send_json({"id": message_id, "type": command})
+        result = await client.receive_json()
+        assert result["success"]
+        if command == "get_panels":
+            assert result["result"][PANEL_PATH]["title"] == "PlantBased"
 
 
 async def test_native_registry_lists_expose_stable_card_identity(

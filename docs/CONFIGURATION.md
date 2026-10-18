@@ -7,6 +7,13 @@ Areas are HA registry areas. A group area takes precedence for its member plants
 otherwise each plant can use its own area. The own area stays saved as a fallback.
 No physical sensor, account, credential or integration YAML is used.
 
+The **PlantBased** sidebar page links administrators directly to this management
+page through **Settings**. Its Plants/Groups/Areas views, search and due-only filter
+change only the displayed view; they do not change memberships, schedules or HA
+areas. Area grouping reads the actual device/area registries, including inherited
+group areas. Group cards show counts for the whole group even while a search or
+care filter narrows the expanded members. No additional setup is required.
+
 ## Plant
 
 | Field | Default / effect |

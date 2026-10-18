@@ -104,6 +104,17 @@ function number(state?: HassState): number | null {
   return Number.isFinite(value) ? value : null;
 }
 export function plants(hass: HomeAssistant, registry: RegistryData): Plant[] {
+  const groupNames = new Map(
+    registry.devices
+      .filter((device) => device.model === "Group")
+      .map((device) => [
+        registry.entities.find(
+          (entry) => entry.device_id === device.id && entry.config_subentry_id,
+        )?.config_subentry_id ??
+          device.identifiers.find(([domain]) => domain === "plantbased")?.[1],
+        deviceName(device),
+      ]),
+  );
   return registry.devices
     .filter((device) => device.model === "Plant")
     .map((device) => {
@@ -150,8 +161,15 @@ export function plants(hass: HomeAssistant, registry: RegistryData): Plant[] {
         deviceId: device.id,
         subentryId,
         name: deviceName(device),
-        group: typeof attrs.group === "string" ? attrs.group : null,
+        group:
+          groupNames.get(
+            typeof attrs.group_id === "string" ? attrs.group_id : undefined,
+          ) ?? (typeof attrs.group === "string" ? attrs.group : null),
         groupId: typeof attrs.group_id === "string" ? attrs.group_id : null,
+        areaId: device.area_id ?? null,
+        area:
+          registry.areas?.find((area) => area.area_id === device.area_id)
+            ?.name ?? null,
         image: safeImage(attrs.image_url, preset),
         preset,
         status: state,

@@ -1,14 +1,22 @@
 # Changelog
 
-## Unreleased — 0.1.1
+## Unreleased — 0.2.0
+
+- Add an automatic PlantBased sidebar page with every plant's image, live status,
+  care countdowns and actions; no manual dashboard or resource setup is required.
+- Switch between plant cards, group cards and HA-area sections. Include empty
+  groups, standalone plants, search and a filter for due care.
+- Add administrator shortcuts to integration settings and device/group details,
+  English/German labels and responsive light/dark layouts.
+- Preserve existing Lovelace cards, native integration management and care history.
+
+## 0.1.1
 
 - Fix the plant form's required empty group field with an optional, translated
   **No group / Keine Gruppe** choice; clearing a group keeps device identity/history.
 - Inherit a group's HA area for member plants, retaining each own area as a
   fallback. Synchronize group moves/clears/deletion and native HA area changes.
 - Clarify English/German field labels and area precedence; preserve care storage.
-
-
 ## 0.1.0 — first complete version
 
 Publication status and assets are listed in

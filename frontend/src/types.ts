@@ -14,6 +14,7 @@ export interface HomeAssistant {
   locale?: { language?: string };
   language?: string;
   connected?: boolean;
+  user?: { is_admin: boolean };
   connection: HAConnection;
   callWS<T>(message: { type: string }): Promise<T>;
   callService(
@@ -41,10 +42,16 @@ export interface DeviceEntry {
   model: string | null;
   identifiers: [string, string][];
   disabled_by?: string | null;
+  area_id?: string | null;
+}
+export interface AreaEntry {
+  area_id: string;
+  name: string;
 }
 export interface RegistryData {
   entities: EntityEntry[];
   devices: DeviceEntry[];
+  areas?: AreaEntry[];
 }
 export interface CardConfig {
   type: string;
@@ -58,6 +65,8 @@ export interface Plant {
   name: string;
   group: string | null;
   groupId: string | null;
+  areaId: string | null;
+  area: string | null;
   image: string;
   preset: string;
   status: string;
