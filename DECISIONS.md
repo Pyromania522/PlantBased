@@ -57,7 +57,9 @@ recommendation. Event logic belongs to the manager, never individual entities.
 Diagnostics use an allowlist. Plant names are the only included user free text;
 notes, species, group names, areas, location, image URLs/paths, config entry
 contents and credentials are excluded. Care dates, histories, intervals, season,
-pause, computed status and counts remain useful for debugging. Notifications are
+pause, computed status and counts remain useful for debugging. If an entry is
+disabled, unloaded or failed setup, diagnostics report entry state and counts
+without accessing unavailable runtime data. Notifications are
 M4; frontend cards/artwork are M5. No public release or Silver tier is claimed.
 
 ## M2 scope and current API verification

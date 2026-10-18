@@ -3,8 +3,10 @@
 from dataclasses import asdict
 from typing import Any
 
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 
+from .const import STORAGE_VERSION
 from .manager import PlantBasedConfigEntry
 
 
@@ -12,6 +14,20 @@ async def async_get_config_entry_diagnostics(
     hass: HomeAssistant, entry: PlantBasedConfigEntry
 ) -> dict[str, Any]:
     """Never serialize the config entry, subentry data or arbitrary attributes."""
+    payload: dict[str, Any] = {
+        "storage_version": STORAGE_VERSION,
+        "entry_state": entry.state.value,
+        "runtime_available": entry.state is ConfigEntryState.LOADED,
+        "plant_count": sum(
+            sub.subentry_type == "plant" for sub in entry.subentries.values()
+        ),
+        "group_count": sum(
+            sub.subentry_type == "group" for sub in entry.subentries.values()
+        ),
+        "plants": [],
+    }
+    if entry.state is not ConfigEntryState.LOADED:
+        return payload
     manager = entry.runtime_data
     plants = []
     for key, config in manager.configs.items():
@@ -35,13 +51,7 @@ async def async_get_config_entry_diagnostics(
                 "schedule": schedule,
             }
         )
-    return {
-        "storage_version": manager.store.version,
-        "today": manager.today.isoformat(),
-        "vacation": manager.vacation,
-        "plant_count": len(plants),
-        "group_count": sum(
-            sub.subentry_type == "group" for sub in entry.subentries.values()
-        ),
-        "plants": plants,
-    }
+    payload.update(
+        today=manager.today.isoformat(), vacation=manager.vacation, plants=plants
+    )
+    return payload

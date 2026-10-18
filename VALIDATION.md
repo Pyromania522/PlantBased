@@ -8,8 +8,8 @@ and PR description; local success alone does not establish remote acceptance.
 
 | Check | Result |
 | --- | --- |
-| HA 2026.10.2 / Python 3.14.2 | **129 passed**, no skips or expected failures |
-| HA 2025.10.0 / Python 3.13.2 | **129 passed**, no skips or expected failures |
+| HA 2026.10.2 / Python 3.14.2 | **131 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **131 passed**, no skips or expected failures |
 | Combined statement/branch coverage | **99.37%** on each target; 100% statements |
 | Strict mypy | Passed on all 20 integration modules |
 | Ruff lint and formatting | Passed |
@@ -33,7 +33,8 @@ cannot create a premature calendar fertilizing event. Stale and concurrent task
 completion is checked again under the storage lock; failed saves retain tasks.
 
 Diagnostics are tested both directly and through HA's authenticated diagnostics
-download endpoint. The allowlist excludes notes, species, area/location text,
+download endpoint, including disabled entries and setup failures without loaded
+runtime data. The allowlist excludes notes, species, area/location text,
 group names and image addresses; returned histories cannot mutate runtime data.
 Action/field, entity and care-label translations load through HA in English and
 German. No new integration runtime dependency, polling or network call is added.

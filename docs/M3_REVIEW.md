@@ -14,10 +14,11 @@ events fire only after confirmed persistence, with registry device IDs.
 
 Diagnostics export an allowlisted care snapshot; only plant names are included
 as free text. Notes, species, group names, locations and image addresses are
-excluded. Calendar/task text follows HA's configured language; entity/action
+excluded. A basic diagnostic payload remains downloadable for disabled entries
+and setup failures without loaded runtime data. Calendar/task text follows HA's configured language; entity/action
 names, fields, care labels and errors are translated in German and English.
 
-Validation: **129 passed on each of HA 2025.10.0/Python 3.13.2 and
+Validation: **131 passed on each of HA 2025.10.0/Python 3.13.2 and
 2026.10.2/Python 3.14.2**, no skips/xfails, **99.37% statement/branch coverage**
 (100% statements). Ruff, strict mypy on 20 modules and official local hassfest
 pass. Real-filesystem storage checks pass on both versions. Tests include native

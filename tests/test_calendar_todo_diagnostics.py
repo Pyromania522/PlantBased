@@ -346,3 +346,37 @@ async def test_diagnostics_download_through_native_ha_endpoint(
     assert payload["plant_count"] == 2
     assert {plant["name"] for plant in payload["plants"]} == {"Monstera", "Ficus"}
     assert "Rotate weekly" not in json.dumps(payload)
+
+
+@pytest.mark.parametrize("failed_setup", [False, True])
+async def test_diagnostics_download_without_loaded_runtime(
+    hass, hass_storage, hass_client, failed_setup
+):
+    from homeassistant.config_entries import ConfigEntryDisabler
+    from homeassistant.setup import async_setup_component
+    from pytest_homeassistant_custom_component.components.diagnostics import (
+        get_diagnostics_for_config_entry,
+    )
+
+    from custom_components.plantbased.const import DOMAIN
+    from custom_components.plantbased.storage import storage_key
+
+    entry = make_hub(hass)
+    if failed_setup:
+        hass_storage[storage_key(entry.entry_id)] = {
+            "version": 999,
+            "minor_version": 1,
+            "data": {"plants": {}, "vacation": False},
+        }
+        assert not await hass.config_entries.async_setup(entry.entry_id)
+    else:
+        await hass.config_entries.async_set_disabled_by(
+            entry.entry_id, ConfigEntryDisabler.USER
+        )
+        assert await async_setup_component(hass, DOMAIN, {})
+    payload = await get_diagnostics_for_config_entry(hass, hass_client, entry)
+    assert payload["runtime_available"] is False
+    assert payload["entry_state"] == ("setup_error" if failed_setup else "not_loaded")
+    assert payload["plants"] == []
+    assert payload["plant_count"] == 2
+    assert payload["group_count"] == 2
