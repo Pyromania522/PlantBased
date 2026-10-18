@@ -17,6 +17,9 @@ See [release notes](docs/releases/v0.2.2.md)
 and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
 published versions and installation assets.
 
+Optional [adaptive watering](#adaptive-watering) learns each plant's recorded
+watering rhythm locally, while retaining its manually configured base interval.
+
 [Installation](#installation) · [Sidebar overview](#sidebar-overview) · [Cards](#dashboard-cards) ·
 [Automations](#automation-examples) · [Reminders](#optional-reminders) ·
 [Troubleshooting](#troubleshooting) · [Deutsch](#deutsch)
@@ -183,6 +186,31 @@ loaded by the browser and are not downloaded by the backend.
 Entity IDs are assigned by HA and can differ by name/language. Select devices or
 entities from HA's pickers rather than copying an assumed entity ID. Disabling a
 required care-status/count entity in HA makes the corresponding card unavailable.
+
+## Adaptive watering
+
+From v0.2.2, enable **Learn watering rhythm** when adding or reconfiguring a plant.
+It is off by default. PlantBased learns only from new, undated **Watered**
+confirmations, including group/card/to-do/reminder actions. The initial date and
+old care history are not training data.
+
+After three similar intervals (four separate watering dates), the active interval
+can move one day toward your routine. For example, a four-day base interval becomes
+three days after watering every three days consistently. Learning can shorten or
+lengthen the rhythm. It uses the median of the last five eligible intervals and
+requires three within one day or 20% of that median, whichever is greater.
+
+Same-day confirmations add no samples. Explicit date corrections, snoozed intervals,
+plant pauses and vacation periods interrupt observations. The already learned
+interval survives pauses and restarts. Fertilizer timing remains independent.
+All processing and storage stay local; this learns your recorded routine.
+
+Cards show **Adaptive: N days** while enabled; the tooltip shows the number of
+recorded intervals. Countdown, calendar, tasks and reminders use the active
+interval. The watering number entity also shows the active interval; setting it
+manually sets a new baseline and restarts learning, even when restoring the old
+baseline. Changing the base interval in **Reconfigure** restarts learning too.
+Turning learning off restores the configured baseline and clears observations.
 
 ## Dashboard cards
 
@@ -521,6 +549,26 @@ heute noch nicht versendete Meldung nach dem Start nachgeholt. Versandnachweise
 bleiben bei Neustarts erhalten; eine doppelte Uhrzeit bei der Zeitumstellung führt
 nicht zu einer zweiten Tagesmeldung. Geräteverbindung, App-Berechtigungen und
 Anbietergrenzen bestimmen die tatsächliche Zustellung.
+
+### Gießrhythmus lernen
+
+Ab **v0.2.2** lässt sich beim Anlegen oder unter **Neu konfigurieren** an der Pflanze
+**Gießrhythmus lernen** einschalten. Standardmäßig ist es aus. Nach drei ähnlichen
+Abständen zwischen vier neuen Gießbestätigungen passt sich das aktive Intervall
+um höchstens einen Tag je Bestätigung an. Bei Basis vier Tagen und regelmäßigem
+Gießen alle drei Tage wird daraus beispielsweise ein Rhythmus von drei Tagen.
+Die Anpassung funktioniert auch zu längeren Intervallen.
+
+Die Karte zeigt **Lernend: N Tage**. Kalender, Aufgaben und Erinnerungen folgen
+diesem aktiven Intervall. Doppelte Bestätigungen am selben Tag, Datumskorrekturen,
+verschobene Intervalle, Pausen und Urlaub fließen nicht ins Lernen ein. Alte
+Pflegehistorien und das anfängliche Gießdatum werden nicht rückwirkend ausgewertet.
+Der gelernte Rhythmus bleibt bei Neustarts und Pausen erhalten; alles bleibt lokal.
+
+Das Basisintervall bleibt gespeichert. Lernen ausschalten stellt es wieder her.
+Das Intervall über die Zahlenentität manuell setzen oder das Basisintervall unter
+**Neu konfigurieren** ändern startet das Lernen neu. Düngeintervalle bleiben
+unabhängig und werden nicht gelernt.
 
 ### Dashboard-Karten
 

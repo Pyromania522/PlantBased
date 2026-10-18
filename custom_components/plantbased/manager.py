@@ -70,6 +70,13 @@ class PlantManager:
             else PlantState.initial(self.entry.subentries[key].data, self.today)
             for key in self.configs
         }
+        for key, state in self.plants.items():
+            config = self.configs[key]
+            state.watering_learning.sync(
+                config.adaptive_watering,
+                config.watering_interval,
+                config.learning_revision,
+            )
         await self.store.async_save(self._serialize(self.plants, self.vacation))
         self._recalculate()
 
@@ -229,6 +236,7 @@ class PlantManager:
         expected_tasks: set[str] | None = None,
     ) -> None:
         """Record each action in one serialized, durable transaction."""
+        learn = value is None
         value = value or dt_util.now().date()
         if value > dt_util.now().date():
             raise ServiceValidationError(
@@ -264,6 +272,14 @@ class PlantManager:
                         )
             plants = deepcopy(self.plants)
             for key in selected:
+                if care == "water":
+                    state = plants[key]
+                    if learn and not state.paused and not self.vacation:
+                        state.watering_learning.observe(
+                            value, skip_gap=state.watering_snooze > 0
+                        )
+                    else:
+                        state.watering_learning.interrupt()
                 plants[key].mark_done(care, value)
             await self._commit(plants, self.vacation)
             for key in selected:
@@ -331,7 +347,9 @@ class PlantManager:
             for plant_id, care in selected:
                 state, config = plants[plant_id], self.configs[plant_id]
                 if care == "water":
-                    base = state.last_watered + timedelta(days=config.watering_interval)
+                    base = state.last_watered + timedelta(
+                        days=state.watering_interval(config)
+                    )
                     state.watering_snooze = (
                         max(base + timedelta(days=state.watering_snooze), today)
                         + timedelta(days=days)
@@ -354,7 +372,12 @@ class PlantManager:
             self._validate([plant_id] if plant_id is not None else [])
             plants = deepcopy(self.plants)
             if plant_id is not None:
+                if plants[plant_id].paused != paused:
+                    plants[plant_id].watering_learning.interrupt()
                 plants[plant_id].paused = paused
+            elif self.vacation != paused:
+                for state in plants.values():
+                    state.watering_learning.interrupt()
             await self._commit(plants, paused if plant_id is None else self.vacation)
 
     @callback
@@ -375,6 +398,9 @@ class PlantManager:
         key = "watering_interval" if care == "water" else "fertilizing_interval"
         for plant_id in selected:
             subentry = self.entry.subentries[plant_id]
+            data = {**subentry.data, key: int(days)}
+            if care == "water" and self.configs[plant_id].adaptive_watering:
+                data["learning_revision"] = self.configs[plant_id].learning_revision + 1
             self.hass.config_entries.async_update_subentry(
-                self.entry, subentry, data={**subentry.data, key: int(days)}
+                self.entry, subentry, data=data
             )

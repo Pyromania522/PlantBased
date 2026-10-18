@@ -64,6 +64,12 @@ export async function installCreateApi(page: Page) {
             }),
           ),
           {
+            name: "adaptive_watering",
+            required: true,
+            default: false,
+            selector: { boolean: {} },
+          },
+          {
             name: "fertilizing_enabled",
             required: true,
             default: true,

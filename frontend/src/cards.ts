@@ -149,6 +149,17 @@ export abstract class PlantBasedBase extends LitElement {
           ><span class="chip-value"
             >${dayText(this.hass, plant.available ? plant.waterDays : null)}</span
           >
+          ${
+            plant.adaptiveWatering &&
+            plant.available &&
+            plant.waterInterval !== null
+              ? html`<span
+                  class="chip-label"
+                  title=${t(this.hass, "learningSamples", plant.learningSamples)}
+                  >${t(this.hass, "adaptiveInterval", plant.waterInterval)}</span
+                >`
+              : nothing
+          }
         </div>
         <div class="chip ${plant.fertilizerDue && !paused ? "active" : ""}">
           <span class="chip-label"

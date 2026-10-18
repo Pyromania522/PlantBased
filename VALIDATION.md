@@ -1,19 +1,19 @@
 # Validation
 
-## v0.2.2 — compact automatic room dashboards
+## v0.2.2 — adaptive watering and compact room dashboards
 
 Prepared for user review; publication follows the reviewed PR merge.
 
 | Check | Executed local result |
 | --- | --- |
-| HA 2026.10.2 / Python 3.14.2 | **234 passed**, no skips or expected failures |
-| HA 2025.10.0 / Python 3.13.2 | **234 passed**, no skips or expected failures |
-| Integration statement/branch coverage | **98.06% current / 98.07% minimum** |
-| Strict mypy / Ruff lint and format | Passed; 26 integration modules |
-| TypeScript / Prettier / committed bundle | Passed; unchanged compiled frontend |
-| Playwright / Chromium | **33 passed** |
+| HA 2026.10.2 / Python 3.14.2 | **274 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **274 passed**, no skips or expected failures |
+| Integration statement/branch coverage | **98.09% current / 98.10% minimum** |
+| Strict mypy / Ruff lint and format | Passed; 27 integration modules |
+| TypeScript / Prettier / Vite | Passed; **79.04 kB / 21.65 kB gzip** |
+| Playwright / Chromium | **35 passed** |
 | Actual-filesystem persistence, both HA versions | Passed |
-| Release ZIP | **129,622 bytes**; both Python outputs byte-identical |
+| Release ZIP | **132,313 bytes**; both Python outputs byte-identical |
 
 Four new real-HA tests verify three visible primary entities per plant, ten hidden
 but enabled auxiliary entities, working hidden care buttons, original entity IDs,
@@ -21,14 +21,24 @@ one-time migration of existing plants, preserved user-hidden/disabled choices,
 manual re-show surviving reload and unchanged care history. New config flows
 record minor version 2. Future major versions are not migrated.
 
-The initial minimum-version run overlapped Vite's output-directory rebuild and
-failed while reading the temporarily absent bundle. The full minimum suite was
-rerun after the build completed; all 234 tests passed without test changes.
+Forty additional learning tests cover consistent shortening/lengthening, minimum
+samples, outliers, duplicate/reversed/overlong observations, bounded steps,
+strict storage decoding, optional setup, group/domain/native watering, task
+completion, calendar/aggregate dates, reload persistence, independent fertilizing,
+snooze/pause/vacation/correction exclusions, failed-write atomicity and manual
+reset including the unchanged old baseline. The learning module has 100% statement
+and branch coverage on both targets. Actual filesystem checks also round-trip the
+nested learning state. Two new browser tests verify English/German live rhythm
+labels; creation tests exercise the default-off checkbox and typed opt-in through
+both the browser fixture and actual native HA HTTP flow.
+
+The merged compact-only candidate was not published at the user's request.
+This combined candidate supersedes it; no v0.2.2 tag/release has been created.
 
 Candidate SHA-256:
 
 ```text
-f78ddf020c6b8a2d7e6180d867e7f18be5a2ef3844f37c4b54a081408cc4a97d  plantbased.zip
+9db6f85a493f4dd5da6db643ddeaf6a991e300de64fb74c8beccc2c37c8e2384  plantbased.zip
 ```
 
 HA owns automatic room rendering. Official frontend source confirms hidden-entity

@@ -87,4 +87,7 @@ export interface Plant {
   waterDays: number | null;
   fertilizerDays: number | null;
   fertilizingEnabled: boolean;
+  adaptiveWatering: boolean;
+  waterInterval: number | null;
+  learningSamples: number;
 }

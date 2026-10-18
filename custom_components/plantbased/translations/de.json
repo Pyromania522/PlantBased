@@ -75,12 +75,15 @@
             "season_start": "Beginn der Düngesaison",
             "season_end": "Ende der Düngesaison",
             "initial_last_watered": "Zuletzt gegossen",
-            "initial_last_fertilized": "Zuletzt gedüngt"
+            "initial_last_fertilized": "Zuletzt gedüngt",
+            "adaptive_watering": "Gießrhythmus lernen"
           },
           "description": "Lege die Pflegeintervalle in lokalen Kalendertagen fest. Die Anfangsdaten werden einmalig übernommen; später lassen sie sich über die Datumsentitäten ändern.",
           "data_description": {
             "group": "Keine Gruppe wählen, um die Pflanze unabhängig zu verwalten.",
-            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert."
+            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert.",
+            "adaptive_watering": "Optional: Nach mindestens drei ähnlichen Gießabständen wird der Rhythmus schrittweise angepasst. Datumskorrekturen, Verschieben und Pausen zählen nicht mit. Ausschalten stellt das Basisintervall wieder her.",
+            "watering_interval": "Basisintervall. Ein gelernter Rhythmus wird separat gespeichert. Eine Änderung startet das Lernen neu."
           }
         },
         "reconfigure": {
@@ -99,11 +102,14 @@
             "fertilizing_interval": "Düngeintervall (Tage)",
             "all_year": "Ganzjährig düngen",
             "season_start": "Beginn der Düngesaison",
-            "season_end": "Ende der Düngesaison"
+            "season_end": "Ende der Düngesaison",
+            "adaptive_watering": "Gießrhythmus lernen"
           },
           "data_description": {
             "group": "Keine Gruppe wählen, um die Pflanze unabhängig zu verwalten.",
-            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert."
+            "area": "Hat die Gruppe einen Bereich, wird dieser übernommen. Der eigene Bereich bleibt als Rückfallwert gespeichert.",
+            "adaptive_watering": "Optional: Nach mindestens drei ähnlichen Gießabständen wird der Rhythmus schrittweise angepasst. Datumskorrekturen, Verschieben und Pausen zählen nicht mit. Ausschalten stellt das Basisintervall wieder her.",
+            "watering_interval": "Basisintervall. Ein gelernter Rhythmus wird separat gespeichert. Eine Änderung startet das Lernen neu."
           }
         }
       },

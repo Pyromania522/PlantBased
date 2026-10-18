@@ -49,7 +49,7 @@ class CareInterval(PlantBasedEntity, NumberEntity):
     def native_value(self) -> float:
         config = self.manager.configs[self.target_id]
         return (
-            config.watering_interval
+            self.manager.plants[self.target_id].watering_interval(config)
             if self.care == "water"
             else config.fertilizing_interval
         )
