@@ -40,6 +40,7 @@ async def async_get_config_entry_diagnostics(
                 "name": config.name,
                 "config": {
                     "watering_interval": config.watering_interval,
+                    "adaptive_watering": config.adaptive_watering,
                     "fertilizing_interval": config.fertilizing_interval,
                     "fertilizing_enabled": config.fertilizing_enabled,
                     "all_year": config.all_year,

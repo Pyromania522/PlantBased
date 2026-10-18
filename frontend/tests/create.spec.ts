@@ -23,6 +23,10 @@ for (const kind of ["plant", "group"] as const) {
       .selectOption("living-area");
     if (kind === "plant") {
       await expect(
+        dialog.getByLabel("Learn watering rhythm"),
+      ).not.toBeChecked();
+      await dialog.getByLabel("Learn watering rhythm").check();
+      await expect(
         dialog.getByLabel("Watering interval", { exact: false }),
       ).toHaveValue("7");
       await expect(
@@ -53,6 +57,7 @@ for (const kind of ["plant", "group"] as const) {
     if (kind === "plant") {
       expect(calls[1].data).toMatchObject({
         group: "none",
+        adaptive_watering: true,
         watering_interval: 12,
         fertilizing_enabled: false,
         all_year: false,

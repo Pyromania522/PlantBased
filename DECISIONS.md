@@ -1,5 +1,35 @@
 # Decisions and verified references
 
+## v0.2.2: optional local watering-rhythm learning
+
+The user asked to adapt a four-day schedule after repeatedly watering every three
+days, before publishing the already merged compact-dashboard change. Keep the
+combined release at v0.2.2 and do not tag/publish until the new PR is reviewed.
+
+Use an optional plant boolean (default off) in the existing native add/reconfigure
+schema. No new visible HA entities or external providers are needed. Keep a
+separate bounded learning state in the atomic PlantStore, with backwards-compatible
+defaults when older storage lacks it. Never infer observations from the existing
+care history: it includes creation seeds, duplicate presses and date corrections.
+
+Start with a new confirmed watering date. Keep at most five positive local-day
+gaps, bounded 1–365. Require three observations near their median (tolerance one
+day or 20%, whichever is greater), then move the effective interval by one day
+toward the rounded median per eligible confirmation. This supports both directions
+and rejects isolated outliers. Same-day presses add no observations. Explicit date
+corrections interrupt observation; a snoozed gap is excluded and its confirmation
+becomes a fresh anchor. Pauses/vacation interrupt observations without discarding
+the already learned interval. Fertilizer actions never train watering.
+
+Learn inside the manager's existing copy/save/commit transaction, shared by native
+buttons, domain actions, groups, tasks and notification actions. A failed durable
+write commits neither care nor learning. All scheduling, snooze, calendar, task
+and reminder paths use the effective interval. Keep the configured base value;
+turning learning off restores it. A manual number edit also increments an internal
+revision so restoring the unchanged base still resets learning. Other metadata
+edits preserve learning. Show active rhythm in translated cards and numeric
+progress/base/effective values on the existing care-status sensor.
+
 ## v0.2.2: compact automatic HA room dashboards
 
 The user declined species/database lookup; do not add a provider or credentials.

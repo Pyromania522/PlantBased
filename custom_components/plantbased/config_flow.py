@@ -196,7 +196,11 @@ class CareSubentryFlow(ConfigSubentryFlow):
                         )
                     )
                 )
-            for key, default in (("fertilizing_enabled", True), ("all_year", False)):
+            for key, default in (
+                ("adaptive_watering", False),
+                ("fertilizing_enabled", True),
+                ("all_year", False),
+            ):
                 fields[vol.Required(key, default=defaults.get(key, default))] = (
                     selector.BooleanSelector()
                 )

@@ -1,6 +1,49 @@
 import { expect, test } from "@playwright/test";
 import { boot } from "./fixture";
 
+for (const language of ["en", "de"]) {
+  test(`adaptive watering displays the active rhythm and updates live (${language})`, async ({
+    page,
+  }) => {
+    await boot(page, {}, { language });
+    await expect(page.getByText(/Adaptive:|Lernend:/)).toHaveCount(0);
+    await page.evaluate(() =>
+      (window as any).setState("monstera", "care_status", "ok", {
+        adaptive_watering: true,
+        watering_effective_interval: 4,
+        watering_learning_samples: 2,
+      }),
+    );
+    const label = page.getByText(
+      language === "de" ? "Lernend: 4 Tage" : "Adaptive: 4 days",
+    );
+    await expect(label).toBeVisible();
+    await expect(label).toHaveAttribute(
+      "title",
+      language === "de"
+        ? "Erfasste Gießabstände: 2"
+        : "Recorded watering intervals: 2",
+    );
+    await page.evaluate(() =>
+      (window as any).setState("monstera", "care_status", "ok", {
+        watering_effective_interval: 3,
+        watering_learning_samples: 3,
+      }),
+    );
+    await expect(
+      page.getByText(
+        language === "de" ? "Lernend: 3 Tage" : "Adaptive: 3 days",
+      ),
+    ).toBeVisible();
+    await page.evaluate(() =>
+      (window as any).setState("monstera", "care_status", "ok", {
+        adaptive_watering: false,
+      }),
+    );
+    await expect(page.getByText(/Adaptive:|Lernend:/)).toHaveCount(0);
+  });
+}
+
 test("single plant, registry IDs, stable labels, safe actions and independent snooze", async ({
   page,
 }) => {

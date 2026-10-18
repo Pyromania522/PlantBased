@@ -180,6 +180,15 @@ export function plants(hass: HomeAssistant, registry: RegistryData): Plant[] {
         waterDays,
         fertilizerDays,
         fertilizingEnabled: attrs.fertilizing_enabled !== false,
+        adaptiveWatering: attrs.adaptive_watering === true,
+        waterInterval:
+          typeof attrs.watering_effective_interval === "number"
+            ? attrs.watering_effective_interval
+            : null,
+        learningSamples:
+          typeof attrs.watering_learning_samples === "number"
+            ? attrs.watering_learning_samples
+            : 0,
       };
     })
     .sort((a, b) => a.name.localeCompare(b.name));

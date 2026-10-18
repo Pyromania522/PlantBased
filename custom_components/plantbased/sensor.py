@@ -100,6 +100,10 @@ class PlantSensor(PlantBasedEntity, SensorEntity):
             "image_url": config.image_url
             or illustration_url(self.hass, config.image_preset),
             "fertilizing_enabled": config.fertilizing_enabled,
+            "adaptive_watering": config.adaptive_watering,
+            "watering_base_interval": config.watering_interval,
+            "watering_effective_interval": state.watering_interval(config),
+            "watering_learning_samples": len(state.watering_learning.gaps),
             "image_preset": config.image_preset,
             "species": config.species,
             "notes": config.notes,

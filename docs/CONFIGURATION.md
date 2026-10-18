@@ -24,7 +24,8 @@ care filter narrows the expanded members. No additional setup is required.
 | Species, notes, location note | Optional free text for your own care records; no species database lookup |
 | Image preset | Generic; one of twelve bundled original illustrations |
 | Custom image path/URL | Optional `/local/...` or browser-accessible HTTP(S); overrides the preset, falls back on load failure |
-| Watering interval | 7 whole calendar days; allowed 1–365 |
+| Watering interval | Base of 7 whole calendar days; allowed 1–365; editing restarts learning |
+| Learn watering rhythm | Off; opt in per plant to adapt the active interval from newly confirmed watering |
 | Fertilizing enabled | On; turning it off removes fertilizer due dates/flags |
 | Fertilizing interval | 28 whole calendar days; allowed 1–365 |
 | Season start/end | March–September inclusive; ranges crossing New Year work |
@@ -34,7 +35,20 @@ care filter narrows the expanded members. No additional setup is required.
 Use the last-care **date entities** to correct runtime dates after creation.
 Changing initial dates in a later configuration edit does not replace an existing
 care history. The interval **number entities** edit the corresponding stored
-configuration. Native care buttons and card buttons record actual care for today.
+configuration. With learning enabled, the watering number shows the active
+interval; setting it manually also restarts learning, including when returning
+to the original baseline. Native care buttons and card buttons record actual care
+for today.
+
+Learning keeps the last five eligible gaps and requires at least three within
+one day or 20% of their median. It changes by at most one day per new watering
+date, bounded to 1–365. The first confirmation establishes an anchor, so three
+gaps require four confirmations on different dates. Duplicate same-day presses
+add no samples. Explicitly dated actions/corrections interrupt observation.
+Snoozed watering starts a new anchor without learning its delayed gap. Pauses and
+vacation clear observations; the learned interval remains. Restarts retain both.
+Disabling learning restores the configured baseline. Existing histories are not
+reused. No fertilizer learning, account or external data is involved.
 
 Per-plant pause and the hub's vacation switch are runtime controls. They suppress
 due flags, reminders, calendar/tasks and due counts while dates continue to run.

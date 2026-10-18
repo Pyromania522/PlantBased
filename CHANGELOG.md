@@ -2,6 +2,12 @@
 
 ## Unreleased — 0.2.2
 
+- Add optional per-plant learning of watering rhythms. After at least three
+  similar recorded intervals, adapt by at most one day per watering confirmation.
+  Keep the configured baseline, persist learned intervals, show them on cards and
+  exclude corrections, duplicates, snoozed intervals and paused/vacation periods.
+- Keep manual control: changing the watering interval restarts learning; turning
+  learning off restores the baseline. Fertilizing remains independently configured.
 - Reduce automatically generated HA room dashboards from 13 primary tiles to
   three per plant: care status and watering/fertilizing countdowns, with plant icons.
 - Hide additional plant entities without disabling them. Apply visibility once to

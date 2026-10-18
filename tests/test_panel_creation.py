@@ -32,7 +32,13 @@ async def test_native_http_create_from_panel(hass, plant_hub, hass_client, kind)
     data.update(name="New from overview", area=area.id)
     if kind == "plant":
         assert data["initial_last_watered"] == "2026-06-15"
-        data.update(group="none", watering_interval=12, fertilizing_enabled=False)
+        assert data["adaptive_watering"] is False
+        data.update(
+            group="none",
+            watering_interval=12,
+            fertilizing_enabled=False,
+            adaptive_watering=True,
+        )
     url = f"{BASE}/{step['flow_id']}"
     response = await client.post(url, json=data)
     assert response.status == 200
@@ -47,6 +53,7 @@ async def test_native_http_create_from_panel(hass, plant_hub, hass_client, kind)
         assert sub.data["group"] is None
         assert sub.data["watering_interval"] == 12
         assert sub.data["fertilizing_enabled"] is False
+        assert plant_hub.runtime_data.configs[sub.subentry_id].adaptive_watering is True
     assert plant_hub.runtime_data.plants["monstera"].to_data() == before
     # A retry of a completed flow cannot create a duplicate plant/group.
     response = await client.post(url, json=data)

@@ -75,12 +75,15 @@
             "season_start": "Fertilizing season starts",
             "season_end": "Fertilizing season ends",
             "initial_last_watered": "Last watered",
-            "initial_last_fertilized": "Last fertilized"
+            "initial_last_fertilized": "Last fertilized",
+            "adaptive_watering": "Learn watering rhythm"
           },
           "description": "Set the care intervals in local calendar days. Initial dates are used once; edit last-care dates using the date entities.",
           "data_description": {
             "group": "Choose No group to manage this plant independently.",
-            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback."
+            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback.",
+            "adaptive_watering": "Optional: after at least three similar watering intervals, gradually adapt the rhythm. Date corrections, snoozed intervals and pauses are excluded. Turning off restores the base interval.",
+            "watering_interval": "Base interval. The learned rhythm is stored separately. Changing this value starts learning again."
           }
         },
         "reconfigure": {
@@ -99,11 +102,14 @@
             "fertilizing_interval": "Fertilizing interval (days)",
             "all_year": "Fertilize all year",
             "season_start": "Fertilizing season starts",
-            "season_end": "Fertilizing season ends"
+            "season_end": "Fertilizing season ends",
+            "adaptive_watering": "Learn watering rhythm"
           },
           "data_description": {
             "group": "Choose No group to manage this plant independently.",
-            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback."
+            "area": "A group's area takes precedence. Your plant's own area is kept as a fallback.",
+            "adaptive_watering": "Optional: after at least three similar watering intervals, gradually adapt the rhythm. Date corrections, snoozed intervals and pauses are excluded. Turning off restores the base interval.",
+            "watering_interval": "Base interval. The learned rhythm is stored separately. Changing this value starts learning again."
           }
         }
       },

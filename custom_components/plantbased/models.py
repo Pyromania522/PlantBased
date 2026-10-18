@@ -8,6 +8,7 @@ from datetime import date
 from typing import Any, Literal
 
 from .const import HISTORY_LIMIT
+from .learning import WateringLearning
 
 type CareType = Literal["water", "fertilize"]
 
@@ -25,6 +26,8 @@ class PlantConfig:
     image_preset: str = "generic"
     image_url: str = ""
     watering_interval: int = 7
+    adaptive_watering: bool = False
+    learning_revision: int = 0
     fertilizing_enabled: bool = True
     fertilizing_interval: int = 28
     all_year: bool = False
@@ -54,6 +57,7 @@ class PlantState:
     paused: bool = False
     watering_history: list[date] = field(default_factory=list)
     fertilizing_history: list[date] = field(default_factory=list)
+    watering_learning: WateringLearning = field(default_factory=WateringLearning)
 
     @classmethod
     def initial(cls, data: Mapping[str, Any], today: date) -> PlantState:
@@ -96,6 +100,9 @@ class PlantState:
                 date.fromisoformat(value)
                 for value in data.get("fertilizing_history", [fertilized.isoformat()])
             ][-HISTORY_LIMIT:],
+            watering_learning=WateringLearning.from_data(
+                data.get("watering_learning", {})
+            ),
         )
 
     def to_data(self) -> dict[str, Any]:
@@ -110,7 +117,14 @@ class PlantState:
             "fertilizing_history": [
                 value.isoformat() for value in self.fertilizing_history
             ],
+            "watering_learning": self.watering_learning.to_data(),
         }
+
+    def watering_interval(self, config: PlantConfig) -> int:
+        """Return the active learned interval or the configured manual baseline."""
+        return self.watering_learning.effective(
+            config.adaptive_watering, config.watering_interval, config.learning_revision
+        )
 
     def mark_done(self, care: CareType, value: date) -> None:
         """Update the independent timer, reset its snooze and record the action."""

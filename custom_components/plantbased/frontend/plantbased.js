@@ -555,6 +555,8 @@ var Oe = {
 	overview: "Plant overview",
 	total: "Total",
 	water: "Watering",
+	adaptiveInterval: "Adaptive: {n} days",
+	learningSamples: "Recorded watering intervals: {n}",
 	fertilize: "Fertilizing",
 	overdue: "Overdue",
 	ok: "Doing well",
@@ -626,6 +628,8 @@ var Oe = {
 	overview: "Pflanzenübersicht",
 	total: "Gesamt",
 	water: "Gießen",
+	adaptiveInterval: "Lernend: {n} Tage",
+	learningSamples: "Erfasste Gießabstände: {n}",
 	fertilize: "Düngen",
 	overdue: "Überfällig",
 	ok: "Gut versorgt",
@@ -750,7 +754,10 @@ function q(e, t) {
 			fertilizerDue: u,
 			waterDays: d,
 			fertilizerDays: f,
-			fertilizingEnabled: o.fertilizing_enabled !== !1
+			fertilizingEnabled: o.fertilizing_enabled !== !1,
+			adaptiveWatering: o.adaptive_watering === !0,
+			waterInterval: typeof o.watering_effective_interval == "number" ? o.watering_effective_interval : null,
+			learningSamples: typeof o.watering_learning_samples == "number" ? o.watering_learning_samples : 0
 		};
 	}).sort((e, t) => e.name.localeCompare(t.name));
 }
@@ -1307,6 +1314,11 @@ var Ie = class {
           ><span class="chip-value"
             >${je(this.hass, e.available ? e.waterDays : null)}</span
           >
+          ${e.adaptiveWatering && e.available && e.waterInterval !== null ? A`<span
+                  class="chip-label"
+                  title=${V(this.hass, "learningSamples", e.learningSamples)}
+                  >${V(this.hass, "adaptiveInterval", e.waterInterval)}</span
+                >` : N}
         </div>
         <div class="chip ${e.fertilizerDue && !n ? "active" : ""}">
           <span class="chip-label"

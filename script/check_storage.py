@@ -31,6 +31,13 @@ async def main() -> None:
                     "paused": True,
                     "watering_history": ["2026-06-15"],
                     "fertilizing_history": ["2026-06-01"],
+                    "watering_learning": {
+                        "baseline": 4,
+                        "revision": 1,
+                        "interval": 3,
+                        "anchor": "2026-06-15",
+                        "gaps": [3, 3, 3],
+                    },
                 }
             },
         }

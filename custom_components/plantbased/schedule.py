@@ -51,7 +51,7 @@ def calculate(
 ) -> CareSchedule:
     """Calculate independent timers using dates, so DST cannot shift a due day."""
     watering = state.last_watered + timedelta(
-        days=config.watering_interval + state.watering_snooze
+        days=state.watering_interval(config) + state.watering_snooze
     )
     fertilizer: date | None = None
     year_round = config.all_year or (config.season_end - config.season_start) % 12 == 11
