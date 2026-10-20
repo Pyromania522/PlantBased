@@ -3,7 +3,7 @@
 import asyncio
 from collections.abc import Callable
 from copy import deepcopy
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 import logging
 from secrets import token_hex
 from typing import TYPE_CHECKING, Any
@@ -50,6 +50,8 @@ class ReminderCoordinator:
         self._timer: Callable[[], None] | None = None
         self._gap_timer: Callable[[], None] | None = None
         self._gap_day: date | None = None
+        self._retry_timer: Callable[[], None] | None = None
+        self._retry_targets: set[str] = set()
         self._worker: asyncio.Task[None] | None = None
         self._dirty = False
         self._send = False
@@ -111,7 +113,30 @@ class ReminderCoordinator:
 
     @callback
     def _async_time(self, now: datetime) -> None:
+        _LOGGER.debug("Scheduled PlantBased reminder triggered at %s", now.isoformat())
         self._async_schedule(send=True)
+
+    @callback
+    def _async_retry(self, now: datetime) -> None:
+        self._retry_timer = None
+        self._async_schedule(send=True)
+
+    @callback
+    def _track_retry(self) -> None:
+        """Retry failed targets without requiring a care change or app activity."""
+        if not self._retry_targets:
+            if self._retry_timer is not None:
+                self._retry_timer()
+                self._retry_timer = None
+            return
+        retry_at = dt_util.utcnow() + timedelta(minutes=5)
+        if (
+            self._retry_timer is None
+            and dt_util.as_local(retry_at).date() == dt_util.now().date()
+        ):
+            self._retry_timer = async_track_point_in_time(
+                self.hass, self._async_retry, retry_at
+            )
 
     @callback
     def _async_started(self, hass: HomeAssistant) -> None:
@@ -258,7 +283,17 @@ class ReminderCoordinator:
                     "title": texts["snooze"],
                 }
             )
-        return {"tag": self.tag, "actions": actions, "alert_once": refresh}
+        data: dict[str, Any] = {
+            "tag": self.tag,
+            "actions": actions,
+            "alert_once": refresh,
+        }
+        if refresh:
+            # alert_once only affects Android. iOS updates must stay quiet too,
+            # including while care is confirmed in the foreground Companion app.
+            data["push"] = {"interruption-level": "passive"}
+            data["presentation_options"] = []
+        return data
 
     async def _async_process(self, send: bool) -> None:
         if self._stopped or self.hass.state in (
@@ -277,6 +312,7 @@ class ReminderCoordinator:
         now = dt_util.now()
         title, message = self._summary(tasks)
         content = title + "\n" + message
+        failed: set[str] = set()
         for target in sorted(set(updated) | selected):
             receipt = updated.setdefault(target, Receipt())
             receipt.seen.intersection_update(tasks)
@@ -287,6 +323,7 @@ class ReminderCoordinator:
                         target,
                         {"message": "clear_notification", "data": {"tag": self.tag}},
                     ):
+                        failed.add(target)
                         continue
                 receipt.active.clear()
                 receipt.token = ""
@@ -295,7 +332,7 @@ class ReminderCoordinator:
                     del updated[target]
                 continue
             scheduled = (
-                send
+                (send or target in self._retry_targets)
                 and now.time().replace(tzinfo=None) >= options.at
                 and receipt.day != now.date()
                 and (options.repeat or bool(set(tasks) - receipt.seen))
@@ -324,9 +361,20 @@ class ReminderCoordinator:
                     candidate, tasks, refresh=not scheduled
                 )
             if await self._async_deliver(target, data):
+                _LOGGER.debug(
+                    "PlantBased %s accepted by %s at %s (%d care tasks)",
+                    "scheduled reminder" if scheduled else "summary update",
+                    "mobile notifier"
+                    if self._is_mobile(target)
+                    else "notification target",
+                    dt_util.now().isoformat(),
+                    len(tasks),
+                )
                 updated[target] = candidate
                 if target == "persistent":
                     self._restore_persistent = False
+            else:
+                failed.add(target)
         if updated != self.receipts:
             await self.store.async_save(
                 {
@@ -336,6 +384,8 @@ class ReminderCoordinator:
                 }
             )
             self.receipts = updated
+        self._retry_targets = failed
+        self._track_retry()
 
     async def _async_action(self, event: Event[dict[str, Any]]) -> None:
         action = event.data.get("action")
@@ -392,6 +442,9 @@ class ReminderCoordinator:
     @callback
     def async_stop(self) -> None:
         self._stopped = True
+        if self._retry_timer is not None:
+            self._retry_timer()
+            self._retry_timer = None
         if self._timer is not None:
             self._timer()
             self._timer = None

@@ -1,5 +1,41 @@
 # Validation
 
+## v0.2.3 — reminder retries and quiet iPhone updates
+
+Prepared for review, not published. The user's first-due-today 15:00 Berlin timer
+passes without app/care interaction; the original missed phone presentation is
+not reproduced or attributed to a confirmed local configuration error.
+
+| Check | Executed local result |
+| --- | --- |
+| HA 2026.10.2 / Python 3.14.2 | **286 passed**, no skips or expected failures |
+| HA 2025.10.0 / Python 3.13.2 | **286 passed**, no skips or expected failures |
+| User's HA 2026.10.1 / matching frontend 20260930.3 | **84 passed**: reminders, options/storage and action tests |
+| Integration statement/branch coverage | **98.13% current / 98.14% minimum** |
+| Ruff lint/format / strict mypy | Passed; 27 integration modules |
+| Committed frontend bundle check | Passed; unchanged compiled frontend |
+| Actual-filesystem storage, both supported targets | Passed |
+| Release package | **132,828 bytes**; both Python ZIPs byte-identical |
+
+Eleven scheduling tests cover 15:00 local delivery for newly due care, automatic
+five-minute retry, repeated failures, recipient isolation, retry cancellation on
+care/snooze/pause/disable/unload, partial-care recovery without duplicate/stale
+watering, local-day boundaries, quiet iOS refresh payloads and normal scheduled
+alerts. The retry regression fails on the original implementation. A new device
+action test guards against deprecated config_entries property access on modern HA
+while exercising the supported minimum's public registry lookup too.
+
+Official Companion documentation establishes Android-only alert_once and iOS
+passive/foreground presentation behavior. No test sends to a real device. Actual
+iPhone presentation remains a manual acceptance check, distinct from HA notifier
+service acceptance. PR checks record official hassfest/HACS and browser acceptance.
+
+```text
+bf031980f3373c19edca4eb39da95baeaa48155a56bf684e463687ca68f06283  plantbased.zip
+```
+
+---
+
 ## v0.2.2 — adaptive watering and compact room dashboards
 
 Prepared for user review; publication follows the reviewed PR merge.

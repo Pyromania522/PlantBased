@@ -1,5 +1,35 @@
 # Decisions and verified references
 
+## v0.2.3: reminder retries and quiet iPhone updates
+
+User report: daily repetition enabled, plants first due today, no visible 15:00
+reminder, then a push after marking care. User runs Core 2026.10.1, Berlin timezone
+and iPhone. The only supplied log is a deprecated DeviceEntry ownership read
+during an action, not a notification delivery failure. A normal first-due-today
+15:00 Berlin regression passes without frontend/care interaction. Do not claim
+that the original missed presentation's cause has been established.
+
+Two independent defects are verified: failed delivery has no autonomous retry,
+and summary refreshes only set `alert_once`, documented as Android-only. Add a
+single five-minute retry timer for failed recipients, bounded to the current local
+day. Recompute tasks each time; cancel when care/disable/unload makes it unnecessary.
+Partial-care recovery counts the successful due reminder once, preventing a second
+scheduled retry for the same recipient. Preserve existing receipt/dedup semantics.
+Retry scheduling follows successful receipt storage; storage-failure recovery is
+unchanged, avoiding a new automatic duplicate loop for uncertain writes.
+
+Verified [official Companion basic notification documentation](https://github.com/home-assistant/companion.home-assistant/blob/master/docs/notifications/basic.md):
+`alert_once` is Android-only; iOS `push.interruption-level: passive` is quiet and
+`presentation_options: []` suppresses foreground banners/sound. Apply these only
+to summary refreshes. Do not bypass Focus or scheduled notification summaries for
+normal reminders. Debug logs record local trigger/accepted-service times and task
+counts, without target IDs, tokens, payloads or plant names; service acceptance is
+not proof of phone delivery.
+
+Use public `device_registry.async_entries_for_config_entry` for device ownership
+on both old and new HA APIs, rather than touching the deprecated property. Existing
+foreign/missing/hub-target checks remain; add a modern-property access guard test.
+
 ## v0.2.2: optional local watering-rhythm learning
 
 The user asked to adapt a four-day schedule after repeatedly watering every three
