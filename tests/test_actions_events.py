@@ -1,8 +1,9 @@
 """Real domain actions, deduplicated targets and durable automation events."""
 
 import asyncio
+from contextlib import nullcontext
 from datetime import date
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, PropertyMock, patch
 
 from homeassistant.core import CoreState
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
@@ -32,6 +33,24 @@ async def test_actions_registered_without_loaded_hub(hass):
     with pytest.raises(ServiceValidationError) as error:
         await action(hass, "mark_watered", entity_id="sensor.missing")
     assert error.value.translation_key == "not_available"
+
+
+async def test_device_action_avoids_deprecated_config_entries(hass, plant_hub):
+    guard = (
+        patch.object(
+            dr.DeviceEntry,
+            "config_entries",
+            new_callable=PropertyMock,
+            side_effect=AssertionError("Deprecated device ownership accessed"),
+        )
+        if hasattr(dr.DeviceEntry, "config_entry_id")
+        else nullcontext()
+    )
+    with guard:
+        await action(
+            hass, "mark_watered", device_id=device(hass, plant_hub, "monstera").id
+        )
+    assert state(hass, "monstera", "last_watered", "date").state == "2026-06-15"
 
 
 async def test_group_plant_and_entity_targets_are_deduplicated(hass, plant_hub):

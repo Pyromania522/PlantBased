@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased — 0.2.2
+## Unreleased — 0.2.3
+
+- Retry failed notification deliveries every five minutes until the local day's
+  end, using current due tasks and avoiding duplicate successful recipients.
+- Keep iPhone summary updates passive and suppress foreground presentation;
+  Android retains alert-once behavior. Scheduled reminders keep normal alerts.
+- Avoid deprecated `DeviceEntry.config_entries` access when targeting plant/group
+  devices, preserving compatibility with the minimum HA version.
+
+## 0.2.2
 
 - Add optional per-plant learning of watering rhythms. After at least three
   similar recorded intervals, adapt by at most one day per watering confirmation.

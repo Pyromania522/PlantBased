@@ -13,7 +13,7 @@ Single-plant, group and overview cards now include English/German controls and
 twelve original illustrations. The new sidebar page provides plant/group cards,
 room grouping, live care status and direct plant/group creation. Automatic HA room
 dashboards show three primary tiles per plant from v0.2.2.
-See [release notes](docs/releases/v0.2.2.md)
+See [release notes](docs/releases/v0.2.3.md)
 and [GitHub Releases](https://github.com/Pyromania522/PlantBased/releases) for
 published versions and installation assets.
 
@@ -380,6 +380,19 @@ to configured HA notifiers and makes no notification network request itself.
 
 ## Troubleshooting
 
+For missing mobile reminders, confirm the hub's reminder time, HA time zone and
+selected `notify.mobile_app_*` target. From v0.2.3, failed delivery is retried every
+five minutes during the same local day; each retry checks current due work.
+Care already completed, snoozed or paused is excluded, and successful recipients
+are not sent duplicate daily reminders. Summary updates after care stay quiet on
+iPhone (passive, no foreground alert) as well as Android; scheduled reminders use
+normal alerts and respect iOS Focus and Scheduled Summary settings.
+
+If the problem persists, enable PlantBased debug logging from its integration
+menu before the next reminder. Logs distinguish the local timer trigger, notifier
+acceptance and summary updates without including target IDs or plant names.
+Notifier acceptance does not prove that the phone displayed the push immediately.
+
 | Symptom | Check |
 | --- | --- |
 | PlantBased missing from Add integration | Verify the directory contains `manifest.json`, restart HA after downloading, check minimum HA version and sanitized HA logs |
@@ -540,6 +553,12 @@ gewässert**, **Alle gedüngt** und optional **1 Tag verschieben** gelten nur f�
 noch fällige Aufgaben aus dieser Meldung. Alte Meldungen ändern keine späteren
 Pflegezyklen. Neue Notify-Entitäten unterstützen einfache Nachrichten und Titel;
 ihre derzeitige API bietet keine Aktions- oder Tag-Daten.
+
+Ab **v0.2.3** werden fehlgeschlagene Zustellungen alle fünf Minuten bis zum Ende
+des lokalen Tages erneut versucht. Dabei zählt nur noch fällige Pflege. Bereits
+erfolgreiche Empfänger erhalten keine doppelte Tagesmeldung. Aktualisierungen
+nach Pflegeaktionen bleiben auch auf dem iPhone still; planmäßige Erinnerungen
+respektieren weiterhin Fokus und geplante Mitteilungsübersichten in iOS.
 
 Mobile Sammelmeldungen werden unter demselben Tag aktualisiert und nach erledigter
 Pflege zurückgezogen; die zusätzliche HA-Meldung wird ebenfalls aktualisiert oder

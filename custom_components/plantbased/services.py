@@ -36,6 +36,10 @@ async def _async_targets(
         )
     manager: PlantManager = entry.runtime_data
     entities, devices = er.async_get(hass), dr.async_get(hass)
+    owned_devices = {
+        device.id
+        for device in dr.async_entries_for_config_entry(devices, entry.entry_id)
+    }
     selected: set[str] = set()
     direct_entities = set(cv.ensure_list(call.data.get("entity_id", [])))
     if direct_entities == {"all"}:
@@ -59,7 +63,7 @@ async def _async_targets(
                 for domain, key in device.identifiers
                 if domain == DOMAIN and key in entry.subentries
             }
-            if device is not None and entry.entry_id in device.config_entries
+            if device is not None and device.id in owned_devices
             else set()
         )
         if not owned:
