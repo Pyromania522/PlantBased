@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
       - name: Require the tagged commit on main
         run: git merge-base --is-ancestor HEAD origin/main
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: plantbased-release-candidate
           path: dist
