@@ -6,4 +6,4 @@ mypy==2.4.0
 CairoSVG==2.9.1
 
 # Official frontend required to test real HTTP/bootstrap/module registration.
-home-assistant-frontend==20260930.4
+home-assistant-frontend==20261028.4
