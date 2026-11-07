@@ -1,7 +1,7 @@
 # Home Assistant is pinned transitively by the test plugin to 2026.10.2.
 pytest-homeassistant-custom-component==0.13.373
 ruff==0.17.1
-mypy==2.4.0
+mypy==2.4.1
 # Optional artwork regeneration tool; not an integration runtime dependency.
 CairoSVG==2.9.1
 
